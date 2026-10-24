@@ -513,13 +513,13 @@
         </div>
     </div>
 
-    <!-- MODAL ATUR ULANG JADWAL (DENGAN OPSI TAMBAH/KURANGI ORANG) -->
+    <!-- MODAL ATUR ULANG JADWAL (DENGAN TOMBOL TAMBAH ORANG & HAPUS ORANG TERPISAH) -->
     <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Atur & Ubah Jadwal Piket</h3>
-                    <p class="text-xs text-slate-500">Tambah, ganti, atau kurangi petugas piket per hari.</p>
+                    <p class="text-xs text-slate-500">Tambah orang atau hapus orang dari jadwal piket harian.</p>
                 </div>
                 <button onclick="closeModal('modal-edit-jadwal')" class="text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -1053,7 +1053,6 @@
                 };
                 reader.readAsDataURL(imgInput.files[0]);
             } else {
-                // If no new image, we preserve the old one. (Set to empty string if you want to clear it, but let's preserve).
                 finalizeSaveAnnouncement(btnSubmit);
             }
         }
@@ -1489,7 +1488,6 @@
             riwayatLogs.unshift(newLog);
             saveData();
             
-            // Integrasi Webhook Kirim data
             sendToDriveWebhook(newLog);
 
             renderDashboard();
@@ -1566,8 +1564,9 @@
                         <select onchange="updateTempDutyArea('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
                             ${tugasList.map(a => `<option value="${a}" ${a === duty.area ? 'selected' : ''}>${a}</option>`).join('')}
                         </select>
-                        <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg text-xs">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <!-- TOMBOL HAPUS ORANG (Terpisah dari hapus tugas) -->
+                        <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg text-xs" title="Hapus Orang dari Jadwal Ini">
+                            <i class="fa-solid fa-user-minus"></i>
                         </button>
                     </div>
                 `).join('');
@@ -1575,8 +1574,9 @@
                 dayBox.innerHTML = `
                     <div class="flex justify-between items-center">
                         <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">${day}</h4>
-                        <button type="button" onclick="addTempDuty('${day}')" class="text-xs text-brand-600 font-bold hover:underline">
-                            + Tambah Petugas
+                        <!-- TOMBOL TAMBAH ORANG (Terpisah dari tambah tugas) -->
+                        <button type="button" onclick="addTempDuty('${day}')" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 px-2.5 py-1 rounded-lg font-bold hover:bg-brand-100 transition flex items-center gap-1">
+                            <i class="fa-solid fa-user-plus text-[10px]"></i> Tambah Orang
                         </button>
                     </div>
                     <div class="space-y-2">${rows || '<p class="text-xs text-slate-400 italic">Libur piket</p>'}</div>
@@ -1723,7 +1723,8 @@
                             <button onclick="editTugas('${tugas}')" class="p-1.5 text-slate-500 hover:text-brand-600 text-xs">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button onclick="deleteTugas(${idx})" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs">
+                            <!-- TOMBOL HAPUS TUGAS (Terpisah dari hapus orang) -->
+                            <button onclick="deleteTugas(${idx})" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs" title="Hapus Tugas Ini">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
