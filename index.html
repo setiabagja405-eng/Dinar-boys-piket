@@ -13,6 +13,10 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Firebase App & Realtime Database SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -513,7 +517,7 @@
         </div>
     </div>
 
-    <!-- MODAL ATUR ULANG JADWAL (DENGAN PEMISAHAN NAMA ORANG & TUGAS TERPISAH) -->
+    <!-- MODAL ATUR ULANG JADWAL -->
     <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
@@ -668,6 +672,22 @@
 
     <!-- APPLICATION LOGIC SCRIPT -->
     <script>
+        // --- KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-_NL4T0FViANzT-PtkWCFczh3gzOoMQQ",
+            authDomain: "dinarboyspiket.firebaseapp.com",
+            databaseURL: "https://dinarboyspiket-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dinarboyspiket",
+            storageBucket: "dinarboyspiket.firebasestorage.app",
+            messagingSenderId: "268751958735",
+            appId: "1:268751958735:web:70253c3759771940c77dba",
+            measurementId: "G-DC8VK31037"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         // --- CONSTANTS & DEFAULTS ---
         const DEFAULT_DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
         const DEFAULT_AREAS = [
@@ -709,12 +729,12 @@
         };
 
         // --- GLOBAL STATE ---
-        let penghuniList = JSON.parse(localStorage.getItem('kos_penghuni')) || DEFAULT_PENGHUNI;
-        let jadwalPiket = JSON.parse(localStorage.getItem('kos_jadwal')) || DEFAULT_JADWAL;
-        let tugasList = JSON.parse(localStorage.getItem('kos_tugas')) || DEFAULT_AREAS;
-        let riwayatLogs = JSON.parse(localStorage.getItem('kos_riwayat')) || DEFAULT_LOGS;
-        let adminAnnouncement = JSON.parse(localStorage.getItem('kos_announcement')) || DEFAULT_ANNOUNCEMENT;
-        let kosWebhookUrl = localStorage.getItem('kos_webhook_url') || "";
+        let penghuniList = DEFAULT_PENGHUNI;
+        let jadwalPiket = DEFAULT_JADWAL;
+        let tugasList = DEFAULT_AREAS;
+        let riwayatLogs = DEFAULT_LOGS;
+        let adminAnnouncement = DEFAULT_ANNOUNCEMENT;
+        let kosWebhookUrl = "";
         let isAdminLoggedIn = false;
         let chartInstance = null;
         let tempEditJadwal = {};
@@ -728,16 +748,44 @@
         let audioRecorder = null;
         let audioChunks = [];
         let isRecording = false;
-        let recordedAudioBase64 = adminAnnouncement.audio || "";
+        let recordedAudioBase64 = "";
+
+        // --- REALTIME SYNC DARI FIREBASE ---
+        db.ref('kos_piket_data').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                penghuniList = data.penghuni || DEFAULT_PENGHUNI;
+                jadwalPiket = data.jadwal || DEFAULT_JADWAL;
+                tugasList = data.tugas || DEFAULT_AREAS;
+                riwayatLogs = data.riwayat || DEFAULT_LOGS;
+                adminAnnouncement = data.announcement || DEFAULT_ANNOUNCEMENT;
+                kosWebhookUrl = data.webhookUrl || "";
+            } else {
+                saveData();
+            }
+
+            initDateHeader();
+            updateExternalLinksUI();
+            checkAndArchiveOldPhotos();
+            renderDashboard();
+            renderJadwal();
+            renderPenghuni();
+            renderTugas();
+            renderRiwayat();
+            updateAdminUIState();
+            checkAndShowUserAnnouncement();
+        });
 
         // --- UTILITY FUNCTIONS ---
         function saveData() {
-            localStorage.setItem('kos_penghuni', JSON.stringify(penghuniList));
-            localStorage.setItem('kos_jadwal', JSON.stringify(jadwalPiket));
-            localStorage.setItem('kos_tugas', JSON.stringify(tugasList));
-            localStorage.setItem('kos_riwayat', JSON.stringify(riwayatLogs));
-            localStorage.setItem('kos_announcement', JSON.stringify(adminAnnouncement));
-            localStorage.setItem('kos_webhook_url', kosWebhookUrl);
+            db.ref('kos_piket_data').set({
+                penghuni: penghuniList,
+                jadwal: jadwalPiket,
+                tugas: tugasList,
+                riwayat: riwayatLogs,
+                announcement: adminAnnouncement,
+                webhookUrl: kosWebhookUrl
+            });
         }
 
         function showToast(message) {
@@ -1231,8 +1279,6 @@
             if (!isAdminLoggedIn) return;
             riwayatLogs = riwayatLogs.filter(log => log.id !== logId);
             saveData();
-            renderDashboard();
-            renderRiwayat();
             showToast("Foto bukti & data absen berhasil dihapus Admin.");
         }
 
@@ -1390,7 +1436,6 @@
             const todayName = getTodayName();
             const todayDuties = jadwalPiket[todayName] || [];
             
-            // Ambil daftar ID penghuni yang terjadwal hari ini (unik)
             const scheduledPenghuniIds = [...new Set(todayDuties.map(d => d.penghuniId))];
             const scheduledPenghuniList = penghuniList.filter(p => scheduledPenghuniIds.includes(p.id));
 
@@ -1409,7 +1454,6 @@
             getGeolocation();
         }
 
-        // Update area piket dropdown saat pilihan penghuni berubah, dan filter tugas yang belum difoto
         function onAbsenPenghuniChange() {
             const selPenghuni = document.getElementById('absen-select-penghuni');
             const selArea = document.getElementById('absen-select-area');
@@ -1419,7 +1463,6 @@
             const todayName = getTodayName();
             const todayDuties = jadwalPiket[todayName] || [];
 
-            // Cari semua area yang ditugaskan ke penghuni ini hari ini
             const assignedDuties = todayDuties.filter(d => d.penghuniId === penghuniId);
             const penghuniObj = penghuniList.find(p => p.id === penghuniId);
             const penghuniNama = penghuniObj ? penghuniObj.nama : '';
@@ -1429,7 +1472,6 @@
 
             let areaOptionsHtml = '';
             assignedDuties.forEach(duty => {
-                // Cek apakah tugas ini sudah difoto hari ini
                 const isAlreadyDone = riwayatLogs.some(log => log.penghuniNama === penghuniNama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
                 
                 if (isAlreadyDone) {
@@ -1610,7 +1652,6 @@
                         <select onchange="updateTempDutyArea('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-brand-700 outline-none">
                             ${tugasList.map(a => `<option value="${a}" ${a === duty.area ? 'selected' : ''}>${a}</option>`).join('')}
                         </select>
-                        <!-- TOMBOL HAPUS TUGAS / BARIS INI -->
                         <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs transition" title="Hapus Tugas Ini">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -1622,7 +1663,6 @@
                         <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-calendar-day text-brand-600"></i> ${day}
                         </h4>
-                        <!-- TOMBOL TAMBAH ORANG / TUGAS BARU -->
                         <button type="button" onclick="addTempDuty('${day}')" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-lg font-bold hover:bg-brand-100 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-user-plus text-[10px]"></i> Tambah Orang / Tugas
                         </button>
@@ -1658,9 +1698,7 @@
             jadwalPiket = tempEditJadwal;
             saveData();
             closeModal('modal-edit-jadwal');
-            renderJadwal();
-            renderDashboard();
-            showToast("Jadwal piket mingguan berhasil diperbarui!");
+            showToast("Jadwal piket mingguan berhasil diperbarui secara live!");
         }
 
         // --- TAB 3: PENGHUNI TAB ---
@@ -1740,18 +1778,14 @@
 
             saveData();
             closeModal('modal-penghuni');
-            renderPenghuni();
-            renderDashboard();
-            showToast("Data penghuni berhasil disimpan!");
+            showToast("Data penghuni berhasil disimpan secara live!");
         }
 
         function deletePenghuni(id) {
             if (!isAdminLoggedIn) return;
             penghuniList = penghuniList.filter(x => x.id !== id);
             saveData();
-            renderPenghuni();
-            renderDashboard();
-            showToast("Penghuni berhasil dihapus!");
+            showToast("Penghuni berhasil dihapus secara live!");
         }
 
         // --- TAB 4: TUGAS TAB ---
@@ -1823,16 +1857,14 @@
 
             saveData();
             closeModal('modal-tugas');
-            renderTugas();
-            showToast("Daftar tugas kebersihan diperbarui!");
+            showToast("Daftar tugas kebersihan diperbarui secara live!");
         }
 
         function deleteTugas(idx) {
             if (!isAdminLoggedIn) return;
             tugasList.splice(idx, 1);
             saveData();
-            renderTugas();
-            showToast("Tugas dihapus!");
+            showToast("Tugas dihapus secara live!");
         }
 
         // --- TAB 5: RIWAYAT TAB ---
@@ -1884,22 +1916,6 @@
                 tbody.appendChild(tr);
             });
         }
-
-        // --- WINDOW ONLOAD INITIALIZATION ---
-        window.onload = function() {
-            initDateHeader();
-            updateExternalLinksUI();
-            checkAndArchiveOldPhotos();
-            renderDashboard();
-            renderJadwal();
-            renderPenghuni();
-            renderTugas();
-            renderRiwayat();
-            updateAdminUIState();
-            checkAndShowUserAnnouncement();
-
-            setInterval(checkDayChange, 60000);
-        };
     </script>
 </body>
 </html>
