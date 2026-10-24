@@ -346,7 +346,7 @@
             <form id="form-absen" onsubmit="handleAbsenSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Petugas Piket</label>
-                    <select id="absen-select-penghuni" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    <select id="absen-select-penghuni" required onchange="onAbsenPenghuniChange()" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                         <!-- Loaded dynamically -->
                     </select>
                 </div>
@@ -513,13 +513,13 @@
         </div>
     </div>
 
-    <!-- MODAL ATUR ULANG JADWAL (DENGAN TOMBOL TAMBAH ORANG & HAPUS ORANG TERPISAH) -->
+    <!-- MODAL ATUR ULANG JADWAL (DENGAN PEMISAHAN NAMA ORANG & TUGAS TERPISAH) -->
     <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Atur & Ubah Jadwal Piket</h3>
-                    <p class="text-xs text-slate-500">Tambah orang atau hapus orang dari jadwal piket harian.</p>
+                    <p class="text-xs text-slate-500">Tambah orang atau hapus orang dari jadwal piket harian secara fleksibel.</p>
                 </div>
                 <button onclick="closeModal('modal-edit-jadwal')" class="text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -570,7 +570,6 @@
                 </button>
             </div>
             
-            <!-- Tambahan: Penampil Foto & Audio untuk User -->
             <div id="user-announcement-media" class="hidden flex-col gap-3 mb-3">
                 <img id="user-announcement-img" src="" class="w-full max-h-48 object-cover rounded-xl border border-slate-200 hidden">
                 <div id="user-announcement-audio-container" class="hidden bg-brand-50 p-2.5 rounded-xl border border-brand-200 shadow-sm">
@@ -627,13 +626,11 @@
                     <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh langsung dibuang ke kontainer depan kos ya guys!" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
                 </div>
 
-                <!-- Tambahan: Input Foto -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Informasi (Opsional)</label>
                     <input type="file" id="announcement-img-input" accept="image/*" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none bg-slate-50">
                 </div>
 
-                <!-- Tambahan: Input Rekam Suara -->
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Pesan Suara / Voice Note</label>
                     <div class="flex items-center gap-2 mb-2">
@@ -645,7 +642,6 @@
                     <audio id="announcement-audio-preview" controls class="w-full h-8 hidden"></audio>
                 </div>
 
-                <!-- Tambahan: Input URL Webhook Google Apps Script -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">URL Webhook (Auto-Backup Drive)</label>
                     <input type="text" id="webhook-url-input" placeholder="https://script.google.com/macros/..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono">
@@ -691,7 +687,7 @@
         ];
 
         const DEFAULT_JADWAL = {
-            'Senin': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p2', area: 'Sampah & Koridor Utama' }],
+            'Senin': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p1', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p2', area: 'Sampah & Koridor Utama' }],
             'Selasa': [{ penghuniId: 'p2', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p3', area: 'Area Kamar Mandi & Kloset' }],
             'Rabu': [{ penghuniId: 'p3', area: 'Area Halaman & Teras' }, { penghuniId: 'p4', area: 'Area Dapur & Wastafel' }],
             'Kamis': [{ penghuniId: 'p4', area: 'Area Kamar Mandi & Kloset' }, { penghuniId: 'p5', area: 'Sampah & Koridor Utama' }],
@@ -983,7 +979,6 @@
                 statusTxt.innerText = "Belum ada rekaman.";
             }
 
-            // reset file input visually
             const imgInput = document.getElementById('announcement-img-input');
             if (imgInput) imgInput.value = '';
 
@@ -1104,7 +1099,7 @@
                 let allDone = true;
                 todayDuties.forEach(item => {
                     const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Penghuni Terhapus', kamar: '-' };
-                    const todayLog = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.tanggal.startsWith(todayYMD));
+                    const todayLog = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
                     const isDone = !!todayLog;
                     if (!isDone) allDone = false;
 
@@ -1181,7 +1176,7 @@
             let completedCount = 0;
             todayDuties.forEach(item => {
                 const penghuni = penghuniList.find(p => p.id === item.penghuniId);
-                if (penghuni && riwayatLogs.some(log => log.penghuniNama === penghuni.nama && log.tanggal.startsWith(todayYMD))) {
+                if (penghuni && riwayatLogs.some(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD))) {
                     completedCount++;
                 }
             });
@@ -1392,19 +1387,63 @@
         }
 
         function openAbsenModal() {
+            const todayName = getTodayName();
+            const todayDuties = jadwalPiket[todayName] || [];
+            
+            // Ambil daftar ID penghuni yang terjadwal hari ini (unik)
+            const scheduledPenghuniIds = [...new Set(todayDuties.map(d => d.penghuniId))];
+            const scheduledPenghuniList = penghuniList.filter(p => scheduledPenghuniIds.includes(p.id));
+
             const selPenghuni = document.getElementById('absen-select-penghuni');
-            const selArea = document.getElementById('absen-select-area');
-
             if (selPenghuni) {
-                selPenghuni.innerHTML = penghuniList.map(p => `<option value="${p.nama}">${p.nama} (${p.kamar})</option>`).join('');
-            }
-            if (selArea) {
-                selArea.innerHTML = tugasList.map(a => `<option value="${a}">${a}</option>`).join('');
+                if (scheduledPenghuniList.length === 0) {
+                    selPenghuni.innerHTML = `<option value="">Tidak ada petugas piket hari ini</option>`;
+                } else {
+                    selPenghuni.innerHTML = scheduledPenghuniList.map(p => `<option value="${p.id}">${p.nama} (${p.kamar})</option>`).join('');
+                }
             }
 
+            onAbsenPenghuniChange();
             resetCameraView();
             openModal('modal-absen');
             getGeolocation();
+        }
+
+        // Update area piket dropdown saat pilihan penghuni berubah, dan filter tugas yang belum difoto
+        function onAbsenPenghuniChange() {
+            const selPenghuni = document.getElementById('absen-select-penghuni');
+            const selArea = document.getElementById('absen-select-area');
+            if (!selPenghuni || !selArea) return;
+
+            const penghuniId = selPenghuni.value;
+            const todayName = getTodayName();
+            const todayDuties = jadwalPiket[todayName] || [];
+
+            // Cari semua area yang ditugaskan ke penghuni ini hari ini
+            const assignedDuties = todayDuties.filter(d => d.penghuniId === penghuniId);
+            const penghuniObj = penghuniList.find(p => p.id === penghuniId);
+            const penghuniNama = penghuniObj ? penghuniObj.nama : '';
+
+            const now = new Date();
+            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            let areaOptionsHtml = '';
+            assignedDuties.forEach(duty => {
+                // Cek apakah tugas ini sudah difoto hari ini
+                const isAlreadyDone = riwayatLogs.some(log => log.penghuniNama === penghuniNama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
+                
+                if (isAlreadyDone) {
+                    areaOptionsHtml += `<option value="${duty.area}" disabled>❌ ${duty.area} (Sudah Selesai)</option>`;
+                } else {
+                    areaOptionsHtml += `<option value="${duty.area}">✨ ${duty.area}</option>`;
+                }
+            });
+
+            if (assignedDuties.length === 0) {
+                areaOptionsHtml = `<option value="">Tidak ada tugas untuk petugas ini</option>`;
+            }
+
+            selArea.innerHTML = areaOptionsHtml;
         }
 
         function closeAbsenModal() {
@@ -1461,8 +1500,15 @@
                 return;
             }
 
-            const nama = document.getElementById('absen-select-penghuni').value;
+            const penghuniId = document.getElementById('absen-select-penghuni').value;
+            const penghuniObj = penghuniList.find(p => p.id === penghuniId);
+            const nama = penghuniObj ? penghuniObj.nama : 'Unknown';
             const area = document.getElementById('absen-select-area').value;
+
+            if (!area) {
+                showToast('Pilih area tugas yang valid!');
+                return;
+            }
 
             const now = new Date();
             const year = now.getFullYear();
@@ -1527,7 +1573,7 @@
                             <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-day text-brand-600"></i> ${day}
                             </h3>
-                            <span class="text-xs font-bold text-slate-400">${duties.length} Orang</span>
+                            <span class="text-xs font-bold text-slate-400">${duties.length} Tugas</span>
                         </div>
                         <div class="space-y-2">${listItems}</div>
                     </div>
@@ -1557,26 +1603,28 @@
                 dayBox.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3";
 
                 let rows = duties.map((duty, idx) => `
-                    <div class="flex items-center gap-2">
-                        <select onchange="updateTempDutyPenghuni('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
-                            ${penghuniList.map(p => `<option value="${p.id}" ${p.id === duty.penghuniId ? 'selected' : ''}>${p.nama}</option>`).join('')}
+                    <div class="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                        <select onchange="updateTempDutyPenghuni('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 outline-none">
+                            ${penghuniList.map(p => `<option value="${p.id}" ${p.id === duty.penghuniId ? 'selected' : ''}>${p.nama} (${p.kamar})</option>`).join('')}
                         </select>
-                        <select onchange="updateTempDutyArea('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+                        <select onchange="updateTempDutyArea('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-brand-700 outline-none">
                             ${tugasList.map(a => `<option value="${a}" ${a === duty.area ? 'selected' : ''}>${a}</option>`).join('')}
                         </select>
-                        <!-- TOMBOL HAPUS ORANG (Terpisah dari hapus tugas) -->
-                        <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg text-xs" title="Hapus Orang dari Jadwal Ini">
-                            <i class="fa-solid fa-user-minus"></i>
+                        <!-- TOMBOL HAPUS TUGAS / BARIS INI -->
+                        <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs transition" title="Hapus Tugas Ini">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 `).join('');
 
                 dayBox.innerHTML = `
                     <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">${day}</h4>
-                        <!-- TOMBOL TAMBAH ORANG (Terpisah dari tambah tugas) -->
-                        <button type="button" onclick="addTempDuty('${day}')" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 px-2.5 py-1 rounded-lg font-bold hover:bg-brand-100 transition flex items-center gap-1">
-                            <i class="fa-solid fa-user-plus text-[10px]"></i> Tambah Orang
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-day text-brand-600"></i> ${day}
+                        </h4>
+                        <!-- TOMBOL TAMBAH ORANG / TUGAS BARU -->
+                        <button type="button" onclick="addTempDuty('${day}')" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 px-3 py-1.5 rounded-lg font-bold hover:bg-brand-100 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-user-plus text-[10px]"></i> Tambah Orang / Tugas
                         </button>
                     </div>
                     <div class="space-y-2">${rows || '<p class="text-xs text-slate-400 italic">Libur piket</p>'}</div>
@@ -1723,7 +1771,6 @@
                             <button onclick="editTugas('${tugas}')" class="p-1.5 text-slate-500 hover:text-brand-600 text-xs">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <!-- TOMBOL HAPUS TUGAS (Terpisah dari hapus orang) -->
                             <button onclick="deleteTugas(${idx})" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs" title="Hapus Tugas Ini">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -1851,7 +1898,6 @@
             updateAdminUIState();
             checkAndShowUserAnnouncement();
 
-            // Auto refresh dashboard every minute to catch day changes seamlessly
             setInterval(checkDayChange, 60000);
         };
     </script>
