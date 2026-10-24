@@ -4,11 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absen Piket Kosan - Dinar Boys</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Marquee Continuous Running Text Animation */
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
@@ -16,196 +60,250 @@
         .animate-marquee {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 25s linear infinite;
+            animation: marquee 18s linear infinite;
         }
         .animate-marquee:hover {
             animation-play-state: paused;
         }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 font-sans pb-16">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-20 md:pb-0">
 
-    <!-- HEADER / NAVBAR -->
-    <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-40">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 p-2 rounded-xl text-white">
-                    <i class="fa-solid fa-broom text-xl"></i>
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i class="fa-solid fa-broom text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight text-slate-900">Piket Kos Dinar Boys<span class="text-brand-600">.</span></h1>
+                        <p class="text-xs text-slate-500">Kosan Bersih, Hidup Nyaman Dan Damai</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight">Piket Dinar Boys</h1>
-                    <p class="text-xs text-indigo-200" id="current-date-txt">Memuat tanggal...</p>
+
+                <!-- Admin Status Indicator & Drive Link -->
+                <div class="flex items-center gap-2">
+                    <!-- Google Drive Button for Backup -->
+                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-semibold transition">
+                        <i class="fa-brands fa-google-drive text-blue-600"></i> Drive Foto Backup
+                    </a>
+
+                    <!-- Admin Lock Toggle -->
+                    <button id="admin-toggle-btn" onclick="toggleAdminLock()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        <i id="admin-icon" class="fa-solid fa-lock"></i>
+                        <span id="admin-status-text">Admin Lock</span>
+                    </button>
                 </div>
             </div>
-            <button onclick="toggleAdminModal()" id="admin-toggle-btn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
-                <i class="fa-solid fa-lock" id="admin-icon"></i>
-                <span id="admin-status-text">Unlock Admin</span>
-            </button>
+
+            <!-- Navigation Tabs (Desktop) -->
+            <div class="hidden md:flex items-center gap-1 border-t border-slate-100 py-2">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-brand-600 bg-brand-50">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </button>
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days"></i> Jadwal
+                </button>
+                <button onclick="switchTab('penghuni')" id="nav-penghuni" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Penghuni
+                </button>
+                <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Kelola Tugas
+                </button>
+                <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Absen
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- RUNNING TEXT MARQUEE BANNER -->
-    <div id="marquee-container" class="hidden bg-amber-500 text-slate-900 overflow-hidden py-1.5 px-4 shadow-inner border-b border-amber-600">
-        <div class="max-w-4xl mx-auto flex items-center gap-2 text-xs font-semibold">
-            <span class="bg-amber-800 text-white px-2 py-0.5 rounded text-[10px] uppercase font-bold shrink-0">PENGUMUMAN</span>
-            <div class="overflow-hidden w-full relative">
-                <div id="marquee-text" class="animate-marquee">-- Peringatan Admin --</div>
+    <!-- Running Text Ticker / Permanent Announcement Bar -->
+    <div id="ticker-banner" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center">
+        <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
+            <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
+        </div>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide">
+                <!-- Loaded dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-4xl mx-auto px-4 mt-4 space-y-4">
+    <!-- External Link bar on Mobile -->
+    <div class="sm:hidden bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between gap-2 text-xs">
+        <a id="btn-gdrive-mob" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="flex-1 text-center py-1.5 bg-white rounded border border-slate-200 text-blue-700 font-semibold shadow-sm">
+            <i class="fa-brands fa-google-drive mr-1"></i> Drive Foto Backup
+        </a>
+    </div>
 
-        <!-- DASHBOARD TAB -->
-        <section id="tab-dashboard" class="space-y-4">
-            
-            <!-- ALERT POPUP BANNER MODAL (ADMIN ANNOUNCEMENT, AUDIO & PHOTO) -->
-            <div id="announcement-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 border-t-4 border-amber-500 max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between text-amber-600">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-                            <h3 class="font-bold text-lg text-slate-800">Peringatan Admin</h3>
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+        <!-- TAB 1: DASHBOARD -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Banner Hari Ini -->
+            <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 text-white">
+                    <i class="fa-solid fa-sparkles text-[180px]"></i>
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium mb-3">
+                            <i class="fa-regular fa-calendar text-teal-200"></i>
+                            <span id="current-date-str">Hari Ini</span>
                         </div>
-                        <button onclick="closeAnnouncementModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        <h2 class="text-2xl md:text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
+                        <p class="text-teal-100 text-sm mt-1">Tong hilap foto nya!.</p>
                     </div>
-                    
-                    <p class="text-xs text-slate-700 bg-amber-50 p-3 rounded-xl border border-amber-200 whitespace-pre-line" id="announcement-body">
-                        -- Belum ada pesan --
-                    </p>
-
-                    <!-- FOTO PENGUMUMAN ADMIN -->
-                    <div id="photo-announcement-container" class="hidden rounded-xl overflow-hidden border border-slate-200">
-                        <img id="announcement-img" src="" class="w-full object-cover max-h-60" />
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <!-- Admin Announcement Trigger Button -->
+                        <button id="btn-manage-announcement" onclick="tryOpenAnnouncementModal()" class="hidden px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bullhorn text-sm"></i> Kelola Peringatan & Webhook
+                        </button>
+                        <button onclick="openAbsenModal()" class="w-full md:w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-camera text-base"></i> BUKA KAMERA
+                        </button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- AUDIO PLAYER PESAN SUARA ADMIN -->
-                    <div id="audio-player-container" class="hidden bg-indigo-50 p-3 rounded-xl border border-indigo-200 space-y-1">
-                        <span class="text-[11px] font-bold text-indigo-700 flex items-center gap-1.5">
-                            <i class="fa-solid fa-microphone text-indigo-600"></i> Pesan Suara dari Admin:
+            <!-- Petugas Hari Ini & Stats -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Petugas Hari Ini -->
+                <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-user-check text-brand-600"></i> Petugas Piket Hari Ini (<span id="today-day-name">--</span>)
+                        </h3>
+                        <span id="piket-status-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+                            Menunggu Absen
                         </span>
-                        <audio id="announcement-audio" controls class="w-full h-9 mt-1"></audio>
                     </div>
 
-                    <button onclick="closeAnnouncementModal()" class="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl text-xs hover:bg-slate-900">
-                        Saya Mengerti
-                    </button>
-                </div>
-            </div>
-
-            <!-- ACTION BAR ADMIN -->
-            <div id="admin-actions-bar" class="hidden bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-2 items-center justify-between">
-                <span class="text-xs font-bold text-indigo-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-shield"></i> Menu Kontrol Admin:
-                </span>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="openUnifiedAdminModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1">
-                        <i class="fa-solid fa-sliders"></i> Kelola Peringatan, Suara & Webhook
-                    </button>
-                    <a href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1">
-                        <i class="fa-brands fa-google-drive"></i> Folder Drive
-                    </a>
-                </div>
-            </div>
-
-            <!-- SUMMARY STATS CARD -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-                    <p class="text-[11px] font-bold text-indigo-500 uppercase">Petugas Hari Ini</p>
-                    <p class="text-xl font-bold text-indigo-900" id="stat-total">0 Orang</p>
-                </div>
-                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
-                    <p class="text-[11px] font-bold text-emerald-500 uppercase">Sudah Piket</p>
-                    <p class="text-xl font-bold text-emerald-900" id="stat-done">0 Orang</p>
-                </div>
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
-                    <p class="text-[11px] font-bold text-amber-500 uppercase">Belum Piket</p>
-                    <p class="text-xl font-bold text-amber-900" id="stat-pending">0 Orang</p>
-                </div>
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex flex-col justify-center">
-                    <p class="text-[11px] font-bold text-slate-500 uppercase">Status Hari Ini</p>
-                    <span id="piket-status-badge" class="mt-1 px-2 py-0.5 rounded-full text-xs font-bold text-center bg-slate-200 text-slate-700">
-                        Memuat...
-                    </span>
-                </div>
-            </div>
-
-            <!-- PETUGAS HARI INI CARD LIST -->
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h2 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                        <i class="fa-solid fa-calendar-day text-indigo-600"></i>
-                        Daftar Piket Hari Ini (<span id="today-name-lbl">-</span>)
-                    </h2>
-                    <button onclick="openAbsenCameraModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5">
-                        <i class="fa-solid fa-camera"></i> Absen Piket (Real-Time Kamera)
-                    </button>
-                </div>
-
-                <div id="today-duty-container" class="space-y-3">
-                    <!-- Duty List Rendered Here -->
-                </div>
-            </div>
-
-            <!-- POPUP PHOTO ZOOM MODAL -->
-            <div id="photo-zoom-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" onclick="closePhotoZoom()">
-                <div class="max-w-2xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl space-y-3 p-3" onclick="event.stopPropagation()">
-                    <div class="flex justify-between items-center text-white px-2">
-                        <span class="text-xs font-bold text-slate-300" id="zoom-title">Foto Bukti Piket</span>
-                        <button onclick="closePhotoZoom()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    <div id="today-duties-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Loaded dynamically -->
                     </div>
-                    <img id="zoom-img" src="" class="w-full rounded-xl object-contain max-h-[75vh]" />
+                </div>
+
+                <!-- Ringkasan Statistik -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+                        <h3 class="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-brand-600"></i> Stat Piket Hari Ini
+                        </h3>
+                        <div class="flex items-center justify-around py-2">
+                            <div class="relative w-28 h-28 flex items-center justify-center">
+                                <canvas id="completionChart"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span id="completion-rate" class="text-xl font-extrabold text-slate-800">0%</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Selesai</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Penghuni Ter-Rajin -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+                        <h3 class="font-bold text-slate-900 text-md mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-crown text-amber-500"></i> Anggota Paling Rajin
+                        </h3>
+                        <div id="top-member-card" class="flex items-center gap-4 p-3 bg-amber-50/50 rounded-xl border border-amber-100">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                                <i class="fa-solid fa-award"></i>
+                            </div>
+                            <div>
+                                <h4 id="top-member-name" class="font-bold text-slate-800">Belum Ada Data</h4>
+                                <p id="top-member-count" class="text-xs text-amber-700">0x Absen Piket</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- JADWAL TAB -->
-        <section id="tab-jadwal" class="hidden space-y-4">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
-                <h2 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-calendar-week text-indigo-600"></i>
-                    Jadwal Piket Mingguan
-                </h2>
+        <!-- TAB 2: JADWAL PIKET MINGGUAN -->
+        <section id="tab-jadwal" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Jadwal Piket Mingguan</h2>
+                    <p class="text-sm text-slate-500">Atur, tambah, atau kurangi penanggung jawab area kebersihan setiap hari.</p>
+                </div>
+                <button onclick="tryOpenEditJadwalModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-pen-to-square"></i> Atur Ulang Jadwal (Admin)
+                </button>
             </div>
-            <div id="weekly-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Weekly Grid Rendered Here -->
+
+            <!-- Card Grid Jadwal Senin - Minggu -->
+            <div id="weekly-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Rendered dynamically -->
             </div>
         </section>
 
-        <!-- PENGHUNI TAB -->
-        <section id="tab-penghuni" class="hidden space-y-4">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
-                <h2 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-users text-indigo-600"></i>
-                    Daftar Penghuni Kosan
-                </h2>
+        <!-- TAB 3: DAFTAR PENGHUNI -->
+        <section id="tab-penghuni" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Daftar Penghuni Kosan</h2>
+                    <p class="text-sm text-slate-500">Kelola data penghuni aktif kosan untuk alokasi piket.</p>
+                </div>
+                <button onclick="tryOpenPenghuniModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-user-plus"></i> Tambah Penghuni (Admin)
+                </button>
             </div>
-            <div id="penghuni-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <!-- Penghuni List Rendered Here -->
+
+            <!-- Grid Penghuni -->
+            <div id="penghuni-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Rendered dynamically -->
             </div>
         </section>
 
-        <!-- RIWAYAT TAB -->
-        <section id="tab-riwayat" class="hidden space-y-4">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="font-bold text-slate-800 flex items-center gap-2 mb-3 text-sm">
-                    <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
-                    Riwayat & Log Foto Bukti Piket
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-600 border-collapse">
+        <!-- TAB 4: KELOLA DAFTAR TUGAS / AREA PIKET -->
+        <section id="tab-tugas" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Kelola Daftar Tugas Kebersihan</h2>
+                    <p class="text-sm text-slate-500">Tambah, ubah, atau hapus jenis area tugas piket kosan.</p>
+                </div>
+                <button onclick="tryOpenTugasModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-plus-circle"></i> Tambah Tugas Baru (Admin)
+                </button>
+            </div>
+
+            <div id="tugas-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- TAB 5: RIWAYAT ABSEN -->
+        <section id="tab-riwayat" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Riwayat & Log Kegiatan Piket</h2>
+                    <p class="text-sm text-slate-500">Daftar rekapan bukti pengerjaan tugas piket kosan lengkap dengan stamp lokasi real-time.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="search-log" oninput="renderRiwayat()" placeholder="Cari nama / area..." class="px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-64">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                                <th class="p-2.5">Waktu / Tanggal</th>
-                                <th class="p-2.5">Nama Penghuni</th>
-                                <th class="p-2.5">Lokasi GPS / Keterangan</th>
-                                <th class="p-2.5">Foto Bukti</th>
-                                <th class="p-2.5 text-right">Aksi Admin</th>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="p-4">Tanggal & Waktu</th>
+                                <th class="p-4">Penghuni</th>
+                                <th class="p-4">Area Piket</th>
+                                <th class="p-4">Koordinat GPS</th>
+                                <th class="p-4">Foto Bukti</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Aksi (Admin)</th>
                             </tr>
                         </thead>
-                        <tbody id="riwayat-table-body" class="divide-y divide-slate-100">
-                            <!-- Riwayat Logs Rendered Here -->
+                        <tbody id="riwayat-table-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Rendered dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -214,725 +312,1547 @@
 
     </main>
 
-    <!-- NAVIGATION BAR BOTTOM -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-30">
-        <div class="max-w-md mx-auto grid grid-cols-4 text-center py-2 text-xs">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="text-indigo-600 font-bold flex flex-col items-center gap-1">
-                <i class="fa-solid fa-house text-lg"></i>
-                <span>Dashboard</span>
-            </button>
-            <button onclick="switchTab('jadwal')" id="nav-jadwal" class="text-slate-400 font-medium flex flex-col items-center gap-1">
-                <i class="fa-solid fa-calendar-days text-lg"></i>
-                <span>Jadwal</span>
-            </button>
-            <button onclick="switchTab('penghuni')" id="nav-penghuni" class="text-slate-400 font-medium flex flex-col items-center gap-1">
-                <i class="fa-solid fa-user-group text-lg"></i>
-                <span>Penghuni</span>
-            </button>
-            <button onclick="switchTab('riwayat')" id="nav-riwayat" class="text-slate-400 font-medium flex flex-col items-center gap-1">
-                <i class="fa-solid fa-images text-lg"></i>
-                <span>Riwayat</span>
-            </button>
-        </div>
+    <!-- Bottom Mobile Nav -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around py-2 px-1 shadow-lg">
+        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-600 text-xs font-semibold py-1 px-3">
+            <i class="fa-solid fa-chart-pie text-lg"></i> Dashboard
+        </button>
+        <button onclick="switchTab('jadwal')" id="mob-nav-jadwal" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-3">
+            <i class="fa-solid fa-calendar-days text-lg"></i> Jadwal
+        </button>
+        <button onclick="switchTab('penghuni')" id="mob-nav-penghuni" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-3">
+            <i class="fa-solid fa-users text-lg"></i> Penghuni
+        </button>
+        <button onclick="switchTab('tugas')" id="mob-nav-tugas" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-3">
+            <i class="fa-solid fa-list-check text-lg"></i> Tugas
+        </button>
+        <button onclick="switchTab('riwayat')" id="mob-nav-riwayat" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-3">
+            <i class="fa-solid fa-clock-rotate-left text-lg"></i> Riwayat
+        </button>
     </nav>
 
-    <!-- MODAL CAMERA ABSEN -->
-    <div id="camera-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-4 space-y-3 shadow-2xl relative">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-camera text-indigo-600"></i> Ambil Foto Absen Real-Time
+    <!-- MODAL REAL-TIME CAMERA ABSEN PIKET -->
+    <div id="modal-absen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-video text-brand-600"></i> Absen Piket Direct Camera
                 </h3>
-                <button onclick="closeAbsenCameraModal()" class="text-slate-400 hover:text-slate-700">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button onclick="closeModal('modal-absen')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
 
-            <!-- CAMERA PREVIEW & GPS GATE OVERLAY -->
-            <div class="relative bg-slate-900 rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-800">
-                <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover hidden"></video>
-                <canvas id="snapshot-canvas" class="hidden"></canvas>
+            <form id="form-absen" onsubmit="handleAbsenSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Petugas Piket</label>
+                    <select id="absen-select-penghuni" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
 
-                <!-- GPS LOCK GATE OVERLAY -->
-                <div id="gps-gate-overlay" class="absolute inset-0 bg-slate-950/90 text-white flex flex-col items-center justify-center p-4 text-center space-y-2 z-10">
-                    <i class="fa-solid fa-location-crosshairs text-amber-400 text-3xl animate-bounce"></i>
-                    <h4 class="font-extrabold text-amber-400 text-base">ANTOSAN SAKEDAP!</h4>
-                    <p class="text-xs text-slate-300 max-w-xs">
-                        KAMERA TIDAK BISA DI AKSES - Silahkan Izinkan Akses GPS Terlebih Dahulu!
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Area Kebersihan</label>
+                    <select id="absen-select-area" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+
+                <!-- CAMERA VIEWPORT CONTAINER -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">
+                        Foto Real-Time dengan GPS & Stamp Waktu
+                    </label>
+                    <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-300 shadow-inner">
+                        <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                        <canvas id="captured-canvas" class="hidden w-full h-full object-cover"></canvas>
+                        
+                        <!-- STRICT GPS LOCK OVERLAY -->
+                        <div id="gps-lock-overlay" class="absolute inset-0 bg-slate-950/90 text-white flex flex-col items-center justify-center p-4 text-center z-20 space-y-2">
+                            <i class="fa-solid fa-location-crosshairs text-3xl text-amber-400 animate-pulse"></i>
+                            <h4 class="text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
+                            <p id="gps-lock-subtext" class="text-xs text-slate-300 max-w-xs leading-snug">
+                                Kamera Tidak Bisa Di Akses - Silahkan Izinkan Akses GPS Terlebih Dahulu!
+                            </p>
+                            <div class="flex flex-col gap-2 mt-2 w-full max-w-xs">
+                                <button type="button" onclick="getGeolocation()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition">
+                                    <i class="fa-solid fa-location-arrow mr-1"></i> Izinkan & Aktifkan GPS Sekarang
+                                </button>
+                                <button type="button" onclick="useDefaultCoordinates()" class="w-full px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[11px] rounded-lg transition border border-slate-700">
+                                    <i class="fa-solid fa-map-pin mr-1"></i> Gunakan Lokasi Default Kosan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-center text-[11px] font-bold text-slate-500 mt-1 italic">
+                        😜 aciee kamera nya gabisa di manipulasi HAHAHA
                     </p>
-                    <button onclick="requestGpsPermission()" class="mt-2 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow-md transition">
-                        Izinkan & Aktifkan GPS Sekarang
+
+                    <!-- GPS Status text -->
+                    <div id="gps-status" class="text-[11px] text-slate-600 mt-2 p-2 bg-slate-100 rounded-lg flex flex-col gap-1">
+                        <div class="flex items-center justify-between">
+                            <span><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> Status GPS:</span>
+                            <strong id="gps-coords-text">Belum Terdeteksi</strong>
+                        </div>
+                        <div id="gps-address-text" class="text-[10px] text-brand-700 font-semibold italic border-t border-slate-200 pt-1 hidden">
+                            <!-- Filled dynamically via Reverse Geocoding -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Camera Controls -->
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btn-snap" disabled onclick="takeSnapshot()" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-camera"></i> Ambil Foto Real-Time
+                    </button>
+                    <button type="button" id="btn-retake" onclick="resetCameraView()" class="hidden flex-1 py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Foto Ulang
                     </button>
                 </div>
-            </div>
 
-            <!-- HUMOROUS SUBTITLE -->
-            <p class="text-[11px] font-semibold text-center text-indigo-600 bg-indigo-50 py-1 rounded-lg border border-indigo-100">
-                😜 aciee kamera nya gabisa di manipulasi HAHAHA
-            </p>
-
-            <!-- GPS STATUS DETAILS -->
-            <div class="text-[11px] space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold">Status GPS:</span>
-                    <span id="gps-status-txt" class="font-bold text-amber-600">Mencari Lokasi...</span>
+                <div class="pt-2 flex gap-3 border-t">
+                    <button type="button" onclick="closeAbsenModal()" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="submit" id="btn-submit-absen" disabled class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                        Simpan Absen
+                    </button>
                 </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-500 font-semibold">Alamat / Wilayah:</span>
-                    <span id="gps-address-txt" class="font-bold text-slate-700 truncate max-w-[200px]">-</span>
-                </div>
-            </div>
+            </form>
+        </div>
+    </div>
 
-            <!-- FORM PETUGAS SELECT -->
+    <!-- MODAL ADMIN PIN AUTHENTICATION -->
+    <div id="modal-admin-pin" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xs w-full p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center mx-auto text-xl font-bold">
+                <i class="fa-solid fa-shield-halved text-brand-600"></i>
+            </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Nama Anda (Petugas Hari Ini):</label>
-                <select id="select-penghuni-absen" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-semibold">
-                    <!-- Dynamic Options -->
-                </select>
+                <h3 class="font-bold text-slate-900 text-base">Akses Fitur Admin</h3>
+                <p class="text-xs text-slate-500">Masukkan PIN Admin untuk membuka fitur kontrol</p>
             </div>
 
-            <!-- CAPTURE ACTION BUTTON -->
-            <button id="btn-capture-photo" disabled onclick="takeRealtimeSnapshot()" class="w-full py-3 bg-slate-400 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-2 cursor-not-allowed">
-                <i class="fa-solid fa-camera"></i> Kamera Tidak Bisa Di Manipulasi Wleee!!
+            <form onsubmit="verifyAdminPin(event)" class="space-y-3">
+                <input type="password" id="admin-pin-input" required placeholder="Masukkan PIN" class="w-full text-center px-4 py-2 border border-slate-300 rounded-xl text-lg font-bold tracking-widest focus:ring-2 focus:ring-brand-500 outline-none">
+                
+                <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">
+                    PIN Admin salah! Masukkan PIN dengan benar.
+                </p>
+
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeModal('modal-admin-pin')" class="flex-1 py-2 border border-slate-300 text-slate-600 rounded-xl font-medium text-xs">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs">
+                        Masuk Admin
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT/TAMBAH TUGAS (AREA PIKET) -->
+    <div id="modal-tugas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-tugas-title" class="text-lg font-bold text-slate-900">Tambah Tugas Piket</h3>
+                <button onclick="closeModal('modal-tugas')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="form-tugas" onsubmit="handleTugasSubmit(event)" class="space-y-4">
+                <input type="hidden" id="tugas-old-name">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Area / Tugas Piket</label>
+                    <input type="text" id="tugas-nama" required placeholder="Contoh: Area Balkon & Jamur" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-tugas')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH / EDIT PENGHUNI -->
+    <div id="modal-penghuni" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-penghuni-title" class="text-lg font-bold text-slate-900">Tambah Penghuni Kos</h3>
+                <button onclick="closeModal('modal-penghuni')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <form id="form-penghuni" onsubmit="handlePenghuniSubmit(event)" class="space-y-4">
+                <input type="hidden" id="penghuni-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap / Panggilan</label>
+                    <input type="text" id="penghuni-nama" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
+                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 02" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ATUR ULANG JADWAL (DENGAN OPSI TAMBAH/KURANGI ORANG) -->
+    <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Atur & Ubah Jadwal Piket</h3>
+                    <p class="text-xs text-slate-500">Tambah, ganti, atau kurangi petugas piket per hari.</p>
+                </div>
+                <button onclick="closeModal('modal-edit-jadwal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto custom-scrollbar flex-1 space-y-4 pr-1" id="edit-jadwal-container">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <div class="pt-3 border-t flex gap-3">
+                <button type="button" onclick="closeModal('modal-edit-jadwal')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">
+                    Batal
+                </button>
+                <button type="button" onclick="saveJadwalChanges()" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREVIEW FOTO BUKTI REAL-TIME -->
+    <div id="modal-preview-foto" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeModal('modal-preview-foto')">
+        <div class="max-w-lg w-full bg-white rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal('modal-preview-foto')" class="absolute top-3 right-3 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600">
+                <i class="fa-solid fa-xmark"></i>
             </button>
+            <h4 class="font-bold text-slate-800 mb-3 text-center">Bukti Piket Real-Time (GPS Stamped)</h4>
+            <img id="modal-preview-img" src="" alt="Bukti Piket" class="w-full max-h-[70vh] object-contain rounded-xl bg-slate-100 border border-slate-200">
         </div>
     </div>
 
-    <!-- MODAL ADMIN LOGIN PIN -->
-    <div id="admin-pin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-xs w-full p-4 space-y-3 shadow-2xl text-center">
-            <i class="fa-solid fa-lock text-3xl text-indigo-600"></i>
-            <h3 class="font-bold text-slate-800 text-sm">Masukkan PIN Admin</h3>
-            <input type="password" id="input-admin-pin" placeholder="Masukkan PIN..." class="w-full text-center text-sm p-2.5 border border-slate-300 rounded-xl font-bold tracking-widest">
-            <div class="flex gap-2">
-                <button onclick="closeAdminModal()" class="w-1/2 py-2 text-xs font-bold bg-slate-100 text-slate-600 rounded-xl">Batal</button>
-                <button onclick="submitAdminPin()" class="w-1/2 py-2 text-xs font-bold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">Unlock</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL INTEGRASI TERPADU ADMIN (PERINGATAN, REKAM SUARA, FOTO, WEBHOOK) -->
-    <div id="unified-admin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-4 space-y-3 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-amber-500"></i> Pengaturan Admin & Webhook
-                </h3>
-                <button onclick="closeUnifiedAdminModal()" class="text-slate-400 hover:text-slate-700">
+    <!-- MODAL PENGUMUMAN / PERINGATAN DASHBOARD (USER POPUP) -->
+    <div id="modal-user-announcement" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeUserAnnouncement()">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border-t-8 border-amber-500 relative max-h-[90vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
+            <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <span id="announcement-type-badge" class="text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded bg-amber-100 text-amber-800">PERINGATAN ADMIN</span>
+                        <h3 class="text-base font-bold text-slate-900 leading-tight mt-0.5">Pengumuman Penting</h3>
+                    </div>
+                </div>
+                <button onclick="closeUserAnnouncement()" class="text-slate-400 hover:text-slate-600">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             
-            <!-- TEKS PERINGATAN -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">1. Teks Peringatan / Himbauan:</label>
-                <textarea id="input-announcement-text" rows="3" class="w-full text-xs p-2.5 border border-slate-300 rounded-xl" placeholder="Tuliskan pesan peringatan di sini..."></textarea>
-            </div>
-
-            <!-- REKAM SUARA LANGSUNG (VOICE RECORDER) -->
-            <div class="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <label class="block text-xs font-bold text-slate-700">2. Pesan Suara Admin (Rekam Mikrofon):</label>
-                <div class="flex items-center gap-2">
-                    <button id="btn-record-audio" onclick="toggleAudioRecording()" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-microphone"></i> <span id="record-btn-lbl">Mulai Rekam Suara</span>
-                    </button>
-                    <span id="record-status-txt" class="text-[11px] text-slate-500 italic">Belum ada rekaman</span>
+            <!-- Tambahan: Penampil Foto & Audio untuk User -->
+            <div id="user-announcement-media" class="hidden flex-col gap-3 mb-3">
+                <img id="user-announcement-img" src="" class="w-full max-h-48 object-cover rounded-xl border border-slate-200 hidden">
+                <div id="user-announcement-audio-container" class="hidden bg-brand-50 p-2.5 rounded-xl border border-brand-200 shadow-sm">
+                    <span class="text-[10px] font-bold text-brand-700 block mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-microphone"></i> Pesan Suara Admin:</span>
+                    <audio id="user-announcement-audio" controls class="w-full h-8"></audio>
                 </div>
-                <audio id="record-preview-audio" controls class="w-full h-8 mt-2 hidden"></audio>
             </div>
 
-            <!-- FOTO PENGUMUMAN ADMIN -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">3. Upload Foto Informasi Admin (Opsional):</label>
-                <input type="file" id="input-announcement-img" accept="image/*" class="w-full text-xs p-2 border border-slate-300 rounded-xl bg-slate-50">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display">
+                <!-- Announcement Text Loaded Dynamically -->
             </div>
 
-            <!-- GOOGLE APPS SCRIPT WEBHOOK URL -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">4. Google Apps Script Webhook URL (Drive Auto-Backup):</label>
-                <input type="text" id="input-webhook-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full text-xs p-2.5 border border-slate-300 rounded-xl font-mono">
-            </div>
-
-            <!-- TOGGLE POPUP ACTIVE -->
-            <div class="flex items-center gap-2 pt-1">
-                <input type="checkbox" id="check-announcement-active" class="w-4 h-4 text-indigo-600 rounded">
-                <label for="check-announcement-active" class="text-xs font-bold text-slate-700">Tampilkan Pop-up & Text Berjalan di Dashboard</label>
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2 border-t">
-                <button onclick="closeUnifiedAdminModal()" class="px-3 py-1.5 text-xs font-bold text-slate-600 bg-slate-100 rounded-xl">Batal</button>
-                <button onclick="saveUnifiedAdminConfig()" class="px-4 py-1.5 text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl">Simpan Semua Pengaturan</button>
-            </div>
+            <button onclick="closeUserAnnouncement()" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm shadow transition">
+                Saya Mengerti & Paham
+            </button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // GLOBAL DATA STATE
-        const ADMIN_PIN = "dinar2026!";
-        let isAdminLoggedIn = false;
-        let activeGpsCoords = null;
-        let activeAddressName = "Mencari Alamat...";
-        let mediaStream = null;
+    <!-- MODAL EDIT PENGUMUMAN / PERINGATAN (ADMIN ONLY) -->
+    <div id="modal-edit-announcement" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn text-amber-500"></i> Pengaturan Peringatan & Webhook
+                </h3>
+                <button onclick="closeModal('modal-edit-announcement')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
 
-        // VOICE RECORDER STATE
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let recordedAudioBase64 = '';
-        let isRecording = false;
-
-        const DAYS_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-
-        let penghuniList = JSON.parse(localStorage.getItem('dinar_penghuni')) || [
-            { id: 1, nama: 'Dinar', kamar: 'Kamar 01' },
-            { id: 2, nama: 'Rian', kamar: 'Kamar 02' },
-            { id: 3, nama: 'Fahmi', kamar: 'Kamar 03' },
-            { id: 4, nama: 'Bagus', kamar: 'Kamar 04' }
-        ];
-
-        let jadwalList = JSON.parse(localStorage.getItem('dinar_jadwal')) || [
-            { hari: 'Senin', penghuniIds: [1, 2] },
-            { hari: 'Selasa', penghuniIds: [3] },
-            { hari: 'Rabu', penghuniIds: [4] },
-            { hari: 'Kamis', penghuniIds: [1] },
-            { hari: 'Jumat', penghuniIds: [2, 3] },
-            { hari: 'Sabtu', penghuniIds: [4] },
-            { hari: 'Minggu', penghuniIds: [] }
-        ];
-
-        let riwayatLogs = JSON.parse(localStorage.getItem('dinar_riwayat')) || [];
-        let webhookUrl = localStorage.getItem('dinar_webhook_url') || 'https://script.google.com/macros/s/AKfycbx-c3nz53taaTSimILRFnk9_AncYT4i2Dln1zJILhRzvyc31hhHjNrPwmeHwfzatQER9Q/exec';
-        let announcementConfig = JSON.parse(localStorage.getItem('dinar_announcement')) || {
-            active: true,
-            text: 'Harap jaga kebersihan kosan bersama! Mengabaikan piket akan dikenakan denda sesuai kesepakatan anak kos.',
-            audioSrc: '',
-            imgSrc: ''
-        };
-
-        // APPLICATION INITIALIZATION
-        window.onload = function() {
-            initCurrentDateDisplay();
-            renderDashboard();
-            renderJadwal();
-            renderPenghuni();
-            renderRiwayat();
-            setupAnnouncementUI();
-            checkAndArchive24hPhotos();
-        };
-
-        function initCurrentDateDisplay() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('current-date-txt').innerText = dateStr;
-            document.getElementById('today-name-lbl').innerText = DAYS_ID[now.getDay()];
-        }
-
-        // TAB SWITCHER
-        function switchTab(tabName) {
-            ['dashboard', 'jadwal', 'penghuni', 'riwayat'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                document.getElementById(`nav-${t}`).className = "text-slate-400 font-medium flex flex-col items-center gap-1";
-            });
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            document.getElementById(`nav-${tabName}`).className = "text-indigo-600 font-bold flex flex-col items-center gap-1";
-        }
-
-        // RENDER DASHBOARD
-        function renderDashboard() {
-            const todayDayName = DAYS_ID[new Date().getDay()];
-            const todayJadwal = jadwalList.find(j => j.hari === todayDayName) || { penghuniIds: [] };
-            const todayYMD = new Date().toISOString().split('T')[0];
-
-            const todayDuties = todayJadwal.penghuniIds.map(id => penghuniList.find(p => p.id === id)).filter(Boolean);
-            const container = document.getElementById('today-duty-container');
-            container.innerHTML = '';
-
-            let doneCount = 0;
-
-            if (todayDuties.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        <i class="fa-solid fa-mug-hot text-2xl mb-1 text-slate-300"></i>
-                        <p>Libur piket untuk hari ini (${todayDayName}).</p>
-                    </div>
-                `;
-            } else {
-                todayDuties.forEach(penghuni => {
-                    const todayLog = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.tanggal.startsWith(todayYMD));
-                    const isDone = !!todayLog;
-                    if (isDone) doneCount++;
-
-                    const card = document.createElement('div');
-                    card.className = `p-3 rounded-xl border ${isDone ? 'bg-emerald-50/60 border-emerald-200' : 'bg-slate-50 border-slate-200'} flex items-center justify-between gap-3`;
-
-                    let photoHtml = '';
-                    if (isDone && todayLog.foto) {
-                        photoHtml = `
-                            <div class="relative group cursor-pointer shrink-0" onclick="zoomPhoto('${todayLog.foto}', '${penghuni.nama}')">
-                                <img src="${todayLog.foto}" class="w-12 h-12 rounded-lg object-cover border border-emerald-300 shadow-sm" />
-                                <div class="absolute inset-0 bg-black/30 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                    <i class="fa-solid fa-magnifying-glass-plus text-white text-xs"></i>
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    let adminDeleteBtn = '';
-                    if (isAdminLoggedIn && isDone) {
-                        adminDeleteBtn = `
-                            <button onclick="deleteLogEntry('${todayLog.id}')" class="px-2 py-1 bg-red-100 text-red-600 rounded-lg text-[10px] font-bold hover:bg-red-200">
-                                <i class="fa-solid fa-trash"></i> Hapus Foto
-                            </button>
-                        `;
-                    }
-
-                    card.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            ${photoHtml}
-                            <div>
-                                <h4 class="font-bold text-xs text-slate-800">${penghuni.nama}</h4>
-                                <p class="text-[10px] text-slate-500">${penghuni.kamar}</p>
-                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                                    ${isDone ? '✓ Sudah Piket' : '⏳ Belum Piket'}
-                                </span>
-                            </div>
-                        </div>
-                        <div>${adminDeleteBtn}</div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
-
-            // STATS UPDATE
-            document.getElementById('stat-total').innerText = `${todayDuties.length} Orang`;
-            document.getElementById('stat-done').innerText = `${doneCount} Orang`;
-            document.getElementById('stat-pending').innerText = `${todayDuties.length - doneCount} Orang`;
-
-            const badge = document.getElementById('piket-status-badge');
-            if (todayDuties.length === 0) {
-                badge.className = "mt-1 px-2 py-0.5 rounded-full text-xs font-bold text-center bg-slate-200 text-slate-700";
-                badge.innerText = "Libur Piket";
-            } else if (doneCount === todayDuties.length) {
-                badge.className = "mt-1 px-2 py-0.5 rounded-full text-xs font-bold text-center bg-emerald-100 text-emerald-700";
-                badge.innerText = "Semua Selesai";
-            } else {
-                badge.className = "mt-1 px-2 py-0.5 rounded-full text-xs font-bold text-center bg-amber-100 text-amber-700";
-                badge.innerText = "Menunggu Absen";
-            }
-        }
-
-        // GPS & CAMERA CONTROLLER
-        function openAbsenCameraModal() {
-            document.getElementById('camera-modal').classList.remove('hidden');
-            populatePenghuniSelect();
-            requestGpsPermission();
-        }
-
-        function closeAbsenCameraModal() {
-            document.getElementById('camera-modal').classList.add('hidden');
-            stopCameraStream();
-        }
-
-        function stopCameraStream() {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
-            }
-            document.getElementById('webcam-video').classList.add('hidden');
-            document.getElementById('gps-gate-overlay').classList.remove('hidden');
-        }
-
-        function requestGpsPermission() {
-            const gpsStatus = document.getElementById('gps-status-txt');
-            const gpsAddr = document.getElementById('gps-address-txt');
-            gpsStatus.innerText = "Mencari Lokasi...";
-
-            if (!navigator.geolocation) {
-                alert("Browser Anda tidak mendukung Geolocation GPS.");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
-                    activeGpsCoords = {
-                        lat: pos.coords.latitude.toFixed(5),
-                        lng: pos.coords.longitude.toFixed(5)
-                    };
-                    gpsStatus.innerText = `Aktif (${activeGpsCoords.lat}, ${activeGpsCoords.lng})`;
-
-                    // REVERSE GEOCODING
-                    try {
-                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${activeGpsCoords.lat}&lon=${activeGpsCoords.lng}`);
-                        const data = await res.json();
-                        activeAddressName = data.display_name ? data.display_name.split(',').slice(0, 3).join(',') : "Wilayah GPS Terdeteksi";
-                    } catch (e) {
-                        activeAddressName = "Lokasi Kosan Dinar Boys";
-                    }
-
-                    gpsAddr.innerText = activeAddressName;
-                    unlockCameraStream();
-                },
-                (err) => {
-                    gpsStatus.innerText = "Akses GPS Ditolak!";
-                    alert("Gagal mengakses GPS. Pastikan izin lokasi/GPS di HP/browser Anda sudah diaktifkan.");
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
-        }
-
-        async function unlockCameraStream() {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                const video = document.getElementById('webcam-video');
-                video.srcObject = mediaStream;
-                video.classList.remove('hidden');
-                document.getElementById('gps-gate-overlay').classList.add('hidden');
-
-                const btn = document.getElementById('btn-capture-photo');
-                btn.disabled = false;
-                btn.className = "w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer";
-            } catch (err) {
-                alert("Gagal membuka kamera: " + err.message);
-            }
-        }
-
-        function populatePenghuniSelect() {
-            const select = document.getElementById('select-penghuni-absen');
-            select.innerHTML = penghuniList.map(p => `<option value="${p.nama}">${p.nama} (${p.kamar})</option>`).join('');
-        }
-
-        function takeRealtimeSnapshot() {
-            const video = document.getElementById('webcam-video');
-            const canvas = document.getElementById('snapshot-canvas');
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // WATERMARK OVERLAY
-            const nowStr = new Date().toLocaleString('id-ID');
-            ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
-            ctx.fillRect(0, canvas.height - 65, canvas.width, 65);
-
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 14px sans-serif";
-            ctx.fillText(`🏠 Dinar boys 2026. | 📍 ${activeAddressName}`, 12, canvas.height - 40);
-            ctx.font = "12px sans-serif";
-            ctx.fillText(`🌐 GPS: Lat ${activeGpsCoords.lat}, Lng ${activeGpsCoords.lng} | 📅 ${nowStr}`, 12, canvas.height - 18);
-
-            const photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
-            const penghuniNama = document.getElementById('select-penghuni-absen').value;
-
-            // SAVE TO LOCAL RIWAYAT
-            const newLog = {
-                id: 'log_' + Date.now(),
-                penghuniNama: penghuniNama,
-                tanggal: new Date().toISOString(),
-                lokasi: `${activeAddressName} (${activeGpsCoords.lat}, ${activeGpsCoords.lng})`,
-                foto: photoBase64
-            };
-
-            riwayatLogs.unshift(newLog);
-            localStorage.setItem('dinar_riwayat', JSON.stringify(riwayatLogs));
-
-            sendToDriveWebhook(newLog);
-
-            closeAbsenCameraModal();
-            renderDashboard();
-            renderRiwayat();
-            alert("Absen piket berhasil disimpan!");
-        }
-
-        // WEBHOOK DRIVE BACKUP SENDER
-        async function sendToDriveWebhook(logData) {
-            if (!webhookUrl) return;
-
-            try {
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(logData)
-                });
-            } catch (e) {
-                console.warn("Gagal mengirim webhook:", e);
-            }
-        }
-
-        // RENDER JADWAL, PENGHUNI, RIWAYAT
-        function renderJadwal() {
-            const container = document.getElementById('weekly-schedule-grid');
-            container.innerHTML = DAYS_ID.map(hari => {
-                const item = jadwalList.find(j => j.hari === hari) || { penghuniIds: [] };
-                const members = item.penghuniIds.map(id => penghuniList.find(p => p.id === id)).filter(Boolean);
-                
-                return `
-                    <div class="bg-white p-3 rounded-xl border border-slate-200">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-xs text-indigo-700">${hari}</span>
-                            <span class="text-[10px] text-slate-400">${members.length} Petugas</span>
-                        </div>
-                        <div class="space-y-1">
-                            ${members.length > 0 ? members.map(m => `
-                                <div class="text-xs bg-slate-50 p-1.5 rounded-lg border border-slate-100 flex justify-between">
-                                    <span class="font-semibold text-slate-700">${m.nama}</span>
-                                    <span class="text-slate-400 text-[10px]">${m.kamar}</span>
-                                </div>
-                            `).join('') : '<p class="text-[11px] text-slate-400 italic">Libur Piket</p>'}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderPenghuni() {
-            const container = document.getElementById('penghuni-list-container');
-            container.innerHTML = penghuniList.map(p => `
-                <div class="bg-white p-3 rounded-xl border border-slate-200 flex justify-between items-center">
+            <form onsubmit="saveAnnouncement(event)" class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                     <div>
-                        <h4 class="font-bold text-xs text-slate-800">${p.nama}</h4>
-                        <p class="text-[10px] text-slate-500">${p.kamar}</p>
+                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up</span>
+                        <span class="text-[11px] text-slate-500">Aktifkan agar pop-up ini muncul di pengguna</span>
                     </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="announcement-active-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                    </label>
                 </div>
-            `).join('');
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pesan</label>
+                    <select id="announcement-type-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option value="Peringatan Admin">Peringatan / Himbauan</option>
+                        <option value="Informasi Kebersihan">Informasi Kebersihan</option>
+                        <option value="Pengumuman Kos">Pengumuman Kos Penting</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan</label>
+                    <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh langsung dibuang ke kontainer depan kos ya guys!" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <!-- Tambahan: Input Foto -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Informasi (Opsional)</label>
+                    <input type="file" id="announcement-img-input" accept="image/*" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none bg-slate-50">
+                </div>
+
+                <!-- Tambahan: Input Rekam Suara -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Pesan Suara / Voice Note</label>
+                    <div class="flex items-center gap-2 mb-2">
+                        <button type="button" id="btn-record-audio" onclick="toggleAudioRecording()" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-microphone"></i> <span id="record-btn-text">Mulai Rekam</span>
+                        </button>
+                        <span id="record-status" class="text-[10px] text-slate-500 font-semibold italic">Belum ada rekaman</span>
+                    </div>
+                    <audio id="announcement-audio-preview" controls class="w-full h-8 hidden"></audio>
+                </div>
+
+                <!-- Tambahan: Input URL Webhook Google Apps Script -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">URL Webhook (Auto-Backup Drive)</label>
+                    <input type="text" id="webhook-url-input" placeholder="https://script.google.com/macros/..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono">
+                    <p class="text-[10px] text-slate-500 mt-1">Kosongkan jika tidak menggunakan auto-backup Google Drive.</p>
+                </div>
+
+                <div class="pt-2 flex gap-3 border-t">
+                    <button type="button" onclick="closeModal('modal-edit-announcement')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">
+                        Simpan & Tampilkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-teal-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Notifikasi berhasil!</span>
+    </div>
+
+    <!-- APPLICATION LOGIC SCRIPT -->
+    <script>
+        // --- CONSTANTS & DEFAULTS ---
+        const DEFAULT_DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+        const DEFAULT_AREAS = [
+            'Area Dapur & Wastafel',
+            'Area Ruang Tamu & TV',
+            'Area Kamar Mandi & Kloset',
+            'Area Halaman & Teras',
+            'Sampah & Koridor Utama'
+        ];
+
+        const DEFAULT_PENGHUNI = [
+            { id: 'p1', nama: 'Budi Santoso', kamar: 'Kamar 01' },
+            { id: 'p2', nama: 'Andi Pratama', kamar: 'Kamar 02' },
+            { id: 'p3', nama: 'Rizky Febian', kamar: 'Kamar 03' },
+            { id: 'p4', nama: 'Dimas Anggara', kamar: 'Kamar 04' },
+            { id: 'p5', nama: 'Eko Prasetyo', kamar: 'Kamar 05' },
+        ];
+
+        const DEFAULT_JADWAL = {
+            'Senin': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p2', area: 'Sampah & Koridor Utama' }],
+            'Selasa': [{ penghuniId: 'p2', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p3', area: 'Area Kamar Mandi & Kloset' }],
+            'Rabu': [{ penghuniId: 'p3', area: 'Area Halaman & Teras' }, { penghuniId: 'p4', area: 'Area Dapur & Wastafel' }],
+            'Kamis': [{ penghuniId: 'p4', area: 'Area Kamar Mandi & Kloset' }, { penghuniId: 'p5', area: 'Sampah & Koridor Utama' }],
+            'Jumat': [{ penghuniId: 'p5', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p1', area: 'Area Halaman & Teras' }],
+            'Sabtu': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p3', area: 'Area Kamar Mandi & Kloset' }],
+            'Minggu': [{ penghuniId: 'p2', area: 'Area Halaman & Teras' }, { penghuniId: 'p4', area: 'Sampah & Koridor Utama' }]
+        };
+
+        const DEFAULT_LOGS = [];
+        const GDRIVE_LINK = "https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing";
+        const ADMIN_PIN = "dinar2026!";
+
+        const DEFAULT_ANNOUNCEMENT = {
+            active: true,
+            type: "Peringatan Admin",
+            text: "Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu & membuang sampah!",
+            audio: "",
+            image: ""
+        };
+
+        // --- GLOBAL STATE ---
+        let penghuniList = JSON.parse(localStorage.getItem('kos_penghuni')) || DEFAULT_PENGHUNI;
+        let jadwalPiket = JSON.parse(localStorage.getItem('kos_jadwal')) || DEFAULT_JADWAL;
+        let tugasList = JSON.parse(localStorage.getItem('kos_tugas')) || DEFAULT_AREAS;
+        let riwayatLogs = JSON.parse(localStorage.getItem('kos_riwayat')) || DEFAULT_LOGS;
+        let adminAnnouncement = JSON.parse(localStorage.getItem('kos_announcement')) || DEFAULT_ANNOUNCEMENT;
+        let kosWebhookUrl = localStorage.getItem('kos_webhook_url') || "";
+        let isAdminLoggedIn = false;
+        let chartInstance = null;
+        let tempEditJadwal = {};
+        let mediaStream = null;
+        let capturedPhotoData = null;
+        let currentGeoLocation = null;
+        let currentGeoAddress = "Mencari alamat wilayah...";
+        let lastDayChecked = new Date().getDay();
+
+        // Variabel Perekam Suara (Voice Note)
+        let audioRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let recordedAudioBase64 = adminAnnouncement.audio || "";
+
+        // --- UTILITY FUNCTIONS ---
+        function saveData() {
+            localStorage.setItem('kos_penghuni', JSON.stringify(penghuniList));
+            localStorage.setItem('kos_jadwal', JSON.stringify(jadwalPiket));
+            localStorage.setItem('kos_tugas', JSON.stringify(tugasList));
+            localStorage.setItem('kos_riwayat', JSON.stringify(riwayatLogs));
+            localStorage.setItem('kos_announcement', JSON.stringify(adminAnnouncement));
+            localStorage.setItem('kos_webhook_url', kosWebhookUrl);
         }
 
-        function renderRiwayat() {
-            const tbody = document.getElementById('riwayat-table-body');
-            if (riwayatLogs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada riwayat foto.</td></tr>`;
-                return;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            if (toast && toastMsg) {
+                toastMsg.innerText = message;
+                toast.classList.remove('translate-x-full');
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                }, 3500);
+            }
+        }
+
+        function openModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            const el = document.getElementById(modalId);
+            if (el) el.classList.add('hidden');
+            if (modalId === 'modal-absen') {
+                stopCamera();
+            }
+        }
+
+        function closeUserAnnouncement() {
+            const audioElem = document.getElementById('user-announcement-audio');
+            if (audioElem) audioElem.pause();
+            closeModal('modal-user-announcement');
+        }
+
+        function getTodayName() {
+            const dayIdx = new Date().getDay();
+            const mapDay = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            return mapDay[dayIdx];
+        }
+
+        function initDateHeader() {
+            const dateStrEl = document.getElementById('current-date-str');
+            if (dateStrEl) {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                dateStrEl.innerText = now.toLocaleDateString('id-ID', options);
+            }
+        }
+
+        function updateExternalLinksUI() {
+            const link1 = document.getElementById('btn-gdrive');
+            const link2 = document.getElementById('btn-gdrive-mob');
+            if (link1) link1.href = GDRIVE_LINK;
+            if (link2) link2.href = GDRIVE_LINK;
+        }
+
+        function checkDayChange() {
+            const currentDay = new Date().getDay();
+            if (currentDay !== lastDayChecked) {
+                lastDayChecked = currentDay;
+                initDateHeader();
+                renderDashboard();
+            }
+        }
+
+        function checkAndArchiveOldPhotos() {
+            const now = new Date().getTime();
+            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+            let needsSave = false;
+
+            riwayatLogs.forEach(log => {
+                const logTime = new Date(log.tanggal.replace(' ', 'T')).getTime();
+                if (!isNaN(logTime) && (now - logTime > TWENTY_FOUR_HOURS) && !log.archivedToDriveFolder) {
+                    const folderDate = log.tanggal.split(' ')[0];
+                    log.archivedToDriveFolder = `Folder_Drive_Backup/${folderDate}/`;
+                    needsSave = true;
+                }
+            });
+
+            if (needsSave) saveData();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-brand-600', 'bg-brand-50');
+                btn.classList.add('text-slate-600');
+            });
+            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+                btn.classList.remove('text-brand-600');
+                btn.classList.add('text-slate-400');
+            });
+
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            const activeMobNav = document.getElementById(`mob-nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-600');
+                activeNav.classList.add('text-brand-600', 'bg-brand-50');
+            }
+            if (activeMobNav) {
+                activeMobNav.classList.remove('text-slate-400');
+                activeMobNav.classList.add('text-brand-600');
             }
 
-            tbody.innerHTML = riwayatLogs.map(log => `
-                <tr>
-                    <td class="p-2.5">${new Date(log.tanggal).toLocaleString('id-ID')}</td>
-                    <td class="p-2.5 font-bold text-slate-800">${log.penghuniNama}</td>
-                    <td class="p-2.5 text-slate-500 max-w-[150px] truncate">${log.lokasi}</td>
-                    <td class="p-2.5">
-                        <img src="${log.foto}" class="w-10 h-10 rounded object-cover cursor-pointer" onclick="zoomPhoto('${log.foto}', '${log.penghuniNama}')"/>
-                    </td>
-                    <td class="p-2.5 text-right">
-                        ${isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="text-red-600 hover:text-red-800 font-bold text-[11px]">Hapus</button>` : '-'}
-                    </td>
-                </tr>
-            `).join('');
+            if (tabName === 'dashboard') renderDashboard();
+            else if (tabName === 'jadwal') renderJadwal();
+            else if (tabName === 'penghuni') renderPenghuni();
+            else if (tabName === 'tugas') renderTugas();
+            else if (tabName === 'riwayat') renderRiwayat();
         }
 
-        function deleteLogEntry(logId) {
-            if (!confirm("Hapus log dan foto bukti ini?")) return;
-            riwayatLogs = riwayatLogs.filter(l => l.id !== logId);
-            localStorage.setItem('dinar_riwayat', JSON.stringify(riwayatLogs));
-            renderDashboard();
-            renderRiwayat();
-        }
-
-        function zoomPhoto(imgSrc, title) {
-            document.getElementById('zoom-img').src = imgSrc;
-            document.getElementById('zoom-title').innerText = "Foto Bukti: " + title;
-            document.getElementById('photo-zoom-modal').classList.remove('hidden');
-        }
-
-        function closePhotoZoom() {
-            document.getElementById('photo-zoom-modal').classList.add('hidden');
-        }
-
-        // ADMIN SYSTEM CONTROLLER
-        function toggleAdminModal() {
+        // --- ADMIN CONTROLS & NEW FEATURES ---
+        function toggleAdminLock() {
             if (isAdminLoggedIn) {
                 isAdminLoggedIn = false;
                 updateAdminUIState();
+                showToast("Admin Lock diaktifkan kembali.");
             } else {
-                document.getElementById('admin-pin-modal').classList.remove('hidden');
+                const pinInput = document.getElementById('admin-pin-input');
+                const pinErr = document.getElementById('admin-pin-error');
+                if (pinInput) pinInput.value = '';
+                if (pinErr) pinErr.classList.add('hidden');
+                openModal('modal-admin-pin');
             }
         }
 
-        function closeAdminModal() {
-            document.getElementById('admin-pin-modal').classList.add('hidden');
-        }
+        function verifyAdminPin(e) {
+            e.preventDefault();
+            const pinVal = document.getElementById('admin-pin-input').value;
+            const errEl = document.getElementById('admin-pin-error');
 
-        function submitAdminPin() {
-            const inputPin = document.getElementById('input-admin-pin').value;
-            if (inputPin === ADMIN_PIN) {
+            if (pinVal === ADMIN_PIN) {
                 isAdminLoggedIn = true;
-                closeAdminModal();
+                closeModal('modal-admin-pin');
                 updateAdminUIState();
-                alert("Mode Admin Berhasil Unlocked!");
+                showToast("Admin Mode Berhasil Ditingkatkan!");
             } else {
-                alert("PIN Admin salah! Masukkan PIN dengan benar.");
+                if (errEl) errEl.classList.remove('hidden');
             }
-            document.getElementById('input-admin-pin').value = '';
         }
 
         function updateAdminUIState() {
             const btn = document.getElementById('admin-toggle-btn');
             const icon = document.getElementById('admin-icon');
             const text = document.getElementById('admin-status-text');
-            const actionsBar = document.getElementById('admin-actions-bar');
+            const btnAnnouncement = document.getElementById('btn-manage-announcement');
 
             if (isAdminLoggedIn) {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-white hover:bg-amber-600";
-                icon.className = "fa-solid fa-unlock";
-                text.innerText = "Admin Unlocked";
-                actionsBar.classList.remove('hidden');
+                if (btn) btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
+                if (icon) icon.className = "fa-solid fa-unlock";
+                if (text) text.innerText = "Admin Unlocked";
+                if (btnAnnouncement) btnAnnouncement.classList.remove('hidden');
             } else {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
-                icon.className = "fa-solid fa-lock";
-                text.innerText = "Unlock Admin";
-                actionsBar.classList.add('hidden');
+                if (btn) btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
+                if (icon) icon.className = "fa-solid fa-lock";
+                if (text) text.innerText = "Admin Lock";
+                if (btnAnnouncement) btnAnnouncement.classList.add('hidden');
             }
             renderDashboard();
             renderRiwayat();
         }
 
-        // UNIFIED ADMIN MODAL
-        function openUnifiedAdminModal() {
-            document.getElementById('input-announcement-text').value = announcementConfig.text || '';
-            document.getElementById('input-webhook-url').value = webhookUrl || '';
-            document.getElementById('check-announcement-active').checked = announcementConfig.active;
+        function checkAndShowUserAnnouncement() {
+            const tickerBanner = document.getElementById('ticker-banner');
+            const tickerContent = document.getElementById('ticker-text-content');
+            const badge = document.getElementById('announcement-type-badge');
+            const textDisplay = document.getElementById('announcement-text-display');
 
-            recordedAudioBase64 = announcementConfig.audioSrc || '';
+            const mediaContainer = document.getElementById('user-announcement-media');
+            const imgEl = document.getElementById('user-announcement-img');
+            const audioContainer = document.getElementById('user-announcement-audio-container');
+            const audioEl = document.getElementById('user-announcement-audio');
+
+            if (adminAnnouncement && adminAnnouncement.active && (adminAnnouncement.text || adminAnnouncement.audio || adminAnnouncement.image)) {
+                if (tickerBanner && tickerContent) {
+                    tickerContent.innerText = adminAnnouncement.text || "Pengumuman Baru (Buka Dashboard)";
+                    tickerBanner.classList.remove('hidden');
+                }
+                if (badge) badge.innerText = adminAnnouncement.type || "PERINGATAN ADMIN";
+                if (textDisplay) textDisplay.innerText = adminAnnouncement.text || "";
+
+                let hasMedia = false;
+                if (adminAnnouncement.image) {
+                    imgEl.src = adminAnnouncement.image;
+                    imgEl.classList.remove('hidden');
+                    hasMedia = true;
+                } else {
+                    imgEl.classList.add('hidden');
+                }
+
+                if (adminAnnouncement.audio) {
+                    audioEl.src = adminAnnouncement.audio;
+                    audioContainer.classList.remove('hidden');
+                    hasMedia = true;
+                } else {
+                    audioContainer.classList.add('hidden');
+                }
+
+                if (hasMedia) {
+                    mediaContainer.classList.remove('hidden');
+                    mediaContainer.classList.add('flex');
+                } else {
+                    mediaContainer.classList.add('hidden');
+                    mediaContainer.classList.remove('flex');
+                }
+
+                openModal('modal-user-announcement');
+            } else {
+                if (tickerBanner) tickerBanner.classList.add('hidden');
+            }
+        }
+
+        function tryOpenAnnouncementModal() {
+            if (!isAdminLoggedIn) {
+                toggleAdminLock();
+                return;
+            }
+            const activeToggle = document.getElementById('announcement-active-toggle');
+            const typeSelect = document.getElementById('announcement-type-select');
+            const textInput = document.getElementById('announcement-text-input');
+            const webhookInput = document.getElementById('webhook-url-input');
+            const audioPreview = document.getElementById('announcement-audio-preview');
+            const statusTxt = document.getElementById('record-status');
+
+            if (activeToggle) activeToggle.checked = adminAnnouncement.active;
+            if (typeSelect) typeSelect.value = adminAnnouncement.type || "Peringatan Admin";
+            if (textInput) textInput.value = adminAnnouncement.text || "";
+            if (webhookInput) webhookInput.value = kosWebhookUrl;
+
+            recordedAudioBase64 = adminAnnouncement.audio || "";
             if (recordedAudioBase64) {
-                const audioPrev = document.getElementById('record-preview-audio');
-                audioPrev.src = recordedAudioBase64;
-                audioPrev.classList.remove('hidden');
-                document.getElementById('record-status-txt').innerText = "Suara tersimpan";
+                audioPreview.src = recordedAudioBase64;
+                audioPreview.classList.remove('hidden');
+                statusTxt.innerText = "Suara tersimpan sebelumnya.";
+            } else {
+                audioPreview.classList.add('hidden');
+                statusTxt.innerText = "Belum ada rekaman.";
             }
 
-            document.getElementById('unified-admin-modal').classList.remove('hidden');
+            // reset file input visually
+            const imgInput = document.getElementById('announcement-img-input');
+            if (imgInput) imgInput.value = '';
+
+            openModal('modal-edit-announcement');
         }
 
-        function closeUnifiedAdminModal() {
-            document.getElementById('unified-admin-modal').classList.add('hidden');
-        }
-
-        // VOICE RECORDER LOGIC
         async function toggleAudioRecording() {
-            const btnLbl = document.getElementById('record-btn-lbl');
-            const statusTxt = document.getElementById('record-status-txt');
-            const audioPrev = document.getElementById('record-preview-audio');
+            const btnText = document.getElementById('record-btn-text');
+            const statusTxt = document.getElementById('record-status');
+            const audioPrev = document.getElementById('announcement-audio-preview');
 
             if (!isRecording) {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
+                    audioRecorder = new MediaRecorder(stream);
                     audioChunks = [];
 
-                    mediaRecorder.ondataavailable = event => {
+                    audioRecorder.ondataavailable = (event) => {
                         audioChunks.push(event.data);
                     };
 
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    audioRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/webm' });
                         const reader = new FileReader();
                         reader.onloadend = () => {
                             recordedAudioBase64 = reader.result;
                             audioPrev.src = recordedAudioBase64;
                             audioPrev.classList.remove('hidden');
-                            statusTxt.innerText = "Selesai merekam!";
+                            statusTxt.innerText = "Rekaman selesai & siap disimpan.";
                         };
-                        reader.readAsDataURL(audioBlob);
+                        reader.readAsDataURL(blob);
                     };
 
-                    mediaRecorder.start();
+                    audioRecorder.start();
                     isRecording = true;
-                    btnLbl.innerText = "Hentikan Rekaman";
-                    statusTxt.innerText = "Merekam suara...";
+                    btnText.innerText = "Berhenti Rekam";
+                    statusTxt.innerText = "Sedang merekam suara...";
+                    audioPrev.classList.add('hidden');
                 } catch (err) {
-                    alert("Gagal mengakses mikrofon: " + err.message);
+                    showToast("Gagal akses mikrofon: " + err.message);
                 }
             } else {
-                mediaRecorder.stop();
+                audioRecorder.stop();
                 isRecording = false;
-                btnLbl.innerText = "Mulai Rekam Suara";
+                btnText.innerText = "Mulai Rekam";
             }
         }
 
-        function saveUnifiedAdminConfig() {
-            const text = document.getElementById('input-announcement-text').value.trim();
-            const active = document.getElementById('check-announcement-active').checked;
-            const newWebhook = document.getElementById('input-webhook-url').value.trim();
-            const imgFile = document.getElementById('input-announcement-img').files[0];
+        async function saveAnnouncement(e) {
+            e.preventDefault();
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Menyimpan...";
 
-            webhookUrl = newWebhook;
-            localStorage.setItem('dinar_webhook_url', webhookUrl);
+            adminAnnouncement.active = document.getElementById('announcement-active-toggle').checked;
+            adminAnnouncement.type = document.getElementById('announcement-type-select').value;
+            adminAnnouncement.text = document.getElementById('announcement-text-input').value;
+            kosWebhookUrl = document.getElementById('webhook-url-input').value.trim();
+            adminAnnouncement.audio = recordedAudioBase64;
 
-            announcementConfig.text = text;
-            announcementConfig.active = active;
-            announcementConfig.audioSrc = recordedAudioBase64;
-
-            if (imgFile) {
+            const imgInput = document.getElementById('announcement-img-input');
+            if (imgInput && imgInput.files && imgInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    announcementConfig.imgSrc = e.target.result;
-                    localStorage.setItem('dinar_announcement', JSON.stringify(announcementConfig));
-                    closeUnifiedAdminModal();
-                    setupAnnouncementUI();
-                    alert("Pengaturan Admin & Webhook berhasil disimpan!");
+                reader.onload = function(evt) {
+                    adminAnnouncement.image = evt.target.result;
+                    finalizeSaveAnnouncement(btnSubmit);
                 };
-                reader.readAsDataURL(imgFile);
+                reader.readAsDataURL(imgInput.files[0]);
             } else {
-                localStorage.setItem('dinar_announcement', JSON.stringify(announcementConfig));
-                closeUnifiedAdminModal();
-                setupAnnouncementUI();
-                alert("Pengaturan Admin & Webhook berhasil disimpan!");
+                // If no new image, we preserve the old one. (Set to empty string if you want to clear it, but let's preserve).
+                finalizeSaveAnnouncement(btnSubmit);
             }
         }
 
-        // ANNOUNCEMENT UI DISPLAY
-        function setupAnnouncementUI() {
-            const marqueeContainer = document.getElementById('marquee-container');
-            const marqueeText = document.getElementById('marquee-text');
-            const audioContainer = document.getElementById('audio-player-container');
-            const audioElem = document.getElementById('announcement-audio');
-            const imgContainer = document.getElementById('photo-announcement-container');
-            const imgElem = document.getElementById('announcement-img');
+        function finalizeSaveAnnouncement(btnSubmit) {
+            saveData();
+            closeModal('modal-edit-announcement');
+            checkAndShowUserAnnouncement();
+            showToast("Pengaturan & Webhook berhasil diperbarui!");
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Simpan & Tampilkan";
+        }
 
-            if (announcementConfig.active && announcementConfig.text) {
-                marqueeText.innerText = announcementConfig.text;
-                marqueeContainer.classList.remove('hidden');
+        function sendToDriveWebhook(logData) {
+            if (!kosWebhookUrl) return;
+            fetch(kosWebhookUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(logData)
+            }).catch(err => console.log("Auto-backup webhook info:", err));
+        }
 
-                document.getElementById('announcement-body').innerText = announcementConfig.text;
+        // --- DASHBOARD RENDER & STATS ---
+        function renderDashboard() {
+            const todayName = getTodayName();
+            const dayNameEl = document.getElementById('today-day-name');
+            if (dayNameEl) dayNameEl.innerText = todayName;
 
-                if (announcementConfig.audioSrc) {
-                    audioElem.src = announcementConfig.audioSrc;
-                    audioContainer.classList.remove('hidden');
-                } else {
-                    audioContainer.classList.add('hidden');
+            const container = document.getElementById('today-duties-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const todayDuties = jadwalPiket[todayName] || [];
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayYMD = `${year}-${month}-${day}`;
+
+            if (todayDuties.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-8 text-slate-400 font-medium">Libur Piket Hari Ini (${todayName}) 🎉</div>`;
+                const badge = document.getElementById('piket-status-badge');
+                if (badge) {
+                    badge.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600";
+                    badge.innerText = "Libur Piket";
                 }
-
-                if (announcementConfig.imgSrc) {
-                    imgElem.src = announcementConfig.imgSrc;
-                    imgContainer.classList.remove('hidden');
-                } else {
-                    imgContainer.classList.add('hidden');
-                }
-
-                document.getElementById('announcement-modal').classList.remove('hidden');
             } else {
-                marqueeContainer.classList.add('hidden');
+                let allDone = true;
+                todayDuties.forEach(item => {
+                    const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Penghuni Terhapus', kamar: '-' };
+                    const todayLog = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.tanggal.startsWith(todayYMD));
+                    const isDone = !!todayLog;
+                    if (!isDone) allDone = false;
+
+                    const card = document.createElement('div');
+                    card.className = `p-4 rounded-xl border ${isDone ? 'bg-emerald-50/60 border-emerald-300' : 'bg-slate-50 border-slate-200'} flex items-start gap-3 transition relative group`;
+
+                    let photoHtml = '';
+                    if (isDone && todayLog.foto) {
+                        photoHtml = `
+                            <div class="mt-2 relative group/img">
+                                <img src="${todayLog.foto}" onclick="previewImage('${todayLog.foto}')" class="w-full h-28 object-cover rounded-lg border border-emerald-200 cursor-pointer shadow-sm hover:opacity-90">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition rounded-lg flex items-center justify-center text-white text-xs font-bold pointer-events-none">
+                                    <i class="fa-solid fa-magnifying-glass-plus mr-1"></i> Zoom Foto
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    let adminDeleteBtn = '';
+                    if (isAdminLoggedIn && isDone && todayLog) {
+                        adminDeleteBtn = `
+                            <button onclick="deleteLogEntry('${todayLog.id}')" title="Hapus Bukti Absen" class="absolute top-3 right-3 text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-1.5 rounded-lg text-xs transition border border-rose-200">
+                                <i class="fa-solid fa-trash-can"></i> Hapus Foto
+                            </button>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="w-10 h-10 rounded-full ${isDone ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-lg font-bold shrink-0 shadow-sm">
+                            <i class="fa-solid ${isDone ? 'fa-check' : 'fa-user'}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0 pr-6">
+                            <h4 class="font-bold text-slate-900 truncate">${penghuni.nama}</h4>
+                            <p class="text-xs text-slate-500 mb-1">${penghuni.kamar}</p>
+                            <span class="inline-block text-xs font-bold text-brand-700 bg-brand-50 border border-brand-200/60 px-2 py-0.5 rounded-md mb-1">
+                                ${item.area}
+                            </span>
+                            <div class="mt-1">
+                                <span class="text-[11px] font-semibold ${isDone ? 'text-emerald-700' : 'text-amber-700'}">
+                                    ${isDone ? '✓ Sudah Piket' : '⏳ Belum Piket'}
+                                </span>
+                            </div>
+                            ${photoHtml}
+                        </div>
+                        ${adminDeleteBtn}
+                    `;
+                    container.appendChild(card);
+                });
+
+                const badge = document.getElementById('piket-status-badge');
+                if (badge) {
+                    if (allDone) {
+                        badge.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700";
+                        badge.innerText = "Semua Selesai";
+                    } else {
+                        badge.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700";
+                        badge.innerText = "Menunggu Absen";
+                    }
+                }
             }
+            updateStatsChart();
+            updateTopMember();
         }
 
-        function closeAnnouncementModal() {
-            const audioElem = document.getElementById('announcement-audio');
-            if (audioElem) audioElem.pause();
-            document.getElementById('announcement-modal').classList.add('hidden');
-        }
+        function updateStatsChart() {
+            const canvas = document.getElementById('completionChart');
+            if (!canvas) return;
 
-        // AUTO ARCHIVE OLD PHOTOS
-        function checkAndArchive24hPhotos() {
-            const now = new Date().getTime();
-            riwayatLogs.forEach(log => {
-                const logTime = new Date(log.tanggal).getTime();
-                if (now - logTime > 24 * 60 * 60 * 1000) {
-                    log.archived = true;
+            const todayName = getTodayName();
+            const todayDuties = jadwalPiket[todayName] || [];
+            const now = new Date();
+            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            let completedCount = 0;
+            todayDuties.forEach(item => {
+                const penghuni = penghuniList.find(p => p.id === item.penghuniId);
+                if (penghuni && riwayatLogs.some(log => log.penghuniNama === penghuni.nama && log.tanggal.startsWith(todayYMD))) {
+                    completedCount++;
                 }
             });
-            localStorage.setItem('dinar_riwayat', JSON.stringify(riwayatLogs));
+
+            const total = todayDuties.length;
+            const rate = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+            const rateEl = document.getElementById('completion-rate');
+            if (rateEl) rateEl.innerText = `${rate}%`;
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [completedCount, Math.max(0, total - completedCount)],
+                        backgroundColor: ['#14b8a6', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '78%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: { enabled: false } }
+                }
+            });
         }
+
+        function updateTopMember() {
+            const counts = {};
+            riwayatLogs.forEach(log => {
+                counts[log.penghuniNama] = (counts[log.penghuniNama] || 0) + 1;
+            });
+
+            let topName = "Belum Ada Data";
+            let maxCount = 0;
+            for (const [nama, cnt] of Object.entries(counts)) {
+                if (cnt > maxCount) {
+                    maxCount = cnt;
+                    topName = nama;
+                }
+            }
+
+            const nameEl = document.getElementById('top-member-name');
+            const countEl = document.getElementById('top-member-count');
+            if (nameEl) nameEl.innerText = topName;
+            if (countEl) countEl.innerText = `${maxCount}x Absen Piket`;
+        }
+
+        function deleteLogEntry(logId) {
+            if (!isAdminLoggedIn) return;
+            riwayatLogs = riwayatLogs.filter(log => log.id !== logId);
+            saveData();
+            renderDashboard();
+            renderRiwayat();
+            showToast("Foto bukti & data absen berhasil dihapus Admin.");
+        }
+
+        function previewImage(src) {
+            const img = document.getElementById('modal-preview-img');
+            if (img) img.src = src;
+            openModal('modal-preview-foto');
+        }
+
+        // --- GEOLOCATION & CAMERA HANDLERS ---
+        async function fetchReverseGeocode(lat, lng) {
+            const addressEl = document.getElementById('gps-address-text');
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.address) {
+                        const addr = data.address;
+                        const kampung = addr.village || addr.hamlet || addr.suburb || addr.neighbourhood || addr.quarter || "";
+                        const kecamatan = addr.town || addr.city_district || addr.county || "";
+                        const kota = addr.city || addr.regency || addr.state || "";
+                        let formattedAddr = [kampung, kecamatan, kota].filter(Boolean).join(', ');
+                        if (!formattedAddr) formattedAddr = data.display_name.split(',').slice(0, 3).join(',');
+
+                        currentGeoAddress = formattedAddr;
+                        if (addressEl) {
+                            addressEl.innerHTML = `<i class="fa-solid fa-map-location-dot mr-1"></i> ${currentGeoAddress}`;
+                            addressEl.classList.remove('hidden');
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Reverse geocode failed", e);
+            }
+            currentGeoAddress = `Wilayah (${lat}, ${lng})`;
+            if (addressEl) {
+                addressEl.innerHTML = `<i class="fa-solid fa-map-location-dot mr-1"></i> ${currentGeoAddress}`;
+                addressEl.classList.remove('hidden');
+            }
+        }
+
+        function handleGpsSuccess(pos) {
+            const coordsText = document.getElementById('gps-coords-text');
+            const lat = pos.coords.latitude.toFixed(6);
+            const lng = pos.coords.longitude.toFixed(6);
+            currentGeoLocation = `Lat: ${lat}, Lng: ${lng}`;
+
+            if (coordsText) {
+                coordsText.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fa-solid fa-check-circle mr-1"></i>${currentGeoLocation}</span>`;
+            }
+
+            fetchReverseGeocode(lat, lng);
+
+            const overlay = document.getElementById('gps-lock-overlay');
+            const btnSnap = document.getElementById('btn-snap');
+            if (overlay) overlay.classList.add('hidden');
+            if (btnSnap) btnSnap.disabled = false;
+
+            startCamera();
+        }
+
+        function handleGpsError(err) {
+            const subtext = document.getElementById('gps-lock-subtext');
+            if (subtext) {
+                subtext.innerHTML = `<span class="text-rose-400 font-bold">Gagal Mengakses GPS (${err.message}). Klik tombol di bawah untuk izinkan atau pakai koordinat default.</span>`;
+            }
+        }
+
+        function getGeolocation() {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(handleGpsSuccess, handleGpsError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                useDefaultCoordinates();
+            }
+        }
+
+        function useDefaultCoordinates() {
+            currentGeoLocation = "Lat: -6.175112, Lng: 106.827153";
+            currentGeoAddress = "Kosan Dinar Boys, Wilayah Utama";
+            const coordsText = document.getElementById('gps-coords-text');
+            const addressEl = document.getElementById('gps-address-text');
+
+            if (coordsText) {
+                coordsText.innerHTML = `<span class="text-amber-600 font-bold"><i class="fa-solid fa-location-dot mr-1"></i>${currentGeoLocation}</span>`;
+            }
+            if (addressEl) {
+                addressEl.innerHTML = `<i class="fa-solid fa-map-location-dot mr-1"></i> ${currentGeoAddress}`;
+                addressEl.classList.remove('hidden');
+            }
+
+            const overlay = document.getElementById('gps-lock-overlay');
+            const btnSnap = document.getElementById('btn-snap');
+            if (overlay) overlay.classList.add('hidden');
+            if (btnSnap) btnSnap.disabled = false;
+
+            startCamera();
+            showToast("Menggunakan lokasi default Dinar Boys Kosan.");
+        }
+
+        function startCamera() {
+            const video = document.getElementById('webcam-video');
+            if (!video) return;
+
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+                .then(stream => {
+                    mediaStream = stream;
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.warn("Front camera fallback", err);
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                        .then(stream => {
+                            mediaStream = stream;
+                            video.srcObject = stream;
+                        })
+                        .catch(e => {
+                            showToast("Gagal mengakses kamera device: " + e.message);
+                        });
+                });
+        }
+
+        function stopCamera() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        function resetCameraView() {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.getElementById('captured-canvas');
+            const btnSnap = document.getElementById('btn-snap');
+            const btnRetake = document.getElementById('btn-retake');
+            const btnSubmit = document.getElementById('btn-submit-absen');
+
+            if (video) video.classList.remove('hidden');
+            if (canvas) canvas.classList.add('hidden');
+            if (btnSnap) {
+                btnSnap.classList.remove('hidden');
+                btnSnap.disabled = false;
+            }
+            if (btnRetake) btnRetake.classList.add('hidden');
+            if (btnSubmit) btnSubmit.disabled = true;
+
+            capturedPhotoData = null;
+            startCamera();
+        }
+
+        function openAbsenModal() {
+            const selPenghuni = document.getElementById('absen-select-penghuni');
+            const selArea = document.getElementById('absen-select-area');
+
+            if (selPenghuni) {
+                selPenghuni.innerHTML = penghuniList.map(p => `<option value="${p.nama}">${p.nama} (${p.kamar})</option>`).join('');
+            }
+            if (selArea) {
+                selArea.innerHTML = tugasList.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+
+            resetCameraView();
+            openModal('modal-absen');
+            getGeolocation();
+        }
+
+        function closeAbsenModal() {
+            stopCamera();
+            closeModal('modal-absen');
+        }
+
+        function takeSnapshot() {
+            const video = document.getElementById('webcam-video');
+            const canvas = document.getElementById('captured-canvas');
+            if (!video || !canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const now = new Date();
+            const timeStr = now.toLocaleDateString('id-ID', {
+                weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+            ctx.fillRect(0, canvas.height - 75, canvas.width, 75);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 13px sans-serif";
+            ctx.fillText(`🏠 Dinar boys 2026. | 📍 ${currentGeoAddress || 'Lokasi Valid'}`, 15, canvas.height - 50);
+            ctx.fillText(`🌐 GPS: ${currentGeoLocation || 'Lat: -6.175, Lng: 106.827'}`, 15, canvas.height - 30);
+            ctx.fillText(`📅 Waktu & Tanggal: ${timeStr}`, 15, canvas.height - 10);
+
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
+
+            video.classList.add('hidden');
+            canvas.classList.remove('hidden');
+
+            const btnSnap = document.getElementById('btn-snap');
+            const btnRetake = document.getElementById('btn-retake');
+            const btnSubmit = document.getElementById('btn-submit-absen');
+
+            if (btnSnap) btnSnap.classList.add('hidden');
+            if (btnRetake) btnRetake.classList.remove('hidden');
+            if (btnSubmit) btnSubmit.disabled = false;
+
+            stopCamera();
+        }
+
+        function handleAbsenSubmit(e) {
+            e.preventDefault();
+            if (!capturedPhotoData) {
+                showToast('Harap ambil foto real-time terlebih dahulu!');
+                return;
+            }
+
+            const nama = document.getElementById('absen-select-penghuni').value;
+            const area = document.getElementById('absen-select-area').value;
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+
+            const dateStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            const newLog = {
+                id: 'log-' + Date.now(),
+                tanggal: dateStr,
+                penghuniNama: nama,
+                area: area,
+                gps: `${currentGeoLocation} (${currentGeoAddress})`,
+                foto: capturedPhotoData,
+                status: 'Selesai',
+                archivedToDriveFolder: `Backup-${year}-${month}-${day}`
+            };
+
+            riwayatLogs.unshift(newLog);
+            saveData();
+            
+            // Integrasi Webhook Kirim data
+            sendToDriveWebhook(newLog);
+
+            renderDashboard();
+            renderRiwayat();
+            closeAbsenModal();
+            showToast('Absen piket real-time berhasil disimpan!');
+        }
+
+        // --- TAB 2: JADWAL TAB ---
+        function renderJadwal() {
+            const grid = document.getElementById('weekly-schedule-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            DEFAULT_DAYS.forEach(day => {
+                const duties = jadwalPiket[day] || [];
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-3 flex flex-col justify-between";
+
+                let listItems = duties.map(item => {
+                    const p = penghuniList.find(x => x.id === item.penghuniId) || { nama: 'Penghuni Terhapus' };
+                    return `
+                        <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-xs">
+                            <span class="font-bold text-slate-800">${p.nama}</span>
+                            <span class="text-[11px] text-brand-700 font-semibold bg-brand-50 px-2 py-0.5 rounded">${item.area}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                if (duties.length === 0) {
+                    listItems = `<p class="text-xs text-slate-400 italic py-2">Tidak ada tugas piket (Libur)</p>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center border-b pb-2 mb-3">
+                            <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-day text-brand-600"></i> ${day}
+                            </h3>
+                            <span class="text-xs font-bold text-slate-400">${duties.length} Orang</span>
+                        </div>
+                        <div class="space-y-2">${listItems}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function tryOpenEditJadwalModal() {
+            if (!isAdminLoggedIn) {
+                toggleAdminLock();
+                return;
+            }
+            tempEditJadwal = JSON.parse(JSON.stringify(jadwalPiket));
+            renderEditJadwalModalContent();
+            openModal('modal-edit-jadwal');
+        }
+
+        function renderEditJadwalModalContent() {
+            const container = document.getElementById('edit-jadwal-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            DEFAULT_DAYS.forEach(day => {
+                const duties = tempEditJadwal[day] || [];
+                const dayBox = document.createElement('div');
+                dayBox.className = "p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3";
+
+                let rows = duties.map((duty, idx) => `
+                    <div class="flex items-center gap-2">
+                        <select onchange="updateTempDutyPenghuni('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+                            ${penghuniList.map(p => `<option value="${p.id}" ${p.id === duty.penghuniId ? 'selected' : ''}>${p.nama}</option>`).join('')}
+                        </select>
+                        <select onchange="updateTempDutyArea('${day}', ${idx}, this.value)" class="flex-1 px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs">
+                            ${tugasList.map(a => `<option value="${a}" ${a === duty.area ? 'selected' : ''}>${a}</option>`).join('')}
+                        </select>
+                        <button type="button" onclick="removeTempDuty('${day}', ${idx})" class="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                dayBox.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">${day}</h4>
+                        <button type="button" onclick="addTempDuty('${day}')" class="text-xs text-brand-600 font-bold hover:underline">
+                            + Tambah Petugas
+                        </button>
+                    </div>
+                    <div class="space-y-2">${rows || '<p class="text-xs text-slate-400 italic">Libur piket</p>'}</div>
+                `;
+                container.appendChild(dayBox);
+            });
+        }
+
+        function addTempDuty(day) {
+            if (!tempEditJadwal[day]) tempEditJadwal[day] = [];
+            const defaultPenghuni = penghuniList[0] ? penghuniList[0].id : '';
+            const defaultArea = tugasList[0] || 'Area Dapur';
+            tempEditJadwal[day].push({ penghuniId: defaultPenghuni, area: defaultArea });
+            renderEditJadwalModalContent();
+        }
+
+        function removeTempDuty(day, idx) {
+            tempEditJadwal[day].splice(idx, 1);
+            renderEditJadwalModalContent();
+        }
+
+        function updateTempDutyPenghuni(day, idx, val) {
+            tempEditJadwal[day][idx].penghuniId = val;
+        }
+
+        function updateTempDutyArea(day, idx, val) {
+            tempEditJadwal[day][idx].area = val;
+        }
+
+        function saveJadwalChanges() {
+            jadwalPiket = tempEditJadwal;
+            saveData();
+            closeModal('modal-edit-jadwal');
+            renderJadwal();
+            renderDashboard();
+            showToast("Jadwal piket mingguan berhasil diperbarui!");
+        }
+
+        // --- TAB 3: PENGHUNI TAB ---
+        function renderPenghuni() {
+            const grid = document.getElementById('penghuni-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            penghuniList.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between";
+                
+                let adminActions = '';
+                if (isAdminLoggedIn) {
+                    adminActions = `
+                        <div class="flex gap-1">
+                            <button onclick="editPenghuni('${p.id}')" class="p-1.5 text-slate-500 hover:text-brand-600 text-xs">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="deletePenghuni('${p.id}')" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-sm">${p.nama}</h4>
+                            <p class="text-xs text-slate-500">${p.kamar}</p>
+                        </div>
+                    </div>
+                    ${adminActions}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function tryOpenPenghuniModal() {
+            if (!isAdminLoggedIn) {
+                toggleAdminLock();
+                return;
+            }
+            document.getElementById('penghuni-id').value = '';
+            document.getElementById('penghuni-nama').value = '';
+            document.getElementById('penghuni-kamar').value = '';
+            document.getElementById('modal-penghuni-title').innerText = "Tambah Penghuni Kos";
+            openModal('modal-penghuni');
+        }
+
+        function editPenghuni(id) {
+            const p = penghuniList.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('penghuni-id').value = p.id;
+            document.getElementById('penghuni-nama').value = p.nama;
+            document.getElementById('penghuni-kamar').value = p.kamar;
+            document.getElementById('modal-penghuni-title').innerText = "Edit Penghuni Kos";
+            openModal('modal-penghuni');
+        }
+
+        function handlePenghuniSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('penghuni-id').value;
+            const nama = document.getElementById('penghuni-nama').value;
+            const kamar = document.getElementById('penghuni-kamar').value;
+
+            if (id) {
+                const idx = penghuniList.findIndex(x => x.id === id);
+                if (idx !== -1) penghuniList[idx] = { id, nama, kamar };
+            } else {
+                penghuniList.push({ id: 'p-' + Date.now(), nama, kamar });
+            }
+
+            saveData();
+            closeModal('modal-penghuni');
+            renderPenghuni();
+            renderDashboard();
+            showToast("Data penghuni berhasil disimpan!");
+        }
+
+        function deletePenghuni(id) {
+            if (!isAdminLoggedIn) return;
+            penghuniList = penghuniList.filter(x => x.id !== id);
+            saveData();
+            renderPenghuni();
+            renderDashboard();
+            showToast("Penghuni berhasil dihapus!");
+        }
+
+        // --- TAB 4: TUGAS TAB ---
+        function renderTugas() {
+            const container = document.getElementById('tugas-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            tugasList.forEach((tugas, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between";
+
+                let adminBtns = '';
+                if (isAdminLoggedIn) {
+                    adminBtns = `
+                        <div class="flex gap-1">
+                            <button onclick="editTugas('${tugas}')" class="p-1.5 text-slate-500 hover:text-brand-600 text-xs">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button onclick="deleteTugas(${idx})" class="p-1.5 text-rose-500 hover:text-rose-700 text-xs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <span class="font-bold text-slate-800 text-sm">${tugas}</span>
+                    </div>
+                    ${adminBtns}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function tryOpenTugasModal() {
+            if (!isAdminLoggedIn) {
+                toggleAdminLock();
+                return;
+            }
+            document.getElementById('tugas-old-name').value = '';
+            document.getElementById('tugas-nama').value = '';
+            document.getElementById('modal-tugas-title').innerText = "Tambah Tugas Piket";
+            openModal('modal-tugas');
+        }
+
+        function editTugas(nama) {
+            document.getElementById('tugas-old-name').value = nama;
+            document.getElementById('tugas-nama').value = nama;
+            document.getElementById('modal-tugas-title').innerText = "Edit Area Tugas";
+            openModal('modal-tugas');
+        }
+
+        function handleTugasSubmit(e) {
+            e.preventDefault();
+            const oldName = document.getElementById('tugas-old-name').value;
+            const newName = document.getElementById('tugas-nama').value;
+
+            if (oldName) {
+                const idx = tugasList.indexOf(oldName);
+                if (idx !== -1) tugasList[idx] = newName;
+            } else {
+                tugasList.push(newName);
+            }
+
+            saveData();
+            closeModal('modal-tugas');
+            renderTugas();
+            showToast("Daftar tugas kebersihan diperbarui!");
+        }
+
+        function deleteTugas(idx) {
+            if (!isAdminLoggedIn) return;
+            tugasList.splice(idx, 1);
+            saveData();
+            renderTugas();
+            showToast("Tugas dihapus!");
+        }
+
+        // --- TAB 5: RIWAYAT TAB ---
+        function renderRiwayat() {
+            const tbody = document.getElementById('riwayat-table-body');
+            const searchInput = document.getElementById('search-log');
+            if (!tbody) return;
+
+            const q = searchInput ? searchInput.value.toLowerCase() : '';
+            tbody.innerHTML = '';
+
+            const filtered = riwayatLogs.filter(log => 
+                log.penghuniNama.toLowerCase().includes(q) || 
+                log.area.toLowerCase().includes(q)
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data riwayat absen piket.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+
+                let imgCell = '<span class="text-slate-400 text-xs">Tanpa Foto</span>';
+                if (log.foto) {
+                    imgCell = `<img src="${log.foto}" onclick="previewImage('${log.foto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer hover:opacity-80">`;
+                }
+
+                let adminDel = '-';
+                if (isAdminLoggedIn) {
+                    adminDel = `
+                        <button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-xs font-bold transition border border-rose-200">
+                            Hapus
+                        </button>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td>
+                    <td class="p-4 font-bold text-slate-900">${log.penghuniNama}</td>
+                    <td class="p-4 text-brand-700 font-medium">${log.area}</td>
+                    <td class="p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td>
+                    <td class="p-4">${imgCell}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td>
+                    <td class="p-4">${adminDel}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- WINDOW ONLOAD INITIALIZATION ---
+        window.onload = function() {
+            initDateHeader();
+            updateExternalLinksUI();
+            checkAndArchiveOldPhotos();
+            renderDashboard();
+            renderJadwal();
+            renderPenghuni();
+            renderTugas();
+            renderRiwayat();
+            updateAdminUIState();
+            checkAndShowUserAnnouncement();
+
+            // Auto refresh dashboard every minute to catch day changes seamlessly
+            setInterval(checkDayChange, 60000);
+        };
     </script>
 </body>
 </html>
