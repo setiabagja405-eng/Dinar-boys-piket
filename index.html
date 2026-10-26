@@ -395,7 +395,7 @@
                             <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="5"></div>
                         </div>
                     </div>
-                    <p id="login-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200 mt-2">PIN salah! Silahkan masukan kembali</p>
+                    <p id="login-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200 mt-2">Pin salah! Silahkan masukan kembali</p>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-sm shadow-md transition">Masuk ke Akun Saya</button>
@@ -439,7 +439,7 @@
                             <i id="eye-icon-pin-baru" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                    <p id="ganti-pin-error" class="hidden text-[11px] text-rose-600 font-bold mt-1 bg-rose-50 p-2 rounded border border-rose-200">PIN salah! Silahkan masukan kembali</p>
+                    <p id="ganti-pin-error" class="hidden text-[11px] text-rose-600 font-bold mt-1 bg-rose-50 p-2 rounded border border-rose-200">Pin salah! Silahkan masukan kembali</p>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-brand-600 text-white rounded-xl font-bold text-xs shadow mt-2">Simpan & Ubah PIN</button>
             </form>
@@ -594,7 +594,7 @@
                         <i id="eye-icon-admin-pin" class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">PIN salah! Silahkan masukan kembali</p>
+                <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">Pin salah! Silahkan masukan kembali</p>
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('modal-admin-pin')" class="flex-1 py-2 border border-slate-300 text-slate-600 rounded-xl font-medium text-xs">Batal</button>
                     <button type="submit" class="flex-1 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs">Masuk Admin</button>
@@ -1093,6 +1093,7 @@
                     closeModal('modal-user-login');
                     updateUserSessionUI();
                     renderDashboard();
+                    renderTugasTambahan();
                     showToast(`Berhasil login sebagai ${userObj.nama}!`);
                 } else {
                     document.getElementById('login-pin-error').classList.remove('hidden');
@@ -1105,6 +1106,7 @@
             loggedInUser = null;
             updateUserSessionUI();
             renderDashboard();
+            renderTugasTambahan();
             openUserLoginModal();
             showToast("Anda telah keluar dari sesi.");
         }
@@ -1160,7 +1162,7 @@
             const correctPin = userObj.pin || '123456';
             if (pinLama !== correctPin) {
                 document.getElementById('ganti-pin-error').classList.remove('hidden');
-                showToast("PIN lama salah! PIN tidak terubah.");
+                showToast("Pin salah! Silahkan masukan kembali");
                 return;
             }
 
@@ -1503,7 +1505,7 @@
             } else {
                 todayDuties.forEach((item, index) => {
                     const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Belum Dipilih', kamar: '-' };
-                    const todayLog = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
+                    const todayLog = riwayatLogs.some(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
                     const isDone = !!todayLog;
                     const taskKey = `${todayName}_${index}_${item.area}`;
                     const catatanAdmin = taskCatatanMap[taskKey] || '';
@@ -1515,7 +1517,8 @@
                         ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full backdrop-blur-md shadow"><i class="fa-solid fa-circle-check"></i> Selesai <span class="w-2 h-2 rounded-full bg-white/50 animate-ping"></span></span>`
                         : `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
 
-                    let buktiBtn = isDone && todayLog.foto ? `<button onclick="previewImage('${todayLog.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>` : '';
+                    let todayLogObj = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
+                    let buktiBtn = isDone && todayLogObj && todayLogObj.foto ? `<button onclick="previewImage('${todayLogObj.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>` : '';
 
                     let adminCatatanSection = `
                         <div class="mt-1 pt-2 border-t border-slate-200/60 flex items-start justify-between gap-2">
@@ -1626,9 +1629,18 @@
                     waktuInfo = `<span class="text-[11px] text-rose-600 font-semibold"><i class="fa-regular fa-clock mr-1"></i> Deadline: ${formattedDate}</span>`;
                 }
 
-                let actionBtn = isDone && tugas.foto
-                    ? `<button onclick="previewImage('${tugas.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`
-                    : `<button onclick="openAbsenTambahanModal('${tugas.id}')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow transition"><i class="fa-solid fa-camera"></i> Foto Selesaikan Tugas</button>`;
+                let actionBtn = '';
+                if (isDone && tugas.foto) {
+                    actionBtn = `<button onclick="previewImage('${tugas.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`;
+                } else {
+                    if (!loggedInUser) {
+                        actionBtn = `<button onclick="openUserLoginModal()" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">Silakan Login Terlebih Dahulu</button>`;
+                    } else if (loggedInUser.id !== tugas.penghuniId) {
+                        actionBtn = `<div class="w-full py-2.5 bg-slate-200 text-slate-600 font-bold rounded-xl text-xs text-center">Terkunci (Bukan Tugas Anda)</div>`;
+                    } else {
+                        actionBtn = `<button onclick="openAbsenTambahanModal('${tugas.id}')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow transition"><i class="fa-solid fa-camera"></i> Foto Selesaikan Tugas</button>`;
+                    }
+                }
 
                 let adminEditDel = isAdminLoggedIn ? `
                     <div class="absolute top-3 right-3 flex gap-1">
@@ -1743,6 +1755,12 @@
         function openAbsenTambahanModal(id) {
             const t = tugasTambahanList.find(x => x.id === id);
             if (!t) return;
+            
+            if (!loggedInUser || loggedInUser.id !== t.penghuniId) {
+                showToast("Akses ditolak! Bukan tugas Anda atau belum login.");
+                return;
+            }
+
             currentTambahanId = id;
             const p = penghuniList.find(x => x.id === t.penghuniId) || { nama: '-' };
 
