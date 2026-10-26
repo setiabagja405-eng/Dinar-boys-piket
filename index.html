@@ -368,7 +368,7 @@
             </div>
             <div>
                 <h3 class="font-bold text-slate-900 text-lg">Login Akun Penghuni</h3>
-                <p class="text-xs text-slate-500">Pilih nama Anda dan ketik PIN (Default: 123456).</p>
+                <p class="text-xs text-slate-500">Pilih nama Anda dan ketik PIN Anda.</p>
             </div>
             
             <form onsubmit="handleUserLoginSubmit(event)" class="space-y-4">
@@ -395,7 +395,7 @@
                             <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="5"></div>
                         </div>
                     </div>
-                    <p id="login-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200 mt-2">PIN salah! PIN awal semua akun adalah 123456.</p>
+                    <p id="login-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200 mt-2">PIN salah! Silahkan masukan kembali</p>
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-sm shadow-md transition">Masuk ke Akun Saya</button>
@@ -439,7 +439,7 @@
                             <i id="eye-icon-pin-baru" class="fa-solid fa-eye"></i>
                         </button>
                     </div>
-                    <p id="ganti-pin-error" class="hidden text-[11px] text-rose-600 font-bold mt-1 bg-rose-50 p-2 rounded border border-rose-200">PIN lama salah! PIN tidak terubah.</p>
+                    <p id="ganti-pin-error" class="hidden text-[11px] text-rose-600 font-bold mt-1 bg-rose-50 p-2 rounded border border-rose-200">PIN salah! Silahkan masukan kembali</p>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-brand-600 text-white rounded-xl font-bold text-xs shadow mt-2">Simpan & Ubah PIN</button>
             </form>
@@ -594,7 +594,7 @@
                         <i id="eye-icon-admin-pin" class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">PIN Admin salah! Masukkan PIN dengan benar.</p>
+                <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">PIN salah! Silahkan masukan kembali</p>
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('modal-admin-pin')" class="flex-1 py-2 border border-slate-300 text-slate-600 rounded-xl font-medium text-xs">Batal</button>
                     <button type="submit" class="flex-1 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs">Masuk Admin</button>
