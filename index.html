@@ -125,15 +125,11 @@
                 <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat
                 </button>
-                <button id="nav-manage-users-btn" onclick="openManageUsersTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-user-shield"></i> Kelola User & PIN
+                <button id="nav-manage-users-btn" onclick="openManageUsersTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all flex items-center gap-2 whitespace-nowrap relative">
+                    <i class="fa-solid fa-user-shield"></i> Kelola User & PIN <span id="approval-badge-count" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
                 <button id="nav-bendahara-btn" onclick="openBendaharaTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 transition-all flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-coins"></i> Menu Bendahara
-                </button>
-                <!-- Tombol Approval Notif Badge (Hanya muncul jika admin unlocked) -->
-                <button id="nav-approval-btn" onclick="openApprovalTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-all flex items-center gap-2 whitespace-nowrap relative">
-                    <i class="fa-solid fa-clipboard-check"></i> Approval Admin <span id="approval-badge-count" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
             </div>
         </div>
@@ -218,7 +214,6 @@
                             <button onclick="switchTab('kas')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
                                 <i class="fa-solid fa-wallet"></i> KAS
                             </button>
-                            <!-- Tombol Kelola/Tambah Tugas (Disembunyikan sampai admin unlock) -->
                             <div id="admin-dashboard-tugas-controls" class="hidden">
                                 <button onclick="tryOpenEditJadwalModal()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm">
                                     <i class="fa-solid fa-plus"></i> Kelola/Tambah Tugas
@@ -252,7 +247,6 @@
                     <h2 class="text-xl font-bold text-slate-900">Jadwal Piket Mingguan</h2>
                     <p class="text-sm text-slate-500">Atur, tambah, atau kurangi penanggung jawab area kebersihan setiap hari.</p>
                 </div>
-                <!-- Tombol Atur Ulang Jadwal (Disembunyikan sampai admin unlock) -->
                 <button id="btn-edit-jadwal-main" onclick="tryOpenEditJadwalModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
                     <i class="fa-solid fa-pen-to-square"></i> Atur Ulang Jadwal (Admin)
                 </button>
@@ -267,7 +261,6 @@
                     <h2 class="text-xl font-bold text-slate-900">Daftar Penghuni Kosan</h2>
                     <p class="text-sm text-slate-500">Kelola data penghuni aktif kosan dan tambahkan motivasi personal Anda.</p>
                 </div>
-                <!-- Tombol Tambah Penghuni (Disembunyikan sampai admin unlock) -->
                 <button id="btn-tambah-penghuni-main" onclick="tryOpenPenghuniModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
                     <i class="fa-solid fa-user-plus"></i> Tambah Penghuni (Admin)
                 </button>
@@ -282,7 +275,6 @@
                     <h2 class="text-xl font-bold text-slate-900">Kelola Daftar Tugas Kebersihan</h2>
                     <p class="text-sm text-slate-500">Tambah, ubah, atau hapus jenis area tugas piket kosan.</p>
                 </div>
-                <!-- Tombol Tambah Tugas Baru (Disembunyikan sampai admin unlock) -->
                 <button id="btn-tambah-tugas-main" onclick="tryOpenTugasModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
                     <i class="fa-solid fa-plus-circle"></i> Tambah Tugas Baru (Admin)
                 </button>
@@ -311,7 +303,7 @@
             <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-wallet text-amber-500 mr-2"></i> Kas Kosan - Minggu Ini</h2>
-                    <p class="text-sm text-slate-500">Catatan pembayaran kas mingguan penghuni dan lihat rekap pemasukan/pengeluaran (Kelipatan Rp 1.000).</p>
+                    <p class="text-sm text-slate-500">Catatan pembayaran kas mingguan penghuni dan lihat rekap pemasukan/pengeluaran.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="openCatatanKasModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
@@ -378,18 +370,43 @@
             </div>
         </section>
 
-        <!-- TAB KHUSUS ADMIN: KELOLA USER & PIN -->
-        <section id="tab-manage-users" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900">Kelola Akun User & PIN Login</h2>
-                    <p class="text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
+        <!-- TAB KELOLA USER & PIN (DIGABUNG DENGAN PANEL APPROVAL ADMIN) -->
+        <section id="tab-manage-users" class="tab-content hidden space-y-8">
+            <!-- Sub-Bagian 1: Panel Approval Admin -->
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-indigo-600 mr-2"></i> Panel Approval Admin</h2>
+                        <p class="text-sm text-slate-500">Daftar permintaan perubahan saldo/pengeluaran yang menunggu persetujuan (Approve/Reject) dari Admin.</p>
+                    </div>
                 </div>
-                <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Semua PIN User
-                </button>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="p-3">Waktu Permintaan</th>
+                                <th class="p-3">Diajukan Oleh</th>
+                                <th class="p-3">Tipe / Keterangan</th>
+                                <th class="p-3">Nominal / Detail</th>
+                                <th class="p-3">Aksi Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approval-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden p-6">
+
+            <!-- Sub-Bagian 2: Kelola Akun User & PIN -->
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-user-shield text-amber-700 mr-2"></i> Kelola Akun User & PIN Login</h2>
+                        <p class="text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
+                    </div>
+                    <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Semua PIN User
+                    </button>
+                </div>
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -428,8 +445,8 @@
                     <h3 class="font-bold text-slate-900 text-base">Atur Nominal Kas Minggu Ini</h3>
                     <form onsubmit="saveNominalKas(event)" class="space-y-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Kas (Kelipatan Rp 1.000)</label>
-                            <input type="number" id="input-nominal-kas" step="1000" min="1000" required placeholder="10000" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Kas</label>
+                            <input type="number" id="input-nominal-kas" min="0" required placeholder="10000" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow">Simpan Nominal Kas</button>
                     </form>
@@ -445,32 +462,6 @@
                         <button onclick="openEditSaldoModal()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition">Edit Saldo Kas</button>
                         <button onclick="switchTab('kas')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition">Buka Tabel Kas</button>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB APPROVAL ADMIN -->
-        <section id="tab-approval" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-indigo-600 mr-2"></i> Panel Approval Admin</h2>
-                    <p class="text-sm text-slate-500">Daftar permintaan perubahan saldo/pengeluaran yang menunggu persetujuan (Approve/Reject) dari Admin.</p>
-                </div>
-            </div>
-            <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden p-6">
-                <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="p-3">Waktu Permintaan</th>
-                                <th class="p-3">Diajukan Oleh</th>
-                                <th class="p-3">Tipe / Keterangan</th>
-                                <th class="p-3">Nominal / Detail</th>
-                                <th class="p-3">Aksi Admin</th>
-                            </tr>
-                        </thead>
-                        <tbody id="approval-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
-                    </table>
                 </div>
             </div>
         </section>
@@ -565,6 +556,24 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP KHUSUS TERLEWAT PIKET -->
+    <div id="modal-terlewat-piket" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 border-t-8 border-rose-600 text-center relative">
+            <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-inner">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-slate-900 text-xl">Pemberitahuan Denda Piket</h3>
+                <p id="terlewat-piket-pesan" class="text-sm font-semibold text-rose-700 bg-rose-50 p-3.5 rounded-2xl border border-rose-200 mt-3 leading-relaxed">
+                    Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!
+                </p>
+            </div>
+            <button onclick="closeModal('modal-terlewat-piket')" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-sm shadow-lg transition">
+                Saya Mengerti & Siap Bayar Denda
+            </button>
         </div>
     </div>
 
@@ -773,8 +782,8 @@
                     <input type="text" id="pengeluaran-ket" required placeholder="Contoh: Beli Galon & Sabun Cuci" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Pengeluaran (Kelipatan Rp 1.000)</label>
-                    <input type="number" id="pengeluaran-nominal" step="1000" min="1000" required placeholder="15000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Pengeluaran</label>
+                    <input type="number" id="pengeluaran-nominal" min="1" required placeholder="15000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                     <p class="text-[11px] text-amber-600 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Memerlukan persetujuan (Approval) Admin sebelum masuk ke saldo.</p>
                 </div>
                 <div class="pt-2 flex gap-3">
@@ -785,7 +794,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT SALDO KAS (DENGAN APPROVAL) -->
+    <!-- MODAL EDIT SALDO KAS (DENGAN APPROVAL & OTOMATIS TAMBAH/KURANG/NOL) -->
     <div id="modal-edit-saldo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -795,12 +804,12 @@
             <form onsubmit="handleEditSaldoSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan Penyesuaian Saldo</label>
-                    <input type="text" id="edit-saldo-ket" required placeholder="Contoh: Saldo awal kas / Penyesuaian fisik" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    <input type="text" id="edit-saldo-ket" required placeholder="Contoh: Penyesuaian fisik / Reset saldo kosong" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Saldo Kas Sekarang (Kelipatan Rp 1.000)</label>
-                    <input type="number" id="edit-saldo-nominal" step="1000" min="0" required placeholder="50000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                    <p class="text-[11px] text-amber-600 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Memerlukan persetujuan (Approval) Admin sebelum diterapkan.</p>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Saldo Kas Sekarang (Bisa 0 / Berkurang / Bertambah)</label>
+                    <input type="number" id="edit-saldo-nominal" min="0" required placeholder="0 atau 50000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    <p class="text-[11px] text-amber-600 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Jika nilai lebih kecil dari saldo awal akan otomatis dikurangi (bisa 0), jika lebih besar akan ditambahkan.</p>
                 </div>
                 <div class="pt-2 flex gap-3">
                     <button type="button" onclick="closeModal('modal-edit-saldo')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm">Batal</button>
@@ -1425,10 +1434,45 @@
                 if (found) {
                     loggedInUser = found;
                     updateUserSessionUI();
+                    checkMissedPiketForUser(found);
                     return;
                 }
             }
             openUserLoginModal();
+        }
+
+        function checkMissedPiketForUser(userObj) {
+            if (!userObj) return;
+            const nowWib = getWIBDate();
+            const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            
+            let missedFound = false;
+            for (let i = 1; i <= 3; i++) {
+                const pastDate = new Date(nowWib);
+                pastDate.setDate(pastDate.getDate() - i);
+                const pastDayName = daysOfWeek[pastDate.getDay()];
+                const pastDuties = jadwalPiket[pastDayName] || [];
+                const userWasAssigned = pastDuties.some(d => d.penghuniId === userObj.id);
+
+                if (userWasAssigned) {
+                    const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
+                    const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
+                    if (!hasAbsen) {
+                        missedFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (missedFound) {
+                const storageKey = `dinar_missed_popup_${userObj.id}_${nowWib.toDateString()}`;
+                if (!localStorage.getItem(storageKey)) {
+                    localStorage.setItem(storageKey, 'true');
+                    setTimeout(() => {
+                        openModal('modal-terlewat-piket');
+                    }, 800);
+                }
+            }
         }
 
         function openUserLoginModal() {
@@ -1467,6 +1511,7 @@
                     updateUserSessionUI();
                     renderDashboard();
                     renderTugasTambahan();
+                    checkMissedPiketForUser(userObj);
                     showToast(`Berhasil login sebagai ${userObj.nama}!`);
                 } else {
                     document.getElementById('login-pin-error').classList.remove('hidden');
@@ -1576,11 +1621,6 @@
             switchTab('bendahara');
         }
 
-        function openApprovalTab() {
-            if (!isAdminLoggedIn) return;
-            switchTab('approval');
-        }
-
         function renderManageUsersTable() {
             const tbody = document.getElementById('manage-users-table-body');
             if (!tbody) return;
@@ -1626,12 +1666,12 @@
             showToast("Semua PIN user berhasil disimpan ke data admin!");
         }
 
-        // --- KAS KOSAN & BENDAHARA LOGIC ---
+        // --- KAS KOSAN & BENDAHARA LOGIC (Mendukung Penambahan & Pengurangan Saldo Otomatis) ---
         function calculateTotalSaldoKas() {
             let totalPemasukan = 0;
             penghuniList.forEach(p => {
                 if (kasData.pembayaran && kasData.pembayaran[p.id]) {
-                    totalPemasukan += Number(kasData.nominal || 10000);
+                    totalPemasukan += Number(kasData.nominal || 0);
                 }
             });
             if (kasData.pemasukanLogs) {
@@ -1651,7 +1691,7 @@
             const saldoDisplay = document.getElementById('dashboard-saldo-kas-display');
             const bendaharaSaldo = document.getElementById('bendahara-total-saldo-display');
             
-            if (nominalBadge) nominalBadge.innerText = `Rp ${Number(kasData.nominal || 10000).toLocaleString('id-ID')}`;
+            if (nominalBadge) nominalBadge.innerText = `Rp ${Number(kasData.nominal || 0).toLocaleString('id-ID')}`;
             const saldo = calculateTotalSaldoKas();
             if (saldoDisplay) saldoDisplay.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
             if (bendaharaSaldo) bendaharaSaldo.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
@@ -1691,15 +1731,17 @@
             kasData.pembayaran[penghuniId] = status;
 
             const p = penghuniList.find(x => x.id === penghuniId);
+            const nominalKas = Number(kasData.nominal || 0);
+
             if (status && p) {
-                triggerKasPaymentPopup(p.nama);
+                triggerKasPaymentPopup(p.nama, nominalKas);
                 if (!kasData.pemasukanLogs) kasData.pemasukanLogs = [];
                 const now = new Date();
                 kasData.pemasukanLogs.unshift({
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                     nama: p.nama,
                     keterangan: 'Pembayaran Kas Minggu Ini',
-                    jumlah: Number(kasData.nominal || 10000)
+                    jumlah: nominalKas
                 });
             } else if (!status && p) {
                 if (kasData.pemasukanLogs) {
@@ -1709,10 +1751,10 @@
 
             saveData();
             renderKasTable();
-            showToast(status ? `Kas ${p ? p.nama : ''} dicatat lunas!` : "Status kas dibatalkan.");
+            showToast(status ? `Kas ${p ? p.nama : ''} dicatat lunas (+Rp ${nominalKas.toLocaleString('id-ID')})!` : `Status kas dibatalkan (-Rp ${nominalKas.toLocaleString('id-ID')}).`);
         }
 
-        function triggerKasPaymentPopup(namaPenghuni) {
+        function triggerKasPaymentPopup(namaPenghuni, nominal) {
             const container = document.getElementById('kas-payment-popup-container');
             if (!container) return;
 
@@ -1724,7 +1766,7 @@
                 <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-wallet"></i></div>
                 <div class="flex-1 text-xs">
                     <strong class="block text-teal-300 font-bold">Informasi Kas Masuk</strong>
-                    <span><strong>${namaPenghuni}</strong> baru saja membayar kas minggu ini! 🎉</span>
+                    <span><strong>${namaPenghuni}</strong> membayar kas Rp ${Number(nominal).toLocaleString('id-ID')}! 🎉</span>
                 </div>
                 <button onclick="document.getElementById('${popupId}').remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             `;
@@ -1743,13 +1785,13 @@
         function saveNominalKas(e) {
             e.preventDefault();
             const val = parseInt(document.getElementById('input-nominal-kas').value);
-            if (val > 0 && val % 1000 === 0) {
+            if (!isNaN(val) && val >= 0) {
                 kasData.nominal = val;
                 saveData();
                 renderKasTable();
                 showToast("Nominal kas berhasil diperbarui!");
             } else {
-                showToast("Nominal kas harus kelipatan 1000!");
+                showToast("Nominal kas tidak valid!");
             }
         }
 
@@ -1766,8 +1808,8 @@
             const ket = document.getElementById('pengeluaran-ket').value;
             const nominal = parseInt(document.getElementById('pengeluaran-nominal').value);
 
-            if (nominal % 1000 !== 0) {
-                showToast("Nominal pengeluaran harus kelipatan 1000!");
+            if (isNaN(nominal) || nominal <= 0) {
+                showToast("Nominal pengeluaran tidak valid!");
                 return;
             }
 
@@ -1819,8 +1861,8 @@
             const targetNominal = parseInt(document.getElementById('edit-saldo-nominal').value);
             const ket = document.getElementById('edit-saldo-ket').value;
 
-            if (targetNominal < 0 || targetNominal % 1000 !== 0) {
-                showToast("Nominal saldo harus kelipatan Rp 1.000 dan tidak boleh negatif!");
+            if (isNaN(targetNominal) || targetNominal < 0) {
+                showToast("Nominal saldo tidak boleh negatif!");
                 return;
             }
 
@@ -1828,7 +1870,7 @@
                 applySaldoAdjustment(targetNominal, ket, 'Admin');
                 closeModal('modal-edit-saldo');
                 renderKasTable();
-                showToast("Saldo kas berhasil disesuaikan secara akurat!");
+                showToast("Saldo kas berhasil disesuaikan secara otomatis (tambah/kurang/nol)!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
                 const now = new Date();
@@ -1851,7 +1893,7 @@
             let basePemasukan = 0;
             penghuniList.forEach(p => {
                 if (kasData.pembayaran && kasData.pembayaran[p.id]) {
-                    basePemasukan += Number(kasData.nominal || 10000);
+                    basePemasukan += Number(kasData.nominal || 0);
                 }
             });
             if (kasData.pemasukanLogs) {
@@ -1864,7 +1906,9 @@
                 kasData.pengeluaranLogs.forEach(x => { basePengeluaran += Number(x.nominal || 0); });
             }
 
-            const requiredPenyesuaian = targetNominal - (basePemasukan - basePengeluaran);
+            const currentNetWithoutAdjustment = basePemasukan - basePengeluaran;
+            const requiredPenyesuaian = targetNominal - currentNetWithoutAdjustment;
+            
             kasData.penyesuaianSaldo = requiredPenyesuaian;
 
             if (!kasData.pemasukanLogs) kasData.pemasukanLogs = [];
@@ -1878,22 +1922,17 @@
             saveData();
         }
 
-        // --- APPROVAL ADMIN LOGIC ---
+        // --- APPROVAL ADMIN LOGIC (Dipindah ke Kelola User & PIN) ---
         function renderApprovalBadge() {
             const badge = document.getElementById('approval-badge-count');
-            const navBtn = document.getElementById('nav-approval-btn');
-            if (!badge || !navBtn) return;
-
             const count = (kasData.pendingApprovals || []).length;
-            if (isAdminLoggedIn && count > 0) {
-                badge.innerText = count;
-                badge.classList.remove('hidden');
-                navBtn.classList.remove('hidden');
-            } else if (isAdminLoggedIn) {
-                badge.classList.add('hidden');
-                navBtn.classList.remove('hidden');
-            } else {
-                navBtn.classList.add('hidden');
+            if (badge) {
+                if (isAdminLoggedIn && count > 0) {
+                    badge.innerText = count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
             }
             renderApprovalTable();
         }
@@ -2116,7 +2155,6 @@
             const navBendaharaBtn = document.getElementById('nav-bendahara-btn');
             const adminResetMingguan = document.getElementById('admin-reset-mingguan-container');
             
-            // Tombol-tombol atur jadwal, tambah penghuni, tambah tugas yang disembunyikan sampai admin unlock
             const btnEditJadwalMain = document.getElementById('btn-edit-jadwal-main');
             const btnTambahPenghuniMain = document.getElementById('btn-tambah-penghuni-main');
             const btnTambahTugasMain = document.getElementById('btn-tambah-tugas-main');
@@ -2133,7 +2171,6 @@
                     adminTambahanControls?.classList.remove('hidden');
                     navManageUsersBtn?.classList.remove('hidden');
                     
-                    // Munculkan tombol atur jadwal, tambah penghuni, tambah tugas saat admin unlock
                     btnEditJadwalMain?.classList.remove('hidden');
                     btnEditJadwalMain?.classList.add('flex');
                     btnTambahPenghuniMain?.classList.remove('hidden');
@@ -2159,7 +2196,6 @@
                 navManageUsersBtn?.classList.add('hidden');
                 navBendaharaBtn?.classList.add('hidden');
                 
-                // Sembunyikan kembali tombol-tombol tersebut jika terkunci
                 btnEditJadwalMain?.classList.add('hidden');
                 btnEditJadwalMain?.classList.remove('flex');
                 btnTambahPenghuniMain?.classList.add('hidden');
