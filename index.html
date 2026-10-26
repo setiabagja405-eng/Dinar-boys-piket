@@ -794,26 +794,33 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT SALDO KAS (DENGAN APPROVAL & OTOMATIS TAMBAH/KURANG/NOL) -->
+    <!-- MODAL EDIT SALDO KAS (DENGAN PILIHAN TAMBAH / KURANG / NOL LANGSUNG) -->
     <div id="modal-edit-saldo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-wallet text-amber-500"></i> Edit Saldo Uang Kas</h3>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-wallet text-amber-500"></i> Penyesuaian Saldo Kas</h3>
                 <button onclick="closeModal('modal-edit-saldo')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <form onsubmit="handleEditSaldoSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan Penyesuaian Saldo</label>
-                    <input type="text" id="edit-saldo-ket" required placeholder="Contoh: Penyesuaian fisik / Reset saldo kosong" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Jenis Penyesuaian</label>
+                    <select id="edit-saldo-tipe" onchange="onSaldoTipeChange(this.value)" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500 font-semibold">
+                        <option value="kurang">Kurangi Saldo (-) Tunai</option>
+                        <option value="tambah">Tambahkan Saldo (+) Tunai</option>
+                        <option value="set_nol">Kosongkan Saldo Menjadi Rp 0</option>
+                    </select>
+                </div>
+                <div id="container-nominal-edit">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Penyesuaian</label>
+                    <input type="number" id="edit-saldo-nominal" min="0" required placeholder="Contoh: 15000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Target Saldo Kas Sekarang (Bisa 0 / Berkurang / Bertambah)</label>
-                    <input type="number" id="edit-saldo-nominal" min="0" required placeholder="0 atau 50000" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                    <p class="text-[11px] text-amber-600 mt-1 font-medium"><i class="fa-solid fa-circle-info mr-1"></i> Jika nilai lebih kecil dari saldo awal akan otomatis dikurangi (bisa 0), jika lebih besar akan ditambahkan.</p>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan Penyesuaian</label>
+                    <input type="text" id="edit-saldo-ket" required placeholder="Contoh: Koreksi selisih uang kas fisik" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div class="pt-2 flex gap-3">
                     <button type="button" onclick="closeModal('modal-edit-saldo')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold text-sm shadow-md">Ajukan Persetujuan</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan / Ajukan</button>
                 </div>
             </form>
         </div>
@@ -1666,7 +1673,7 @@
             showToast("Semua PIN user berhasil disimpan ke data admin!");
         }
 
-        // --- KAS KOSAN & BENDAHARA LOGIC (Mendukung Penambahan & Pengurangan Saldo Otomatis) ---
+        // --- KAS KOSAN & BENDAHARA LOGIC (Mendukung Kurangi Saldo Langsung, Tambah, & Set 0) ---
         function calculateTotalSaldoKas() {
             let totalPemasukan = 0;
             penghuniList.forEach(p => {
@@ -1849,28 +1856,53 @@
                 showToast("Akses ditolak! Khusus Admin dan Bendahara.");
                 return;
             }
-            const currentSaldo = calculateTotalSaldoKas();
-            document.getElementById('edit-saldo-ket').value = 'Penyesuaian Saldo Kas Fisik';
-            document.getElementById('edit-saldo-nominal').value = currentSaldo;
+            document.getElementById('edit-saldo-tipe').value = 'kurang';
+            onSaldoTipeChange('kurang');
+            document.getElementById('edit-saldo-ket').value = '';
             openModal('modal-edit-saldo');
+        }
+
+        function onSaldoTipeChange(val) {
+            const containerNominal = document.getElementById('container-nominal-edit');
+            const inputNominal = document.getElementById('edit-saldo-nominal');
+            if (val === 'set_nol') {
+                containerNominal.classList.add('hidden');
+                inputNominal.required = false;
+                inputNominal.value = '0';
+            } else {
+                containerNominal.classList.remove('hidden');
+                inputNominal.required = true;
+                inputNominal.value = '';
+            }
         }
 
         function handleEditSaldoSubmit(e) {
             e.preventDefault();
             if (!isBendaharaLoggedIn && !isAdminLoggedIn) return;
-            const targetNominal = parseInt(document.getElementById('edit-saldo-nominal').value);
+            const nominalInput = parseInt(document.getElementById('edit-saldo-nominal').value);
+            const jenisAdjustment = document.getElementById('edit-saldo-tipe').value; // 'tambah', 'kurang', 'set_nol'
             const ket = document.getElementById('edit-saldo-ket').value;
 
-            if (isNaN(targetNominal) || targetNominal < 0) {
-                showToast("Nominal saldo tidak boleh negatif!");
+            if (jenisAdjustment !== 'set_nol' && (isNaN(nominalInput) || nominalInput < 0)) {
+                showToast("Nominal tidak valid!");
                 return;
             }
 
+            let finalAdjustmentValue = 0;
+            if (jenisAdjustment === 'tambah') {
+                finalAdjustmentValue = nominalInput;
+            } else if (jenisAdjustment === 'kurang') {
+                finalAdjustmentValue = -nominalInput;
+            } else if (jenisAdjustment === 'set_nol') {
+                const currentSaldoNow = calculateTotalSaldoKas();
+                finalAdjustmentValue = -currentSaldoNow;
+            }
+
             if (isAdminLoggedIn) {
-                applySaldoAdjustment(targetNominal, ket, 'Admin');
+                applyDirectSaldoAdjustment(finalAdjustmentValue, ket, 'Admin');
                 closeModal('modal-edit-saldo');
                 renderKasTable();
-                showToast("Saldo kas berhasil disesuaikan secara otomatis (tambah/kurang/nol)!");
+                showToast("Saldo kas berhasil disesuaikan secara langsung!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
                 const now = new Date();
@@ -1880,49 +1912,30 @@
                     diajukanOleh: 'Bendahara',
                     tipe: 'EDIT_SALDO',
                     keterangan: ket,
-                    nominal: targetNominal
+                    nominal: finalAdjustmentValue
                 });
                 saveData();
                 closeModal('modal-edit-saldo');
                 renderApprovalBadge();
-                showToast("Pengajuan edit saldo dikirim ke Admin untuk persetujuan!");
+                showToast("Pengajuan penyesuaian saldo dikirim ke Admin untuk persetujuan!");
             }
         }
 
-        function applySaldoAdjustment(targetNominal, ket, authorName) {
-            let basePemasukan = 0;
-            penghuniList.forEach(p => {
-                if (kasData.pembayaran && kasData.pembayaran[p.id]) {
-                    basePemasukan += Number(kasData.nominal || 0);
-                }
-            });
-            if (kasData.pemasukanLogs) {
-                kasData.pemasukanLogs.forEach(l => { 
-                    if (!l.keterangan.startsWith('[Edit Saldo]')) basePemasukan += Number(l.jumlah || 0); 
-                });
-            }
-            let basePengeluaran = 0;
-            if (kasData.pengeluaranLogs) {
-                kasData.pengeluaranLogs.forEach(x => { basePengeluaran += Number(x.nominal || 0); });
-            }
-
-            const currentNetWithoutAdjustment = basePemasukan - basePengeluaran;
-            const requiredPenyesuaian = targetNominal - currentNetWithoutAdjustment;
-            
-            kasData.penyesuaianSaldo = requiredPenyesuaian;
+        function applyDirectSaldoAdjustment(adjustmentValue, ket, authorName) {
+            kasData.penyesuaianSaldo = Number(kasData.penyesuaianSaldo || 0) + Number(adjustmentValue);
 
             if (!kasData.pemasukanLogs) kasData.pemasukanLogs = [];
             const now = new Date();
             kasData.pemasukanLogs.unshift({
                 waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                 nama: authorName,
-                keterangan: `[Edit Saldo] ${ket}`,
-                jumlah: requiredPenyesuaian
+                keterangan: `[Penyesuaian Saldo] ${ket}`,
+                jumlah: Number(adjustmentValue)
             });
             saveData();
         }
 
-        // --- APPROVAL ADMIN LOGIC (Dipindah ke Kelola User & PIN) ---
+        // --- APPROVAL ADMIN LOGIC ---
         function renderApprovalBadge() {
             const badge = document.getElementById('approval-badge-count');
             const count = (kasData.pendingApprovals || []).length;
@@ -1957,7 +1970,7 @@
                     <td class="p-3 text-slate-600">${item.waktu}</td>
                     <td class="p-3 font-bold text-slate-900">${item.diajukanOleh}</td>
                     <td class="p-3">${tipeLabel}<br><span class="text-xs text-slate-500">${item.keterangan}</span></td>
-                    <td class="p-3 font-extrabold text-brand-700">Rp ${Number(item.nominal).toLocaleString('id-ID')}</td>
+                    <td class="p-3 font-extrabold ${Number(item.nominal) < 0 ? 'text-rose-600' : 'text-brand-700'}">${Number(item.nominal) < 0 ? `-Rp ${Math.abs(item.nominal).toLocaleString('id-ID')}` : `Rp ${Number(item.nominal).toLocaleString('id-ID')}`}</td>
                     <td class="p-3 flex gap-2">
                         <button onclick="approveRequest('${item.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow">Approve</button>
                         <button onclick="rejectRequest('${item.id}')" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200">Reject</button>
@@ -1982,13 +1995,14 @@
                     nominal: req.nominal
                 });
             } else if (req.tipe === 'EDIT_SALDO') {
-                applySaldoAdjustment(req.nominal, req.keterangan, req.diajukanOleh);
+                applyDirectSaldoAdjustment(req.nominal, req.keterangan, req.diajukanOleh);
             }
 
             kasData.pendingApprovals = kasData.pendingApprovals.filter(x => x.id !== id);
             saveData();
             renderKasTable();
-            showToast("Pengajuan berhasil disetujui (Approved) dan diterapkan ke saldo!");
+            renderApprovalBadge();
+            showToast("Pengajuan berhasil disetujui (Approved) dan saldo langsung diperbarui!");
         }
 
         function rejectRequest(id) {
@@ -1996,6 +2010,7 @@
             kasData.pendingApprovals = (kasData.pendingApprovals || []).filter(x => x.id !== id);
             saveData();
             renderKasTable();
+            renderApprovalBadge();
             showToast("Pengajuan ditolak (Rejected).");
         }
 
