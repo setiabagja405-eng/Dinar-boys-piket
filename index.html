@@ -85,6 +85,14 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <!-- Sesi Info User Login -->
+                    <div id="user-session-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-semibold text-slate-700">
+                        <i class="fa-solid fa-user-check text-brand-600"></i>
+                        <span id="current-logged-user-name">-</span>
+                        <button onclick="openGantiPinModal()" title="Ganti PIN" class="text-brand-600 hover:text-brand-800 ml-1" id="btn-open-ganti-pin"><i class="fa-solid fa-key"></i></button>
+                        <button onclick="logoutUserSession()" title="Logout Akun" class="text-rose-500 hover:text-rose-700 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+
                     <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-semibold transition">
                         <i class="fa-brands fa-google-drive text-blue-600"></i> Drive Foto Backup
                     </a>
@@ -115,6 +123,10 @@
                 <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Absen
                 </button>
+                <!-- Tombol Menu User di Navbar Admin Unlocked -->
+                <button id="nav-manage-users-btn" onclick="openManageUsersTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                    <i class="fa-solid fa-user-shield"></i> Kelola User & PIN
+                </button>
             </div>
         </div>
     </header>
@@ -130,8 +142,13 @@
     </div>
 
     <div class="sm:hidden bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between gap-2 text-xs">
-        <a id="btn-gdrive-mob" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="flex-1 text-center py-1.5 bg-white rounded border border-slate-200 text-blue-700 font-semibold shadow-sm">
-            <i class="fa-brands fa-google-drive mr-1"></i> Drive Foto Backup
+        <div id="user-session-badge-mob" class="flex items-center gap-1 font-bold text-slate-700">
+            <i class="fa-solid fa-user text-brand-600"></i> <span id="current-logged-user-name-mob">-</span>
+            <button onclick="openGantiPinModal()" class="text-brand-600 ml-1"><i class="fa-solid fa-key"></i></button>
+            <button onclick="logoutUserSession()" class="text-rose-500 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+        <a id="btn-gdrive-mob" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="text-center py-1.5 px-2 bg-white rounded border border-slate-200 text-blue-700 font-semibold shadow-sm">
+            <i class="fa-brands fa-google-drive mr-1"></i> Drive
         </a>
     </div>
 
@@ -150,16 +167,19 @@
                             <i class="fa-regular fa-calendar text-teal-200"></i>
                             <span id="current-date-str">Hari Ini</span>
                         </div>
-                        <h2 class="text-2xl md:text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
-                        <p class="text-teal-100 text-sm mt-1">Tong hilap foto nya!.</p>
+                        <!-- Admin bisa ubah kata-kata judul dashboard ini -->
+                        <h2 id="dashboard-main-title" class="text-2xl md:text-3xl font-extrabold cursor-pointer" onclick="tryOpenAnnouncementModal()">Siapa Piket Hari Ini?</h2>
+                        <p id="dashboard-main-subtitle" class="text-teal-100 text-sm mt-1 cursor-pointer" onclick="tryOpenAnnouncementModal()">Tong hilap foto nya!.</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <button id="btn-manage-announcement" onclick="tryOpenAnnouncementModal()" class="hidden px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-bullhorn text-sm"></i> Kelola Peringatan & Webhook
+                            <i class="fa-solid fa-bullhorn text-sm"></i> Kelola Teks & Peringatan
                         </button>
-                        <button onclick="openAbsenModal()" class="w-full md:w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-camera text-base"></i> BUKA KAMERA
-                        </button>
+                        
+                        <!-- Kontainer Tombol Kamera Pintar Sesuai Status Login User -->
+                        <div id="camera-action-container" class="w-full md:w-auto">
+                            <!-- Dirender dinamis oleh JS apakah memunculkan Tombol Kamera atau Informasi Sudah Piket -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -288,6 +308,34 @@
             </div>
         </section>
 
+        <!-- TAB KHUSUS ADMIN: KELOLA USER & PIN -->
+        <section id="tab-manage-users" class="tab-content hidden space-y-6">
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Kelola Akun User & PIN Login</h2>
+                    <p class="text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
+                </div>
+                <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Semua PIN User
+                </button>
+            </div>
+            <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden p-6">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="p-3">Nama Penghuni</th>
+                                <th class="p-3">Kamar</th>
+                                <th class="p-3">PIN Akun Login (6 Digit)</th>
+                                <th class="p-3">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-users-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Bottom Mobile Nav -->
@@ -312,6 +360,92 @@
         </button>
     </nav>
 
+    <!-- MODAL LOGIN PENGHUNI (HANYA BULATAN DAN AUTO-INPUT PIN TANPA KLIK APAPUN) -->
+    <div id="modal-user-login" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-5 border-t-8 border-brand-600 text-center">
+            <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center mx-auto text-xl font-bold">
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 text-lg">Login Akun Penghuni</h3>
+                <p class="text-xs text-slate-500">Pilih nama Anda dan ketik PIN (Default: 123456).</p>
+            </div>
+            
+            <form onsubmit="handleUserLoginSubmit(event)" class="space-y-4">
+                <div class="text-left">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Nama Anda</label>
+                    <select id="login-select-user" required onchange="onLoginUserChange()" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <!-- Render dari JS penghuniList -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-2">PIN Akun (6 Digit Angka)</label>
+                    <!-- Input transparan disembunyikan secara visual tapi tetap aktif menangkap ketikan keyboard/HP -->
+                    <div class="relative">
+                        <input type="password" id="login-input-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" oninput="syncPinDots('login')">
+                        
+                        <!-- 6 Bulatan Display yang diklik langsung memfokuskan input tersembunyi di atasnya -->
+                        <div class="flex justify-center gap-3 cursor-pointer py-1" onclick="document.getElementById('login-input-pin').focus()">
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="0"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="1"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="2"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="3"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="4"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="5"></div>
+                        </div>
+                    </div>
+                    <p id="login-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded border border-rose-200 mt-2">PIN salah! PIN awal semua akun adalah 123456.</p>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-sm shadow-md transition">Masuk ke Akun Saya</button>
+                
+                <!-- Menu Ubah PIN di Bawah Login -->
+                <div class="pt-2 border-t text-center">
+                    <button type="button" onclick="openGantiPinFromLogin()" class="text-xs font-bold text-brand-600 hover:text-brand-800 underline flex items-center justify-center gap-1 mx-auto">
+                        <i class="fa-solid fa-key"></i> Lupa PIN / Ubah PIN Akun Ini?
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GANTI PIN USER -->
+    <div id="modal-ganti-pin" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-key text-brand-600 mr-1"></i> Ganti PIN Akun</h3>
+                <button onclick="closeModal('modal-ganti-pin')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveNewUserPin(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Nama Penghuni</label>
+                    <input type="text" id="ganti-pin-nama-display" disabled class="w-full px-3 py-2 border bg-slate-100 rounded-xl text-xs font-bold text-slate-700">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Masukkan PIN Lama</label>
+                    <div class="relative">
+                        <input type="password" id="ganti-pin-lama" inputmode="numeric" pattern="[0-9]*" maxlength="6" required placeholder="PIN lama Anda" class="w-full px-3 py-2 pr-10 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500 font-mono tracking-widest text-center" oninput="syncPinDots('ganti')">
+                        <button type="button" onclick="togglePasswordVisibility('ganti-pin-lama', 'eye-icon-pin-lama')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+                            <i id="eye-icon-pin-lama" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1">Masukkan PIN Baru (6 Digit)</label>
+                    <div class="relative">
+                        <input type="password" id="ganti-pin-baru" inputmode="numeric" pattern="[0-9]*" maxlength="6" required placeholder="PIN baru 6 digit" class="w-full px-3 py-2 pr-10 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500 font-mono tracking-widest text-center">
+                        <button type="button" onclick="togglePasswordVisibility('ganti-pin-baru', 'eye-icon-pin-baru')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 text-xs">
+                            <i id="eye-icon-pin-baru" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                    <p id="ganti-pin-error" class="hidden text-[11px] text-rose-600 font-bold mt-1 bg-rose-50 p-2 rounded border border-rose-200">PIN lama salah! PIN tidak terubah.</p>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-brand-600 text-white rounded-xl font-bold text-xs shadow mt-2">Simpan & Ubah PIN</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL KAMERA -->
     <div id="modal-absen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
@@ -326,8 +460,9 @@
 
             <form id="form-absen" onsubmit="handleAbsenSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Petugas Piket</label>
-                    <select id="absen-select-penghuni" required onchange="onAbsenPenghuniChange()" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></select>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Petugas Piket (Akun Anda)</label>
+                    <input type="text" id="absen-penghuni-display" disabled class="w-full px-3.5 py-2.5 border bg-slate-100 rounded-xl text-sm font-bold text-brand-700">
+                    <input type="hidden" id="absen-select-penghuni">
                 </div>
 
                 <div>
@@ -344,7 +479,7 @@
                         <div id="gps-lock-overlay" class="absolute inset-0 bg-slate-950/90 text-white flex flex-col items-center justify-center p-4 text-center z-20 space-y-2">
                             <i class="fa-solid fa-location-crosshairs text-3xl text-amber-400 animate-pulse"></i>
                             <h4 class="text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
-                            <p id="gps-lock-subtext" class="text-xs text-slate-300 max-w-xs leading-snug">Mengambil koordinat dan wilayah GPS (Kp/Rt/Rw/Desa/Kec/Kab/Prov)...</p>
+                            <p id="gps-lock-subtext" class="text-xs text-slate-300 max-w-xs leading-snug">Mengambil koordinat dan wilayah GPS...</p>
                             <div class="flex flex-col gap-2 mt-2 w-full max-w-xs">
                                 <button type="button" onclick="getGeolocation()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition">
                                     <i class="fa-solid fa-location-arrow mr-1"></i> Izinkan & Aktifkan GPS Sekarang
@@ -384,7 +519,7 @@
         </div>
     </div>
 
-    <!-- MODAL KAMERA / ABSEN TUGAS TAMBAHAN (DENGAN GPS) -->
+    <!-- MODAL KAMERA / ABSEN TUGAS TAMBAHAN -->
     <div id="modal-absen-tambahan" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
@@ -453,7 +588,12 @@
                 <p class="text-xs text-slate-500">Masukkan PIN Admin untuk membuka fitur kontrol</p>
             </div>
             <form onsubmit="verifyAdminPin(event)" class="space-y-3">
-                <input type="password" id="admin-pin-input" required placeholder="Masukkan PIN" class="w-full text-center px-4 py-2 border border-slate-300 rounded-xl text-lg font-bold tracking-widest focus:ring-2 focus:ring-brand-500 outline-none">
+                <div class="relative">
+                    <input type="password" id="admin-pin-input" required placeholder="Masukkan PIN" class="w-full text-center px-4 py-2 pr-10 border border-slate-300 rounded-xl text-lg font-bold tracking-widest focus:ring-2 focus:ring-brand-500 outline-none">
+                    <button type="button" onclick="togglePasswordVisibility('admin-pin-input', 'eye-icon-admin-pin')" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 text-xs">
+                        <i id="eye-icon-admin-pin" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
                 <p id="admin-pin-error" class="hidden text-xs text-rose-600 font-bold bg-rose-50 p-2.5 rounded-lg border border-rose-200">PIN Admin salah! Masukkan PIN dengan benar.</p>
                 <div class="flex gap-2">
                     <button type="button" onclick="closeModal('modal-admin-pin')" class="flex-1 py-2 border border-slate-300 text-slate-600 rounded-xl font-medium text-xs">Batal</button>
@@ -563,6 +703,15 @@
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
                     <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 02" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN Akun Login (6 Digit)</label>
+                    <div class="relative">
+                        <input type="password" id="penghuni-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" class="w-full px-3.5 py-2.5 pr-10 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono tracking-widest">
+                        <button type="button" onclick="togglePasswordVisibility('penghuni-pin', 'eye-icon-penghuni-pin')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-xs">
+                            <i id="eye-icon-penghuni-pin" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="pt-2 flex gap-3">
                     <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
                     <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
@@ -641,18 +790,28 @@
         </div>
     </div>
 
-    <!-- MODAL EDIT ANNOUNCEMENT -->
+    <!-- MODAL EDIT ANNOUNCEMENT & KATA-KATA -->
     <div id="modal-edit-announcement" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-amber-500"></i> Pengaturan Peringatan & Background</h3>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-amber-500"></i> Ubah Teks & Peringatan Admin</h3>
                 <button onclick="closeModal('modal-edit-announcement')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
             <form onsubmit="saveAnnouncement(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Judul Utama ("Siapa Piket Hari Ini?")</label>
+                    <input type="text" id="edit-main-title-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Siapa Piket Hari Ini?">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Sub-Judul / Kata-Kata ("Tong hilap foto nya!")</label>
+                    <input type="text" id="edit-main-subtitle-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Tong hilap foto nya!">
+                </div>
+
                 <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
                     <div>
-                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up</span>
+                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up Peringatan</span>
                         <span class="text-[11px] text-slate-500">Aktifkan agar pop-up ini muncul di pengguna</span>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
@@ -671,12 +830,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan (Running Text & Pop-Up)</label>
                     <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Informasi (Opsional)</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Peringatan (Opsional)</label>
                     <input type="file" id="announcement-img-input" accept="image/*" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none bg-slate-50">
                 </div>
 
@@ -686,14 +845,9 @@
                     <button type="button" onclick="clearWebsiteBackground()" class="text-xs text-rose-600 font-bold hover:underline">Hapus / Reset Background</button>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">URL Webhook (Auto-Backup Drive)</label>
-                    <input type="text" id="webhook-url-input" placeholder="https://script.google.com/macros/..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono">
-                </div>
-
                 <div class="pt-2 flex gap-3 border-t">
                     <button type="button" onclick="closeModal('modal-edit-announcement')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan & Tampilkan</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan & Perbarui</button>
                 </div>
             </form>
         </div>
@@ -731,11 +885,11 @@
         ];
 
         const DEFAULT_PENGHUNI = [
-            { id: 'p1', nama: 'Budi Santoso', kamar: 'Kamar 01' },
-            { id: 'p2', nama: 'Andi Pratama', kamar: 'Kamar 02' },
-            { id: 'p3', nama: 'Rizky Febian', kamar: 'Kamar 03' },
-            { id: 'p4', nama: 'Dimas Anggara', kamar: 'Kamar 04' },
-            { id: 'p5', nama: 'Eko Prasetyo', kamar: 'Kamar 05' },
+            { id: 'p1', nama: 'Budi Santoso', kamar: 'Kamar 01', pin: '123456' },
+            { id: 'p2', nama: 'Andi Pratama', kamar: 'Kamar 02', pin: '123456' },
+            { id: 'p3', nama: 'Rizky Febian', kamar: 'Kamar 03', pin: '123456' },
+            { id: 'p4', nama: 'Dimas Anggara', kamar: 'Kamar 04', pin: '123456' },
+            { id: 'p5', nama: 'Eko Prasetyo', kamar: 'Kamar 05', pin: '123456' },
         ];
 
         const DEFAULT_JADWAL = {
@@ -756,6 +910,8 @@
         const DEFAULT_ANNOUNCEMENT = {
             active: true,
             type: "Peringatan Admin",
+            title: "Siapa Piket Hari Ini?",
+            subtitle: "Tong hilap foto nya!.",
             text: "Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu & membuang sampah!",
             image: "",
             backgroundImage: ""
@@ -775,13 +931,13 @@
         let taskCatatanMap = {};
         
         let isAdminLoggedIn = false;
+        let loggedInUser = null;
         let tempEditJadwal = {};
         let mediaStream = null;
         let capturedPhotoData = null;
         let currentGeoLocation = null;
         let currentGeoAddress = "Mencari alamat wilayah...";
         
-        // State GPS Tugas Tambahan
         let capturedPhotoTambahan = null;
         let currentGeoLocationTambahan = null;
         let currentGeoAddressTambahan = "Mencari alamat wilayah...";
@@ -790,6 +946,7 @@
             const data = snapshot.val();
             if (data) {
                 penghuniList = data.penghuni || DEFAULT_PENGHUNI;
+                penghuniList.forEach(p => { if (!p.pin || p.pin.length < 6) p.pin = '123456'; });
                 jadwalPiket = data.jadwal || DEFAULT_JADWAL;
                 tugasList = data.tugas || DEFAULT_AREAS;
                 tugasTambahanList = data.tugasTambahan || DEFAULT_TUGAS_TAMBAHAN;
@@ -805,12 +962,15 @@
             initDateHeader();
             updateExternalLinksUI();
             applyWebsiteBackground();
+            updateDashboardTitlesUI();
+            checkUserSession();
             renderDashboard();
             renderJadwal();
             renderPenghuni();
             renderTugas();
             renderTugasTambahan();
             renderRiwayat();
+            renderManageUsersTable();
             updateAdminUIState();
             checkAndShowUserAnnouncement();
         });
@@ -851,6 +1011,255 @@
             return ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][dayIdx];
         }
 
+        // --- FUNGSI TOGGLE TAMPIL / SEMBUNYI PASSWORD (ADMIN & PIN) ---
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            }
+        }
+
+        // --- SYNC 6 BULATAN PIN DENGAN KEYBOARD BAWAAN HP/LAPTOP (AUTO-INPUT) ---
+        function syncPinDots(type) {
+            const input = document.getElementById(type === 'login' ? 'login-input-pin' : 'ganti-pin-lama');
+            const dots = document.querySelectorAll(`.pin-dot-${type}`);
+            const val = input ? input.value : '';
+            dots.forEach((dot, idx) => {
+                if (idx < val.length) {
+                    dot.innerText = '•';
+                    dot.classList.add('bg-brand-600', 'text-white', 'border-brand-600', 'scale-105');
+                } else {
+                    dot.innerText = '';
+                    dot.classList.remove('bg-brand-600', 'text-white', 'border-brand-600', 'scale-105');
+                }
+            });
+        }
+
+        // --- SISTEM LOGIN USER PER-IP / LOCALSTORAGE ---
+        function checkUserSession() {
+            const savedUserId = localStorage.getItem('dinar_kos_logged_user_id');
+            if (savedUserId) {
+                const found = penghuniList.find(p => p.id === savedUserId);
+                if (found) {
+                    loggedInUser = found;
+                    updateUserSessionUI();
+                    return;
+                }
+            }
+            openUserLoginModal();
+        }
+
+        function openUserLoginModal() {
+            const sel = document.getElementById('login-select-user');
+            if (sel) {
+                sel.innerHTML = penghuniList.map(p => `<option value="${p.id}">${p.nama} (${p.kamar})</option>`).join('');
+            }
+            const pinInput = document.getElementById('login-input-pin');
+            if (pinInput) pinInput.value = '';
+            syncPinDots('login');
+            document.getElementById('login-pin-error').classList.add('hidden');
+            openModal('modal-user-login');
+            setTimeout(() => { pinInput?.focus(); }, 100);
+        }
+
+        function onLoginUserChange() {
+            const pinInput = document.getElementById('login-input-pin');
+            if (pinInput) pinInput.value = '';
+            syncPinDots('login');
+            document.getElementById('login-pin-error').classList.add('hidden');
+            pinInput?.focus();
+        }
+
+        function handleUserLoginSubmit(e) {
+            e.preventDefault();
+            const userId = document.getElementById('login-select-user').value;
+            const inputPin = document.getElementById('login-input-pin').value;
+            const userObj = penghuniList.find(p => p.id === userId);
+
+            if (userObj) {
+                const correctPin = userObj.pin || '123456';
+                if (inputPin === correctPin) {
+                    loggedInUser = userObj;
+                    localStorage.setItem('dinar_kos_logged_user_id', userObj.id);
+                    closeModal('modal-user-login');
+                    updateUserSessionUI();
+                    renderDashboard();
+                    showToast(`Berhasil login sebagai ${userObj.nama}!`);
+                } else {
+                    document.getElementById('login-pin-error').classList.remove('hidden');
+                }
+            }
+        }
+
+        function logoutUserSession() {
+            localStorage.removeItem('dinar_kos_logged_user_id');
+            loggedInUser = null;
+            updateUserSessionUI();
+            renderDashboard();
+            openUserLoginModal();
+            showToast("Anda telah keluar dari sesi.");
+        }
+
+        function updateUserSessionUI() {
+            const nameSpan = document.getElementById('current-logged-user-name');
+            const nameSpanMob = document.getElementById('current-logged-user-name-mob');
+            if (loggedInUser) {
+                if (nameSpan) nameSpan.innerText = loggedInUser.nama;
+                if (nameSpanMob) nameSpanMob.innerText = loggedInUser.nama;
+            } else {
+                if (nameSpan) nameSpan.innerText = "Belum Login";
+                if (nameSpanMob) nameSpanMob.innerText = "Belum Login";
+            }
+        }
+
+        // --- GANTI PIN USER (DARI MENU DI BAWAH LOGIN ATAU HEADER) ---
+        function openGantiPinModal() {
+            let targetUser = loggedInUser;
+            if (!targetUser) {
+                const selectedId = document.getElementById('login-select-user').value;
+                targetUser = penghuniList.find(p => p.id === selectedId);
+            }
+            if (!targetUser) {
+                targetUser = penghuniList[0];
+            }
+            if (!targetUser) return;
+
+            document.getElementById('modal-user-login')?.classList.add('hidden');
+
+            document.getElementById('ganti-pin-nama-display').value = `${targetUser.nama} (${targetUser.kamar})`;
+            document.getElementById('ganti-pin-lama').value = '';
+            document.getElementById('ganti-pin-baru').value = '';
+            document.getElementById('ganti-pin-error').classList.add('hidden');
+            
+            window.tempPinTargetUserId = targetUser.id;
+            openModal('modal-ganti-pin');
+        }
+
+        function openGantiPinFromLogin() {
+            openGantiPinModal();
+        }
+
+        function saveNewUserPin(e) {
+            e.preventDefault();
+            const targetId = window.tempPinTargetUserId || (loggedInUser ? loggedInUser.id : null);
+            const userObj = penghuniList.find(p => p.id === targetId);
+            if (!userObj) return;
+
+            const pinLama = document.getElementById('ganti-pin-lama').value;
+            const pinBaru = document.getElementById('ganti-pin-baru').value;
+
+            const correctPin = userObj.pin || '123456';
+            if (pinLama !== correctPin) {
+                document.getElementById('ganti-pin-error').classList.remove('hidden');
+                showToast("PIN lama salah! PIN tidak terubah.");
+                return;
+            }
+
+            if (pinBaru.length < 6) {
+                showToast("PIN baru harus 6 digit angka!");
+                return;
+            }
+
+            const idx = penghuniList.findIndex(p => p.id === userObj.id);
+            if (idx !== -1) {
+                penghuniList[idx].pin = pinBaru;
+                if (loggedInUser && loggedInUser.id === userObj.id) {
+                    loggedInUser.pin = pinBaru;
+                }
+                saveData();
+                closeModal('modal-ganti-pin');
+                showToast("PIN berhasil diganti secara otomatis!");
+                
+                if (!loggedInUser) {
+                    openUserLoginModal();
+                }
+            }
+        }
+
+        function checkUserPiketStatusToday() {
+            if (!loggedInUser) return { isAssigned: false, isDone: false, assignedAreas: [] };
+
+            const todayName = getTodayName();
+            const todayDuties = jadwalPiket[todayName] || [];
+            const userDuties = todayDuties.filter(d => d.penghuniId === loggedInUser.id);
+
+            if (userDuties.length === 0) {
+                return { isAssigned: false, isDone: false, assignedAreas: [] };
+            }
+
+            const now = new Date();
+            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            let allDone = true;
+            userDuties.forEach(duty => {
+                const done = riwayatLogs.some(log => log.penghuniNama === loggedInUser.nama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
+                if (!done) allDone = false;
+            });
+
+            return { isAssigned: true, isDone: allDone, assignedAreas: userDuties };
+        }
+
+        function openManageUsersTab() {
+            if (!isAdminLoggedIn) return;
+            switchTab('manage-users');
+        }
+
+        function renderManageUsersTable() {
+            const tbody = document.getElementById('manage-users-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            penghuniList.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900">${p.nama}</td>
+                    <td class="p-3 text-slate-600">${p.kamar}</td>
+                    <td class="p-3">
+                        <div class="relative w-36">
+                            <input type="password" id="pin-field-${p.id}" value="${p.pin || '123456'}" maxlength="6" class="px-3 py-1.5 pr-8 border rounded-lg text-xs font-mono w-full outline-none focus:ring-2 focus:ring-brand-500">
+                            <button type="button" onclick="togglePasswordVisibility('pin-field-${p.id}', 'eye-pin-${p.id}')" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 text-xs">
+                                <i id="eye-pin-${p.id}" class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="p-3"><button onclick="updateSingleUserPin('${p.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-700 hover:bg-brand-100 rounded-lg text-xs font-bold border border-brand-200">Ubah PIN</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateSingleUserPin(userId) {
+            const inputVal = document.getElementById(`pin-field-${userId}`).value.trim();
+            const idx = penghuniList.findIndex(p => p.id === userId);
+            if (idx !== -1 && inputVal) {
+                penghuniList[idx].pin = inputVal;
+                saveData();
+                showToast(`PIN untuk ${penghuniList[idx].nama} berhasil diperbarui!`);
+            } else {
+                showToast("PIN tidak boleh kosong!");
+            }
+        }
+
+        function saveAllUserPins() {
+            penghuniList.forEach(p => {
+                const field = document.getElementById(`pin-field-${p.id}`);
+                if (field && field.value.trim()) {
+                    p.pin = field.value.trim();
+                }
+            });
+            saveData();
+            showToast("Semua PIN user berhasil disimpan ke data admin!");
+        }
+
         function initDateHeader() {
             const dateStrEl = document.getElementById('current-date-str');
             if (dateStrEl) {
@@ -869,6 +1278,15 @@
                 bodyEl.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('${adminAnnouncement.backgroundImage}')`;
             } else {
                 bodyEl.style.backgroundImage = 'none';
+            }
+        }
+
+        function updateDashboardTitlesUI() {
+            const titleEl = document.getElementById('dashboard-main-title');
+            const subTitleEl = document.getElementById('dashboard-main-subtitle');
+            if (adminAnnouncement) {
+                if (titleEl) titleEl.innerText = adminAnnouncement.title || "Siapa Piket Hari Ini?";
+                if (subTitleEl) subTitleEl.innerText = adminAnnouncement.subtitle || "Tong hilap foto nya!.";
             }
         }
 
@@ -923,6 +1341,7 @@
             const adminDashboardControls = document.getElementById('admin-dashboard-tugas-controls');
             const btnEditLBT = document.getElementById('btn-edit-leaderboard-title');
             const adminTambahanControls = document.getElementById('admin-tugas-tambahan-controls');
+            const navManageUsersBtn = document.getElementById('nav-manage-users-btn');
 
             if (isAdminLoggedIn) {
                 btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
@@ -932,6 +1351,7 @@
                 adminDashboardControls?.classList.remove('hidden');
                 btnEditLBT?.classList.remove('hidden');
                 adminTambahanControls?.classList.remove('hidden');
+                navManageUsersBtn?.classList.remove('hidden');
             } else {
                 btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
                 icon.className = "fa-solid fa-lock";
@@ -940,10 +1360,12 @@
                 adminDashboardControls?.classList.add('hidden');
                 btnEditLBT?.classList.add('hidden');
                 adminTambahanControls?.classList.add('hidden');
+                navManageUsersBtn?.classList.add('hidden');
             }
             renderDashboard();
             renderTugasTambahan();
             renderRiwayat();
+            renderManageUsersTable();
         }
 
         function checkAndShowUserAnnouncement() {
@@ -971,19 +1393,21 @@
 
         function tryOpenAnnouncementModal() {
             if (!isAdminLoggedIn) { toggleAdminLock(); return; }
+            document.getElementById('edit-main-title-input').value = adminAnnouncement.title || "Siapa Piket Hari Ini?";
+            document.getElementById('edit-main-subtitle-input').value = adminAnnouncement.subtitle || "Tong hilap foto nya!.";
             document.getElementById('announcement-active-toggle').checked = adminAnnouncement.active;
             document.getElementById('announcement-type-select').value = adminAnnouncement.type || "Peringatan Admin";
             document.getElementById('announcement-text-input').value = adminAnnouncement.text || "";
-            document.getElementById('webhook-url-input').value = kosWebhookUrl;
             openModal('modal-edit-announcement');
         }
 
         async function saveAnnouncement(e) {
             e.preventDefault();
+            adminAnnouncement.title = document.getElementById('edit-main-title-input').value || "Siapa Piket Hari Ini?";
+            adminAnnouncement.subtitle = document.getElementById('edit-main-subtitle-input').value || "Tong hilap foto nya!.";
             adminAnnouncement.active = document.getElementById('announcement-active-toggle').checked;
             adminAnnouncement.type = document.getElementById('announcement-type-select').value;
             adminAnnouncement.text = document.getElementById('announcement-text-input').value;
-            kosWebhookUrl = document.getElementById('webhook-url-input').value.trim();
 
             const imgFile = document.getElementById('announcement-img-input').files[0];
             const bgFile = document.getElementById('bg-img-input').files[0];
@@ -991,14 +1415,20 @@
             if (imgFile) tasks++;
             if (bgFile) tasks++;
 
-            if (tasks === 0) { saveData(); closeModal('modal-edit-announcement'); showToast("Pengaturan disimpan!"); return; }
+            if (tasks === 0) {
+                saveData();
+                closeModal('modal-edit-announcement');
+                updateDashboardTitlesUI();
+                showToast("Pengaturan teks & peringatan disimpan!");
+                return;
+            }
 
             if (imgFile) {
                 const r = new FileReader();
                 r.onload = e => {
                     adminAnnouncement.image = e.target.result;
                     done++;
-                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); showToast("Disimpan!"); }
+                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
                 };
                 r.readAsDataURL(imgFile);
             }
@@ -1007,7 +1437,7 @@
                 r.onload = e => {
                     adminAnnouncement.backgroundImage = e.target.result;
                     done++;
-                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); showToast("Disimpan!"); }
+                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
                 };
                 r.readAsDataURL(bgFile);
             }
@@ -1016,6 +1446,7 @@
         function clearWebsiteBackground() {
             adminAnnouncement.backgroundImage = "";
             saveData();
+            applyWebsiteBackground();
             showToast("Background direset!");
         }
 
@@ -1044,6 +1475,21 @@
         function renderDashboard() {
             const todayName = getTodayName();
             document.getElementById('today-day-name').innerText = todayName;
+            
+            const cameraContainer = document.getElementById('camera-action-container');
+            if (cameraContainer) {
+                const piketStatus = checkUserPiketStatusToday();
+                if (!loggedInUser) {
+                    cameraContainer.innerHTML = `<button onclick="openUserLoginModal()" class="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs">Silakan Login Terlebih Dahulu</button>`;
+                } else if (!piketStatus.isAssigned) {
+                    cameraContainer.innerHTML = `<div class="px-4 py-2.5 bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold text-white"><i class="fa-solid fa-circle-info mr-1"></i> Anda tidak terjadwal piket hari ini.</div>`;
+                } else if (piketStatus.isDone) {
+                    cameraContainer.innerHTML = `<div class="px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-circle-check mr-1"></i> ${loggedInUser.nama} kamu sudah piket hari ini! Mantap!</div>`;
+                } else {
+                    cameraContainer.innerHTML = `<button onclick="openAbsenModal()" class="w-full md:w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-xs"><i class="fa-solid fa-camera text-base"></i> BUKA KAMERA PIKET</button>`;
+                }
+            }
+
             const container = document.getElementById('dashboard-task-boxes');
             if (!container) return;
             container.innerHTML = '';
@@ -1293,7 +1739,6 @@
             showToast("Tugas tambahan dihapus.");
         }
 
-        // --- MANAJEMEN GPS & KAMERA TUGAS TAMBAHAN ---
         let currentTambahanId = null;
         function openAbsenTambahanModal(id) {
             const t = tugasTambahanList.find(x => x.id === id);
@@ -1550,6 +1995,7 @@
             document.getElementById('penghuni-id').value = '';
             document.getElementById('penghuni-nama').value = '';
             document.getElementById('penghuni-kamar').value = '';
+            document.getElementById('penghuni-pin').value = '123456';
             document.getElementById('modal-penghuni-title').innerText = "Tambah Penghuni Kos";
             openModal('modal-penghuni');
         }
@@ -1560,6 +2006,7 @@
             document.getElementById('penghuni-id').value = p.id;
             document.getElementById('penghuni-nama').value = p.nama;
             document.getElementById('penghuni-kamar').value = p.kamar;
+            document.getElementById('penghuni-pin').value = p.pin || '123456';
             document.getElementById('modal-penghuni-title').innerText = "Edit Penghuni Kos";
             openModal('modal-penghuni');
         }
@@ -1569,11 +2016,13 @@
             const id = document.getElementById('penghuni-id').value;
             const nama = document.getElementById('penghuni-nama').value;
             const kamar = document.getElementById('penghuni-kamar').value;
+            const pin = document.getElementById('penghuni-pin').value || '123456';
+
             if (id) {
                 const idx = penghuniList.findIndex(x => x.id === id);
-                if (idx !== -1) penghuniList[idx] = { id, nama, kamar };
+                if (idx !== -1) penghuniList[idx] = { id, nama, kamar, pin };
             } else {
-                penghuniList.push({ id: 'p-' + Date.now(), nama, kamar });
+                penghuniList.push({ id: 'p-' + Date.now(), nama, kamar, pin });
             }
             saveData();
             closeModal('modal-penghuni');
@@ -1745,40 +2194,31 @@
         }
 
         function openAbsenModal() {
+            if (!loggedInUser) { openUserLoginModal(); return; }
+
             const todayName = getTodayName();
             const todayDuties = jadwalPiket[todayName] || [];
-            const scheduledPenghuniIds = [...new Set(todayDuties.map(d => d.penghuniId))];
-            const scheduledPenghuniList = penghuniList.filter(p => scheduledPenghuniIds.includes(p.id));
+            const userDuties = todayDuties.filter(d => d.penghuniId === loggedInUser.id);
 
-            const selPenghuni = document.getElementById('absen-select-penghuni');
-            selPenghuni.innerHTML = scheduledPenghuniList.length === 0 ? `<option value="">Tidak ada petugas piket</option>` : scheduledPenghuniList.map(p => `<option value="${p.id}">${p.nama} (${p.kamar})</option>`).join('');
+            document.getElementById('absen-penghuni-display').value = `${loggedInUser.nama} (${loggedInUser.kamar})`;
+            document.getElementById('absen-select-penghuni').value = loggedInUser.id;
 
-            onAbsenPenghuniChange();
-            resetCameraView();
-            openModal('modal-absen');
-            getGeolocation();
-        }
-
-        function onAbsenPenghuniChange() {
-            const penghuniId = document.getElementById('absen-select-penghuni').value;
             const selArea = document.getElementById('absen-select-area');
-            const todayName = getTodayName();
-            const todayDuties = jadwalPiket[todayName] || [];
-            const assignedDuties = todayDuties.filter(d => d.penghuniId === penghuniId);
-            const penghuniObj = penghuniList.find(p => p.id === penghuniId);
-            const penghuniNama = penghuniObj ? penghuniObj.nama : '';
-
             const now = new Date();
             const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             let areaOptionsHtml = '';
-            assignedDuties.forEach(duty => {
-                const isAlreadyDone = riwayatLogs.some(log => log.penghuniNama === penghuniNama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
+            userDuties.forEach(duty => {
+                const isAlreadyDone = riwayatLogs.some(log => log.penghuniNama === loggedInUser.nama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
                 if (isAlreadyDone) areaOptionsHtml += `<option value="${duty.area}" disabled>❌ ${duty.area} (Sudah Selesai)</option>`;
                 else areaOptionsHtml += `<option value="${duty.area}">✨ ${duty.area}</option>`;
             });
 
-            selArea.innerHTML = assignedDuties.length === 0 ? `<option value="">Tidak ada tugas</option>` : areaOptionsHtml;
+            selArea.innerHTML = userDuties.length === 0 ? `<option value="">Tidak ada tugas untuk Anda hari ini</option>` : areaOptionsHtml;
+
+            resetCameraView();
+            openModal('modal-absen');
+            getGeolocation();
         }
 
         function closeAbsenModal() { stopCamera(); closeModal('modal-absen'); }
@@ -1804,7 +2244,7 @@
 
             capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
             video.classList.add('hidden');
-            canvas.classList.remove('hidden');
+            canvas.classList.add('hidden');
             document.getElementById('btn-snap').classList.add('hidden');
             document.getElementById('btn-retake').classList.remove('hidden');
             document.getElementById('btn-submit-absen').disabled = false;
@@ -1813,20 +2253,16 @@
 
         function handleAbsenSubmit(e) {
             e.preventDefault();
-            if (!capturedPhotoData) return;
+            if (!capturedPhotoData || !loggedInUser) return;
 
-            const penghuniId = document.getElementById('absen-select-penghuni').value;
-            const penghuniObj = penghuniList.find(p => p.id === penghuniId);
-            const nama = penghuniObj ? penghuniObj.nama : 'Unknown';
             const area = document.getElementById('absen-select-area').value;
-
             const now = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
             riwayatLogs.unshift({
                 id: 'log-' + Date.now(),
                 tanggal: dateStr,
-                penghuniNama: nama,
+                penghuniNama: loggedInUser.nama,
                 area: area,
                 gps: `${currentGeoLocation} (${currentGeoAddress})`,
                 foto: capturedPhotoData,
