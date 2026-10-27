@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mengunci tampilan agar di HP sama persis seperti tampilan Laptop/Desktop -->
+    <meta name="viewport" content="width=1280, user-scalable=yes">
     <title>Absen Piket Kosan - Dinar Boys</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -10,10 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Firebase App & Realtime Database SDK (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
         tailwind.config = {
@@ -38,6 +35,9 @@
         }
     </script>
     <style>
+        body {
+            min-width: 1200px;
+        }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -68,11 +68,11 @@
         }
     </style>
 </head>
-<body id="app-body" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-20 md:pb-0 bg-cover bg-center bg-fixed">
+<body id="app-body" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-6 bg-cover bg-center bg-fixed">
 
-    <!-- Header / Navbar -->
+    <!-- Header / Navbar (Tampil Konsisten Seperti Laptop di Semua Perangkat) -->
     <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
@@ -85,14 +85,14 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <div id="user-session-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-semibold text-slate-700">
+                    <div id="user-session-badge" class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-semibold text-slate-700">
                         <i class="fa-solid fa-user-check text-brand-600"></i>
                         <span id="current-logged-user-name">-</span>
                         <button onclick="openGantiPinModal()" title="Ganti PIN" class="text-brand-600 hover:text-brand-800 ml-1" id="btn-open-ganti-pin"><i class="fa-solid fa-key"></i></button>
                         <button onclick="logoutUserSession()" title="Logout Akun" class="text-rose-500 hover:text-rose-700 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
 
-                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-semibold transition">
+                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-semibold transition">
                         <i class="fa-brands fa-google-drive text-blue-600"></i> Drive Foto Backup
                     </a>
 
@@ -103,7 +103,7 @@
                 </div>
             </div>
 
-            <div class="hidden md:flex items-center gap-1 border-t border-slate-100 py-2 overflow-x-auto">
+            <div class="flex items-center gap-1 border-t border-slate-100 py-2 overflow-x-auto">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-brand-600 bg-brand-50 whitespace-nowrap">
                     <i class="fa-solid fa-chart-pie"></i> Dashboard
                 </button>
@@ -148,19 +148,8 @@
     <!-- POP-UP NOTIFIKASI KECIL BAYAR KAS -->
     <div id="kas-payment-popup-container" class="fixed bottom-16 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
-    <div class="sm:hidden bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center justify-between gap-2 text-xs">
-        <div id="user-session-badge-mob" class="flex items-center gap-1 font-bold text-slate-700">
-            <i class="fa-solid fa-user text-brand-600"></i> <span id="current-logged-user-name-mob">-</span>
-            <button onclick="openGantiPinModal()" class="text-brand-600 ml-1"><i class="fa-solid fa-key"></i></button>
-            <button onclick="logoutUserSession()" class="text-rose-500 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
-        </div>
-        <a id="btn-gdrive-mob" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="text-center py-1.5 px-2 bg-white rounded border border-slate-200 text-blue-700 font-semibold shadow-sm">
-            <i class="fa-brands fa-google-drive mr-1"></i> Drive
-        </a>
-    </div>
-
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+    <main class="max-w-7xl mx-auto px-8 py-6 flex-1 w-full">
 
         <!-- TAB 1: DASHBOARD -->
         <section id="tab-dashboard" class="tab-content space-y-6">
@@ -168,7 +157,7 @@
                 <div class="absolute -right-10 -bottom-10 opacity-10 text-white">
                     <i class="fa-solid fa-sparkles text-[180px]"></i>
                 </div>
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="relative z-10 flex flex-row items-center justify-between gap-4">
                     <div>
                         <div class="flex items-center gap-2 flex-wrap mb-3">
                             <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium">
@@ -181,7 +170,7 @@
                             </div>
                         </div>
 
-                        <h2 id="dashboard-main-title" class="text-2xl md:text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
+                        <h2 id="dashboard-main-title" class="text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
                         <div class="flex items-center gap-3 mt-1 flex-wrap">
                             <p id="dashboard-main-subtitle" class="text-teal-100 text-sm">Tong hilap foto nya!.</p>
                             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold text-amber-200 border border-white/10 shadow-sm">
@@ -195,17 +184,17 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="flex flex-row gap-2">
                         <button id="btn-manage-announcement" onclick="tryOpenAnnouncementModal()" class="hidden px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
                             <i class="fa-solid fa-bullhorn text-sm"></i> Kelola Teks & Peringatan
                         </button>
-                        <div id="camera-action-container" class="w-full md:w-auto"></div>
+                        <div id="camera-action-container" class="w-auto"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="grid grid-cols-3 gap-6">
+                <div class="col-span-2 bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3 flex-wrap gap-2">
                         <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-brand-600"></i> Daftar Tugas Piket Hari Ini (<span id="today-day-name">--</span>)
@@ -221,7 +210,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="dashboard-task-boxes" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    <div id="dashboard-task-boxes" class="grid grid-cols-2 gap-4"></div>
                 </div>
 
                 <div class="space-y-6">
@@ -242,49 +231,49 @@
 
         <!-- TAB 2: JADWAL -->
         <section id="tab-jadwal" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Jadwal Piket Mingguan</h2>
                     <p class="text-sm text-slate-500">Atur, tambah, atau kurangi penanggung jawab area kebersihan setiap hari.</p>
                 </div>
-                <button id="btn-edit-jadwal-main" onclick="tryOpenEditJadwalModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
+                <button id="btn-edit-jadwal-main" onclick="tryOpenEditJadwalModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i> Atur Ulang Jadwal (Admin)
                 </button>
             </div>
-            <div id="weekly-schedule-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="weekly-schedule-grid" class="grid grid-cols-3 gap-6"></div>
         </section>
 
         <!-- TAB 3: PENGHUNI -->
         <section id="tab-penghuni" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Daftar Penghuni Kosan</h2>
                     <p class="text-sm text-slate-500">Kelola data penghuni aktif kosan dan tambahkan motivasi personal Anda.</p>
                 </div>
-                <button id="btn-tambah-penghuni-main" onclick="tryOpenPenghuniModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
+                <button id="btn-tambah-penghuni-main" onclick="tryOpenPenghuniModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-user-plus"></i> Tambah Penghuni (Admin)
                 </button>
             </div>
-            <div id="penghuni-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            <div id="penghuni-grid" class="grid grid-cols-4 gap-4"></div>
         </section>
 
         <!-- TAB 4: KELOLA TUGAS -->
         <section id="tab-tugas" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Kelola Daftar Tugas Kebersihan</h2>
                     <p class="text-sm text-slate-500">Tambah, ubah, atau hapus jenis area tugas piket kosan.</p>
                 </div>
-                <button id="btn-tambah-tugas-main" onclick="tryOpenTugasModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2 self-start sm:self-auto">
+                <button id="btn-tambah-tugas-main" onclick="tryOpenTugasModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-plus-circle"></i> Tambah Tugas Baru (Admin)
                 </button>
             </div>
-            <div id="tugas-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+            <div id="tugas-list-container" class="grid grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB: TUGAS TAMBAHAN -->
         <section id="tab-tambahan" class="tab-content hidden space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Tugas Tambahan</h2>
                     <p class="text-sm text-slate-500">Kelola tugas tambahan insidentil di kosan.</p>
@@ -295,12 +284,12 @@
                     </button>
                 </div>
             </div>
-            <div id="tugas-tambahan-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+            <div id="tugas-tambahan-container" class="grid grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB: KAS KOSAN -->
         <section id="tab-kas" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-wallet text-amber-500 mr-2"></i> Kas Kosan - Minggu Ini</h2>
                     <p class="text-sm text-slate-500">Catatan pembayaran kas mingguan penghuni dan lihat rekap pemasukan/pengeluaran.</p>
@@ -336,13 +325,13 @@
 
         <!-- TAB: RIWAYAT & ARSIP MINGGUAN -->
         <section id="tab-riwayat" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900">Riwayat & Arsip Mingguan Piket</h2>
                     <p class="text-sm text-slate-500">Daftar rekapan bukti pengerjaan tugas piket kosan dan arsip mingguan yang telah di-reset.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <input type="text" id="search-log" oninput="renderRiwayat()" placeholder="Cari nama / area..." class="px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-64">
+                    <input type="text" id="search-log" oninput="renderRiwayat()" placeholder="Cari nama / area..." class="px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-64">
                     <button onclick="openArsipModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-box-archive"></i> Lihat Arsip / Backup Mingguan
                     </button>
@@ -370,11 +359,11 @@
             </div>
         </section>
 
-        <!-- TAB KELOLA USER & PIN (DIGABUNG DENGAN PANEL APPROVAL ADMIN) -->
+        <!-- TAB KELOLA USER & PIN (PANEL APPROVAL + KONTROL PERINGATAN TIDAK PIKET + KELOLA PIN) -->
         <section id="tab-manage-users" class="tab-content hidden space-y-8">
             <!-- Sub-Bagian 1: Panel Approval Admin -->
             <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-4">
+                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-indigo-600 mr-2"></i> Panel Approval Admin</h2>
                         <p class="text-sm text-slate-500">Daftar permintaan perubahan saldo/pengeluaran yang menunggu persetujuan (Approve/Reject) dari Admin.</p>
@@ -396,14 +385,63 @@
                 </div>
             </div>
 
-            <!-- Sub-Bagian 2: Kelola Akun User & PIN -->
+            <!-- Sub-Bagian 2: Panel Kontrol Peringatan Pengguna Tidak Piket (Denda & Waktu Pop-Up) -->
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-rose-200 shadow-sm space-y-5">
+                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-2"></i> Kontrol Peringatan Pengguna Tidak Piket (Pop-Up Denda)</h2>
+                        <p class="text-sm text-slate-500">Pop-up peringatan akan muncul terus-menerus secara otomatis pada layar penghuni yang terlewat piket sampai Admin mematikannya di bawah ini.</p>
+                    </div>
+                </div>
+
+                <!-- Form Pengaturan Waktu & Status Pop-Up -->
+                <form onsubmit="saveMissedPiketSettings(event)" class="grid grid-cols-3 gap-4 bg-rose-50/60 p-4 rounded-xl border border-rose-200/80 items-end">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status Pop-Up Otomatis</label>
+                        <select id="missed-popup-enabled" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm font-semibold bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="true">Aktif (Muncul Terus Sebelum Dimatikan)</option>
+                            <option value="false">Nonaktif (Matikan Semua Pop-Up Denda)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Waktu Muncul Ulang Pop-Up (Detik)</label>
+                        <input type="number" id="missed-popup-interval" min="3" max="3600" required placeholder="10" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-clock"></i> Simpan Pengaturan Waktu Pop-Up
+                        </button>
+                    </div>
+                    <div class="col-span-3">
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pesan Peringatan Pop-Up Tidak Piket</label>
+                        <input type="text" id="missed-popup-message" required placeholder="Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                    </div>
+                </form>
+
+                <!-- Tabel Daftar Penghuni & Status Peringatan Tidak Piket -->
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <th class="p-3">Nama Penghuni</th>
+                                <th class="p-3">Kamar</th>
+                                <th class="p-3">Status Peringatan / Hari Terlewat</th>
+                                <th class="p-3">Kontrol Pop-Up (Admin)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="missed-users-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sub-Bagian 3: Kelola Akun User & PIN -->
             <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-4">
+                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-user-shield text-amber-700 mr-2"></i> Kelola Akun User & PIN Login</h2>
                         <p class="text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
                     </div>
-                    <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2 self-start sm:self-auto">
+                    <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Semua PIN User
                     </button>
                 </div>
@@ -425,7 +463,7 @@
 
         <!-- TAB KHUSUS BENDAHARA -->
         <section id="tab-bendahara" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row justify-between items-center gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-coins text-amber-500 mr-2"></i> Panel Kontrol Bendahara Kas</h2>
                     <p class="text-sm text-slate-500">Atur nominal kas mingguan, catat pengeluaran kas, edit saldo kas, dan verifikasi pembayaran.</p>
@@ -440,7 +478,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-2 gap-6">
                 <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
                     <h3 class="font-bold text-slate-900 text-base">Atur Nominal Kas Minggu Ini</h3>
                     <form onsubmit="saveNominalKas(event)" class="space-y-3">
@@ -467,31 +505,6 @@
         </section>
 
     </main>
-
-    <!-- Bottom Mobile Nav -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-40 flex justify-around py-2 px-1 shadow-lg overflow-x-auto">
-        <button onclick="switchTab('dashboard')" id="mob-nav-dashboard" class="mob-nav-btn flex flex-col items-center gap-1 text-brand-600 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-chart-pie text-base"></i> Dashboard
-        </button>
-        <button onclick="switchTab('jadwal')" id="mob-nav-jadwal" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-calendar-days text-base"></i> Jadwal
-        </button>
-        <button onclick="switchTab('penghuni')" id="mob-nav-penghuni" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-users text-base"></i> Penghuni
-        </button>
-        <button onclick="switchTab('tugas')" id="mob-nav-tugas" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-list-check text-base"></i> Tugas
-        </button>
-        <button onclick="switchTab('tambahan')" id="mob-nav-tambahan" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-tasks text-base"></i> Tambahan
-        </button>
-        <button onclick="switchTab('kas')" id="mob-nav-kas" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-wallet text-base"></i> Kas
-        </button>
-        <button onclick="switchTab('riwayat')" id="mob-nav-riwayat" class="mob-nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2 whitespace-nowrap">
-            <i class="fa-solid fa-clock-rotate-left text-base"></i> Riwayat
-        </button>
-    </nav>
 
     <!-- MODAL PILIH ROLE ADMIN / BENDAHARA -->
     <div id="modal-role-selector" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -559,10 +572,10 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP KHUSUS TERLEWAT PIKET -->
+    <!-- MODAL POPUP KHUSUS TERLEWAT PIKET (AUTO MUNCUL TERUS SEBELUM DIMATIKAN ADMIN) -->
     <div id="modal-terlewat-piket" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 border-t-8 border-rose-600 text-center relative">
-            <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-inner">
+            <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-inner animate-bounce">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div>
@@ -570,8 +583,9 @@
                 <p id="terlewat-piket-pesan" class="text-sm font-semibold text-rose-700 bg-rose-50 p-3.5 rounded-2xl border border-rose-200 mt-3 leading-relaxed">
                     Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!
                 </p>
+                <p id="terlewat-piket-detail-hari" class="text-xs font-bold text-slate-500 mt-2"></p>
             </div>
-            <button onclick="closeModal('modal-terlewat-piket')" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-sm shadow-lg transition">
+            <button onclick="dismissMissedPiketModalTemporarily()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-bold text-sm shadow-lg transition">
                 Saya Mengerti & Siap Bayar Denda
             </button>
         </div>
@@ -868,7 +882,7 @@
         </div>
     </div>
 
-    <!-- MODAL LIHAT ARsip / BACKUP MINGGUAN -->
+    <!-- MODAL LIHAT ARSIP / BACKUP MINGGUAN -->
     <div id="modal-arsip-riwayat" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1139,21 +1153,12 @@
         <span id="toast-message" class="text-sm font-medium">Notifikasi berhasil!</span>
     </div>
 
-    <!-- FIREBASE & APP SCRIPT -->
+    <!-- BACKEND NODE.JS (RENDER) + DIRECT GOOGLE DRIVE UPLOAD + AUTO RESET JAM 00:00 WIB -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-_NL4T0FViANzT-PtkWCFczh3gzOoMQQ",
-            authDomain: "dinarboyspiket.firebaseapp.com",
-            databaseURL: "https://dinarboyspiket-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "dinarboyspiket",
-            storageBucket: "dinarboyspiket.firebasestorage.app",
-            messagingSenderId: "268751958735",
-            appId: "1:268751958735:web:70253c3759771940c77dba",
-            measurementId: "G-DC8VK31037"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const BACKEND_URL = "https://dinar-boys-piket.onrender.com";
+        const GDRIVE_FOLDER_ID = "1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL";
+        const GDRIVE_LINK = "https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing";
+        const GOOGLE_DRIVE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqUU8mDZxU9kDkTlVDHkcvU996hd-c6-kdwWarF3amA6rycUcatULwVMpZU0xZvzll/exec";
 
         const DEFAULT_DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
         const DEFAULT_AREAS = [
@@ -1197,7 +1202,14 @@
             backgroundImage: ""
         };
 
-        const GDRIVE_LINK = "https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing";
+        const DEFAULT_MISSED_CONFIG = {
+            enabled: true,
+            intervalSeconds: 10,
+            message: "Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!",
+            clearedDates: {},
+            manualActive: {}
+        };
+
         const ADMIN_PIN = "dinar2026!";
         const BENDAHARA_PIN = "Bayarkas";
 
@@ -1219,10 +1231,12 @@
         let adminAnnouncement = DEFAULT_ANNOUNCEMENT;
         let leaderboardTitle = "Leaderboard Paling Rajin"; 
         let taskCatatanMap = {};
+        let missedPiketConfig = JSON.parse(JSON.stringify(DEFAULT_MISSED_CONFIG));
         
         let isAdminLoggedIn = false;
         let isBendaharaLoggedIn = false;
         let loggedInUser = null;
+        let currentActiveTab = 'dashboard';
         let tempEditJadwal = {};
         let mediaStream = null;
         let capturedPhotoData = null;
@@ -1235,10 +1249,113 @@
 
         let motivationInterval = null;
         let activeMotivasiIndex = 0;
+        let hasCheckedInitialSession = false;
+        let lastActiveDateYMD = "";
+        let missedPiketPopupTimeout = null;
 
-        db.ref('kos_piket_data').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
+        function getWIBDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utc + (3600000 * 7));
+        }
+
+        function getTodayYMD() {
+            const now = getWIBDate();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        }
+
+        // --- CACHE FOTO HARIAN LOKAL (Hanya untuk Hari Ini, Otomatis Dihapus Jam 00:00 WIB) ---
+        function getDailyPhotoCache() {
+            const today = getTodayYMD();
+            try {
+                const raw = JSON.parse(localStorage.getItem('dinar_daily_photos') || '{}');
+                if (raw.date !== today) {
+                    localStorage.removeItem('dinar_daily_photos');
+                    return { date: today, photos: {} };
+                }
+                return raw;
+            } catch (e) {
+                return { date: today, photos: {} };
+            }
+        }
+
+        function savePhotoToDailyCache(id, photoUrlOrBase64) {
+            const cache = getDailyPhotoCache();
+            cache.photos[id] = photoUrlOrBase64;
+            try {
+                localStorage.setItem('dinar_daily_photos', JSON.stringify(cache));
+            } catch (e) {}
+        }
+
+        function getTodayPhotoForId(id, logDateStr, existingUrl) {
+            const today = getTodayYMD();
+            if (logDateStr && !logDateStr.startsWith(today)) return '';
+            if (existingUrl && !existingUrl.startsWith('data:image')) return existingUrl;
+            const cache = getDailyPhotoCache();
+            return cache.photos[id] || '';
+        }
+
+        // --- UPLOAD FOTO LANGSUNG KE GOOGLE DRIVE (OTOMATIS MASUK FOLDER HARI) ---
+        async function uploadPhotoToGoogleDrive(base64Image, filename) {
+            if (!GOOGLE_DRIVE_SCRIPT_URL || GOOGLE_DRIVE_SCRIPT_URL.trim() === "") {
+                return "";
+            }
+            try {
+                const response = await fetch(GOOGLE_DRIVE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        folderId: GDRIVE_FOLDER_ID,
+                        hari: getTodayName(),
+                        filename: filename,
+                        image: base64Image
+                    })
+                });
+                if (response.ok) {
+                    const resJson = await response.json();
+                    if (resJson && resJson.status === 'success' && resJson.viewUrl) {
+                        return resJson.viewUrl;
+                    }
+                }
+            } catch (err) {
+                console.warn("Upload Google Drive gagal, menggunakan cache harian sementara:", err);
+            }
+            return "";
+        }
+
+        // --- PEMBERSIH FOTO OTOMATIS SAAT JAM 00:00 WIB ---
+        function cleanupExpiredDailyPhotos() {
+            const todayYMD = getTodayYMD();
+            let hasChanged = false;
+
+            if (lastActiveDateYMD && lastActiveDateYMD !== todayYMD) {
+                localStorage.removeItem('dinar_daily_photos');
+                hasChanged = true;
+            }
+            lastActiveDateYMD = todayYMD;
+
+            riwayatLogs.forEach(log => {
+                if (!log.tanggal || !log.tanggal.startsWith(todayYMD)) {
+                    if (log.foto && log.foto !== '') {
+                        log.foto = '';
+                        hasChanged = true;
+                    }
+                }
+            });
+
+            tugasTambahanList.forEach(t => {
+                if (t.tanggalSelesai && t.tanggalSelesai !== todayYMD && t.foto) {
+                    t.foto = '';
+                    hasChanged = true;
+                }
+            });
+
+            return hasChanged;
+        }
+
+        function applyBackendData(rawData) {
+            const data = rawData && (rawData.kos_piket_data || rawData.data || rawData);
+            if (data && (data.penghuni || data.jadwal || data.tugas)) {
                 penghuniList = data.penghuni || DEFAULT_PENGHUNI;
                 penghuniList.forEach(p => { 
                     if (!p.pin || p.pin.length < 6) p.pin = '123456'; 
@@ -1255,44 +1372,127 @@
                 adminAnnouncement = data.announcement || DEFAULT_ANNOUNCEMENT;
                 leaderboardTitle = data.leaderboardTitle || "Leaderboard Paling Rajin";
                 taskCatatanMap = data.taskCatatan || {};
-            } else {
-                saveData();
+                missedPiketConfig = data.missedPiketConfig || JSON.parse(JSON.stringify(DEFAULT_MISSED_CONFIG));
+                if (missedPiketConfig.enabled === undefined) missedPiketConfig.enabled = true;
+                if (!missedPiketConfig.intervalSeconds) missedPiketConfig.intervalSeconds = 10;
+                if (!missedPiketConfig.message) missedPiketConfig.message = DEFAULT_MISSED_CONFIG.message;
+                if (!missedPiketConfig.clearedDates) missedPiketConfig.clearedDates = {};
+                if (!missedPiketConfig.manualActive) missedPiketConfig.manualActive = {};
+
+                cleanupExpiredDailyPhotos();
+
+                try {
+                    localStorage.setItem('dinar_kos_backup_cache', JSON.stringify(data));
+                } catch (e) {}
             }
 
             initDateHeader();
             updateExternalLinksUI();
             applyWebsiteBackground();
             updateDashboardTitlesUI();
-            checkUserSession();
-            renderDashboard();
-            renderJadwal();
-            renderPenghuni();
-            renderTugas();
-            renderTugasTambahan();
-            renderKasTable();
-            renderRiwayat();
-            renderManageUsersTable();
-            renderApprovalTable();
+            if (!hasCheckedInitialSession) {
+                hasCheckedInitialSession = true;
+                checkUserSession();
+            } else if (loggedInUser) {
+                const updatedUser = penghuniList.find(p => p.id === loggedInUser.id);
+                if (updatedUser) loggedInUser = updatedUser;
+                updateUserSessionUI();
+                checkMissedPiketForUser(loggedInUser);
+            }
             updateAdminUIState();
             checkAndShowUserAnnouncement();
             initMotivationRotation();
             checkWeeklyAutoReset();
-        });
+        }
 
-        function saveData() {
-            db.ref('kos_piket_data').set({
+        async function loadDataFromBackend() {
+            const endpoints = [`${BACKEND_URL}/api/data`, `${BACKEND_URL}/data`, `${BACKEND_URL}/kos_piket_data`];
+            for (const url of endpoints) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (res.ok) {
+                        const json = await res.json();
+                        const payload = json && (json.kos_piket_data || json.data || json);
+                        if (payload && (payload.penghuni || payload.jadwal || payload.tugas)) {
+                            applyBackendData(payload);
+                            return;
+                        } else {
+                            await saveData();
+                            return;
+                        }
+                    }
+                } catch (err) {}
+            }
+
+            const cached = localStorage.getItem('dinar_kos_backup_cache');
+            if (cached) {
+                try {
+                    applyBackendData(JSON.parse(cached));
+                    return;
+                } catch (e) {}
+            }
+            applyBackendData(null);
+        }
+
+        // Simpan ke Backend TANPA Base64 Foto (Backend hanya menyimpan catatan absen & link Drive hari ini)
+        async function saveData() {
+            cleanupExpiredDailyPhotos();
+            const todayYMD = getTodayYMD();
+
+            const backendRiwayat = riwayatLogs.map(log => {
+                const isToday = log.tanggal && log.tanggal.startsWith(todayYMD);
+                const isDriveUrl = log.foto && !log.foto.startsWith('data:image');
+                return {
+                    ...log,
+                    foto: (isToday && isDriveUrl) ? log.foto : ''
+                };
+            });
+
+            const backendTugasTambahan = tugasTambahanList.map(t => {
+                const isToday = t.tanggalSelesai === todayYMD;
+                const isDriveUrl = t.foto && !t.foto.startsWith('data:image');
+                return {
+                    ...t,
+                    foto: (isToday && isDriveUrl) ? t.foto : ''
+                };
+            });
+
+            const payload = {
                 penghuni: penghuniList,
                 jadwal: jadwalPiket,
                 tugas: tugasList,
-                tugasTambahan: tugasTambahanList,
-                riwayat: riwayatLogs,
+                tugasTambahan: backendTugasTambahan,
+                riwayat: backendRiwayat,
                 arsipRiwayat: arsipRiwayatList,
                 kas: kasData,
                 announcement: adminAnnouncement,
                 leaderboardTitle: leaderboardTitle,
-                taskCatatan: taskCatatanMap
-            });
+                taskCatatan: taskCatatanMap,
+                missedPiketConfig: missedPiketConfig
+            };
+
+            applyBackendData(payload);
+
+            const endpoints = [`${BACKEND_URL}/api/data`, `${BACKEND_URL}/data`, `${BACKEND_URL}/kos_piket_data`];
+            for (const url of endpoints) {
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) break;
+                } catch (err) {
+                    console.warn(`Gagal mengirim ke ${url}:`, err);
+                }
+            }
         }
+
+        loadDataFromBackend();
+        setInterval(loadDataFromBackend, 10000);
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -1312,14 +1512,8 @@
         }
         function closeUserAnnouncement() { closeModal('modal-user-announcement'); }
         function getTodayName() {
-            const dayIdx = new Date().getDay();
+            const dayIdx = getWIBDate().getDay();
             return ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][dayIdx];
-        }
-
-        function getWIBDate() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            return new Date(utc + (3600000 * 7));
         }
 
         function updateWIBCountdown() {
@@ -1328,7 +1522,19 @@
             endOfDay.setHours(23, 59, 59, 999);
 
             const diff = endOfDay - nowWib;
-            if (diff <= 0) {
+
+            // Cek jika berganti hari (Jam 00:00 WIB) -> otomatis hapus foto hari kemarin di area web
+            const currentYMD = getTodayYMD();
+            if (lastActiveDateYMD && lastActiveDateYMD !== currentYMD) {
+                if (cleanupExpiredDailyPhotos()) {
+                    saveData();
+                    renderDashboard();
+                    renderTugasTambahan();
+                    renderRiwayat();
+                }
+            }
+
+            if (diff <= 1000) {
                 checkWeeklyAutoReset();
             }
 
@@ -1363,10 +1569,12 @@
             const nowWib = getWIBDate();
             const weekName = `Arsip Minggu (${nowWib.getDate()} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'][nowWib.getMonth()]} ${nowWib.getFullYear()})`;
             
+            const cleanLogsForArchive = riwayatLogs.map(l => ({ ...l, foto: '' }));
+
             arsipRiwayatList.unshift({
                 id: 'arsip-' + Date.now(),
                 periode: weekName,
-                logs: [...riwayatLogs],
+                logs: cleanLogsForArchive,
                 kasStatus: JSON.parse(JSON.stringify(kasData.pembayaran || {}))
             });
 
@@ -1434,6 +1642,184 @@
             });
         }
 
+        // --- SISTEM DETEKSI & KONTROL POP-UP TERLEWAT PIKET (MUNCUL TERUS SAMPAI DIMATIKAN ADMIN) ---
+        function getUserMissedPiketInfo(userObj) {
+            if (!userObj) return { isMissed: false, reasons: [], rawDates: [] };
+
+            const reasons = [];
+            const rawDates = [];
+
+            // 1. Cek jika diaktifkan manual oleh Admin
+            if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
+                reasons.push("Diaktifkan Manual oleh Admin");
+            }
+
+            // 2. Cek otomatis 3 hari ke belakang
+            const nowWib = getWIBDate();
+            const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+            for (let i = 1; i <= 3; i++) {
+                const pastDate = new Date(nowWib);
+                pastDate.setDate(pastDate.getDate() - i);
+                const pastDayName = daysOfWeek[pastDate.getDay()];
+                const pastDuties = jadwalPiket[pastDayName] || [];
+                const userWasAssigned = pastDuties.some(d => d.penghuniId === userObj.id);
+
+                if (userWasAssigned) {
+                    const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
+                    const clearKey = `${userObj.id}_${pastYMD}`;
+                    const isClearedByAdmin = missedPiketConfig.clearedDates && missedPiketConfig.clearedDates[clearKey];
+
+                    if (!isClearedByAdmin) {
+                        const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
+                        if (!hasAbsen) {
+                            reasons.push(`Terlewat Piket ${pastDayName} (${pastYMD})`);
+                            rawDates.push(pastYMD);
+                        }
+                    }
+                }
+            }
+
+            return {
+                isMissed: reasons.length > 0,
+                reasons: reasons,
+                rawDates: rawDates
+            };
+        }
+
+        function checkMissedPiketForUser(userObj) {
+            if (!userObj || !missedPiketConfig.enabled) {
+                if (missedPiketPopupTimeout) {
+                    clearTimeout(missedPiketPopupTimeout);
+                    missedPiketPopupTimeout = null;
+                }
+                closeModal('modal-terlewat-piket');
+                return;
+            }
+
+            const info = getUserMissedPiketInfo(userObj);
+            if (info.isMissed) {
+                const pesanEl = document.getElementById('terlewat-piket-pesan');
+                const detailEl = document.getElementById('terlewat-piket-detail-hari');
+                if (pesanEl) pesanEl.innerText = missedPiketConfig.message || DEFAULT_MISSED_CONFIG.message;
+                if (detailEl) detailEl.innerText = `Catatan: ${info.reasons.join(', ')}`;
+
+                const modalEl = document.getElementById('modal-terlewat-piket');
+                if (modalEl && modalEl.classList.contains('hidden') && !missedPiketPopupTimeout) {
+                    openModal('modal-terlewat-piket');
+                }
+            } else {
+                if (missedPiketPopupTimeout) {
+                    clearTimeout(missedPiketPopupTimeout);
+                    missedPiketPopupTimeout = null;
+                }
+                closeModal('modal-terlewat-piket');
+            }
+        }
+
+        function dismissMissedPiketModalTemporarily() {
+            closeModal('modal-terlewat-piket');
+            if (missedPiketPopupTimeout) clearTimeout(missedPiketPopupTimeout);
+
+            const intervalSec = Math.max(3, Number(missedPiketConfig.intervalSeconds || 10));
+            missedPiketPopupTimeout = setTimeout(() => {
+                missedPiketPopupTimeout = null;
+                if (loggedInUser && missedPiketConfig.enabled) {
+                    const info = getUserMissedPiketInfo(loggedInUser);
+                    if (info.isMissed) {
+                        openModal('modal-terlewat-piket');
+                    }
+                }
+            }, intervalSec * 1000);
+        }
+
+        function saveMissedPiketSettings(e) {
+            e.preventDefault();
+            if (!isAdminLoggedIn) return;
+            missedPiketConfig.enabled = document.getElementById('missed-popup-enabled').value === 'true';
+            missedPiketConfig.intervalSeconds = Math.max(3, parseInt(document.getElementById('missed-popup-interval').value) || 10);
+            missedPiketConfig.message = document.getElementById('missed-popup-message').value.trim() || DEFAULT_MISSED_CONFIG.message;
+            saveData();
+            showToast("Pengaturan waktu & pop-up denda berhasil disimpan!");
+        }
+
+        function adminTurnOffUserMissedPopup(userId) {
+            if (!isAdminLoggedIn) return;
+            const userObj = penghuniList.find(p => p.id === userId);
+            if (!userObj) return;
+
+            if (!missedPiketConfig.manualActive) missedPiketConfig.manualActive = {};
+            if (!missedPiketConfig.clearedDates) missedPiketConfig.clearedDates = {};
+
+            missedPiketConfig.manualActive[userId] = false;
+
+            const info = getUserMissedPiketInfo(userObj);
+            info.rawDates.forEach(ymd => {
+                missedPiketConfig.clearedDates[`${userId}_${ymd}`] = true;
+            });
+
+            saveData();
+            showToast(`Pop-up peringatan denda untuk ${userObj.nama} telah dimatikan!`);
+        }
+
+        function adminTurnOnUserMissedPopup(userId) {
+            if (!isAdminLoggedIn) return;
+            const userObj = penghuniList.find(p => p.id === userId);
+            if (!userObj) return;
+
+            if (!missedPiketConfig.manualActive) missedPiketConfig.manualActive = {};
+            missedPiketConfig.manualActive[userId] = true;
+            missedPiketConfig.enabled = true;
+
+            saveData();
+            showToast(`Pop-up peringatan denda diaktifkan terus-menerus untuk ${userObj.nama}!`);
+        }
+
+        function renderMissedUsersAdminPanel() {
+            const tbody = document.getElementById('missed-users-table-body');
+            if (!tbody) return;
+
+            const enabledSel = document.getElementById('missed-popup-enabled');
+            const intervalInput = document.getElementById('missed-popup-interval');
+            const msgInput = document.getElementById('missed-popup-message');
+
+            if (enabledSel && document.activeElement !== enabledSel) {
+                enabledSel.value = missedPiketConfig.enabled ? 'true' : 'false';
+            }
+            if (intervalInput && document.activeElement !== intervalInput) {
+                intervalInput.value = missedPiketConfig.intervalSeconds || 10;
+            }
+            if (msgInput && document.activeElement !== msgInput) {
+                msgInput.value = missedPiketConfig.message || DEFAULT_MISSED_CONFIG.message;
+            }
+
+            tbody.innerHTML = '';
+            penghuniList.forEach(p => {
+                const info = getUserMissedPiketInfo(p);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+
+                let statusBadge = info.isMissed
+                    ? `<div class="space-y-1">
+                        <span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-extrabold inline-flex items-center gap-1"><i class="fa-solid fa-bell animate-bounce"></i> Pop-Up Aktif Muncul Terus</span>
+                        <div class="text-[11px] text-rose-600 font-semibold">${info.reasons.join(', ')}</div>
+                       </div>`
+                    : `<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold inline-flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Aman / Pop-Up Mati</span>`;
+
+                let actionBtn = info.isMissed
+                    ? `<button onclick="adminTurnOffUserMissedPopup('${p.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1.5"><i class="fa-solid fa-power-off"></i> Matikan Pop-Up (Selesai Denda)</button>`
+                    : `<button onclick="adminTurnOnUserMissedPopup('${p.id}')" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Nyalakan Peringatan Denda</button>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900">${p.nama}</td>
+                    <td class="p-3 text-slate-600">${p.kamar}</td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3">${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function checkUserSession() {
             const savedUserId = localStorage.getItem('dinar_kos_logged_user_id');
             if (savedUserId) {
@@ -1446,40 +1832,6 @@
                 }
             }
             openUserLoginModal();
-        }
-
-        function checkMissedPiketForUser(userObj) {
-            if (!userObj) return;
-            const nowWib = getWIBDate();
-            const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            
-            let missedFound = false;
-            for (let i = 1; i <= 3; i++) {
-                const pastDate = new Date(nowWib);
-                pastDate.setDate(pastDate.getDate() - i);
-                const pastDayName = daysOfWeek[pastDate.getDay()];
-                const pastDuties = jadwalPiket[pastDayName] || [];
-                const userWasAssigned = pastDuties.some(d => d.penghuniId === userObj.id);
-
-                if (userWasAssigned) {
-                    const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
-                    const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
-                    if (!hasAbsen) {
-                        missedFound = true;
-                        break;
-                    }
-                }
-            }
-
-            if (missedFound) {
-                const storageKey = `dinar_missed_popup_${userObj.id}_${nowWib.toDateString()}`;
-                if (!localStorage.getItem(storageKey)) {
-                    localStorage.setItem(storageKey, 'true');
-                    setTimeout(() => {
-                        openModal('modal-terlewat-piket');
-                    }, 800);
-                }
-            }
         }
 
         function openUserLoginModal() {
@@ -1517,6 +1869,7 @@
                     closeModal('modal-user-login');
                     updateUserSessionUI();
                     renderDashboard();
+                    renderPenghuni();
                     renderTugasTambahan();
                     checkMissedPiketForUser(userObj);
                     showToast(`Berhasil login sebagai ${userObj.nama}!`);
@@ -1529,8 +1882,14 @@
         function logoutUserSession() {
             localStorage.removeItem('dinar_kos_logged_user_id');
             loggedInUser = null;
+            if (missedPiketPopupTimeout) {
+                clearTimeout(missedPiketPopupTimeout);
+                missedPiketPopupTimeout = null;
+            }
+            closeModal('modal-terlewat-piket');
             updateUserSessionUI();
             renderDashboard();
+            renderPenghuni();
             renderTugasTambahan();
             openUserLoginModal();
             showToast("Anda telah keluar dari sesi.");
@@ -1538,13 +1897,10 @@
 
         function updateUserSessionUI() {
             const nameSpan = document.getElementById('current-logged-user-name');
-            const nameSpanMob = document.getElementById('current-logged-user-name-mob');
             if (loggedInUser) {
                 if (nameSpan) nameSpan.innerText = loggedInUser.nama;
-                if (nameSpanMob) nameSpanMob.innerText = loggedInUser.nama;
             } else {
                 if (nameSpan) nameSpan.innerText = "Belum Login";
-                if (nameSpanMob) nameSpanMob.innerText = "Belum Login";
             }
         }
 
@@ -1608,8 +1964,7 @@
             const userDuties = todayDuties.filter(d => d.penghuniId === loggedInUser.id);
             if (userDuties.length === 0) return { isAssigned: false, isDone: false, assignedAreas: [] };
 
-            const now = new Date();
-            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const todayYMD = getTodayYMD();
             let allDone = true;
             userDuties.forEach(duty => {
                 const done = riwayatLogs.some(log => log.penghuniNama === loggedInUser.nama && log.area === duty.area && log.tanggal.startsWith(todayYMD));
@@ -1624,7 +1979,7 @@
         }
 
         function openBendaharaTab() {
-            if (!isBendaharaLoggedIn) return;
+            if (!isBendaharaLoggedIn && !isAdminLoggedIn) return;
             switchTab('bendahara');
         }
 
@@ -1650,6 +2005,7 @@
                 `;
                 tbody.appendChild(tr);
             });
+            renderMissedUsersAdminPanel();
         }
 
         function updateSingleUserPin(userId) {
@@ -1673,7 +2029,7 @@
             showToast("Semua PIN user berhasil disimpan ke data admin!");
         }
 
-        // --- KAS KOSAN & BENDAHARA LOGIC (Mendukung Kurangi Saldo Langsung, Tambah, & Set 0) ---
+        // --- KAS KOSAN & BENDAHARA LOGIC ---
         function calculateTotalSaldoKas() {
             let totalPemasukan = 0;
             penghuniList.forEach(p => {
@@ -1681,9 +2037,6 @@
                     totalPemasukan += Number(kasData.nominal || 0);
                 }
             });
-            if (kasData.pemasukanLogs) {
-                kasData.pemasukanLogs.forEach(l => { totalPemasukan += Number(l.jumlah || 0); });
-            }
             let totalPengeluaran = 0;
             if (kasData.pengeluaranLogs) {
                 kasData.pengeluaranLogs.forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
@@ -1743,7 +2096,8 @@
             if (status && p) {
                 triggerKasPaymentPopup(p.nama, nominalKas);
                 if (!kasData.pemasukanLogs) kasData.pemasukanLogs = [];
-                const now = new Date();
+                kasData.pemasukanLogs = kasData.pemasukanLogs.filter(l => !(l.nama === p.nama && l.keterangan === 'Pembayaran Kas Minggu Ini'));
+                const now = getWIBDate();
                 kasData.pemasukanLogs.unshift({
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                     nama: p.nama,
@@ -1820,9 +2174,9 @@
                 return;
             }
 
+            const now = getWIBDate();
             if (isAdminLoggedIn) {
                 if (!kasData.pengeluaranLogs) kasData.pengeluaranLogs = [];
-                const now = new Date();
                 kasData.pengeluaranLogs.unshift({
                     id: 'exp-' + Date.now(),
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
@@ -1835,7 +2189,6 @@
                 showToast("Pengeluaran kas berhasil dicatat!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
-                const now = new Date();
                 kasData.pendingApprovals.unshift({
                     id: 'appr-' + Date.now(),
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
@@ -1880,7 +2233,7 @@
             e.preventDefault();
             if (!isBendaharaLoggedIn && !isAdminLoggedIn) return;
             const nominalInput = parseInt(document.getElementById('edit-saldo-nominal').value);
-            const jenisAdjustment = document.getElementById('edit-saldo-tipe').value; // 'tambah', 'kurang', 'set_nol'
+            const jenisAdjustment = document.getElementById('edit-saldo-tipe').value;
             const ket = document.getElementById('edit-saldo-ket').value;
 
             if (jenisAdjustment !== 'set_nol' && (isNaN(nominalInput) || nominalInput < 0)) {
@@ -1905,7 +2258,7 @@
                 showToast("Saldo kas berhasil disesuaikan secara langsung!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
-                const now = new Date();
+                const now = getWIBDate();
                 kasData.pendingApprovals.unshift({
                     id: 'appr-' + Date.now(),
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
@@ -1925,7 +2278,7 @@
             kasData.penyesuaianSaldo = Number(kasData.penyesuaianSaldo || 0) + Number(adjustmentValue);
 
             if (!kasData.pemasukanLogs) kasData.pemasukanLogs = [];
-            const now = new Date();
+            const now = getWIBDate();
             kasData.pemasukanLogs.unshift({
                 waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                 nama: authorName,
@@ -1987,7 +2340,7 @@
 
             if (req.tipe === 'PENGELUARAN') {
                 if (!kasData.pengeluaranLogs) kasData.pengeluaranLogs = [];
-                const now = new Date();
+                const now = getWIBDate();
                 kasData.pengeluaranLogs.unshift({
                     id: 'exp-' + Date.now(),
                     waktu: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
@@ -2121,8 +2474,11 @@
             if (isAdminLoggedIn || isBendaharaLoggedIn) {
                 isAdminLoggedIn = false;
                 isBendaharaLoggedIn = false;
+                if (currentActiveTab === 'manage-users' || currentActiveTab === 'bendahara') {
+                    switchTab('dashboard');
+                }
                 updateAdminUIState();
-                showToast("Akses pengelola dikunci kembali.");
+                showToast("Akses pengelola dikunci kembali. Semua menu Admin disembunyikan.");
             } else {
                 openModal('modal-role-selector');
             }
@@ -2146,18 +2502,19 @@
                 isAdminLoggedIn = true;
                 closeModal('modal-admin-pin');
                 updateAdminUIState();
-                showToast("Admin Mode Berhasil Ditingkatkan!");
+                showToast("Admin Mode Berhasil Dibuka! Semua menu edit kini tampil.");
             } else if (mode === 'bendahara' && inputVal === BENDAHARA_PIN) {
                 isBendaharaLoggedIn = true;
                 closeModal('modal-admin-pin');
                 updateAdminUIState();
                 switchTab('bendahara');
-                showToast("Bendahara Mode Berhasil Ditingkatkan!");
+                showToast("Bendahara Mode Berhasil Dibuka!");
             } else {
                 document.getElementById('admin-pin-error').classList.remove('hidden');
             }
         }
 
+        // --- UPDATE ADMIN UI STATE (OTOMATIS MERENDER SEMUA MENU EDIT TANPA PERLU DIPANCING) ---
         function updateAdminUIState() {
             const btn = document.getElementById('admin-toggle-btn');
             const icon = document.getElementById('admin-icon');
@@ -2173,6 +2530,21 @@
             const btnEditJadwalMain = document.getElementById('btn-edit-jadwal-main');
             const btnTambahPenghuniMain = document.getElementById('btn-tambah-penghuni-main');
             const btnTambahTugasMain = document.getElementById('btn-tambah-tugas-main');
+
+            // Sembunyikan semua kontrol terlebih dahulu secara ketat
+            btnAnnouncement?.classList.add('hidden');
+            adminDashboardControls?.classList.add('hidden');
+            btnEditLBT?.classList.add('hidden');
+            adminTambahanControls?.classList.add('hidden');
+            navManageUsersBtn?.classList.add('hidden');
+            navBendaharaBtn?.classList.add('hidden');
+            btnEditJadwalMain?.classList.add('hidden');
+            btnEditJadwalMain?.classList.remove('flex');
+            btnTambahPenghuniMain?.classList.add('hidden');
+            btnTambahPenghuniMain?.classList.remove('flex');
+            btnTambahTugasMain?.classList.add('hidden');
+            btnTambahTugasMain?.classList.remove('flex');
+            if (adminResetMingguan) adminResetMingguan.innerHTML = '';
 
             if (isAdminLoggedIn || isBendaharaLoggedIn) {
                 btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
@@ -2204,28 +2576,19 @@
                 btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
                 icon.className = "fa-solid fa-lock";
                 text.innerText = "Admin";
-                btnAnnouncement?.classList.add('hidden');
-                adminDashboardControls?.classList.add('hidden');
-                btnEditLBT?.classList.add('hidden');
-                adminTambahanControls?.classList.add('hidden');
-                navManageUsersBtn?.classList.add('hidden');
-                navBendaharaBtn?.classList.add('hidden');
-                
-                btnEditJadwalMain?.classList.add('hidden');
-                btnEditJadwalMain?.classList.remove('flex');
-                btnTambahPenghuniMain?.classList.add('hidden');
-                btnTambahPenghuniMain?.classList.remove('flex');
-                btnTambahTugasMain?.classList.add('hidden');
-                btnTambahTugasMain?.classList.remove('flex');
-
-                if (adminResetMingguan) adminResetMingguan.innerHTML = '';
             }
+
+            // Render ulang SELURUH tab secara langsung agar semua tombol Edit/Hapus langsung muncul/hilang otomatis
             updateDashboardTitlesUI();
             renderDashboard();
+            renderJadwal();
+            renderPenghuni();
+            renderTugas();
             renderTugasTambahan();
+            renderKasTable();
             renderRiwayat();
             renderManageUsersTable();
-            renderKasTable();
+            renderApprovalBadge();
         }
 
         function initDateHeader() {
@@ -2237,7 +2600,6 @@
 
         function updateExternalLinksUI() {
             document.getElementById('btn-gdrive')?.setAttribute('href', GDRIVE_LINK);
-            document.getElementById('btn-gdrive-mob')?.setAttribute('href', GDRIVE_LINK);
         }
 
         function applyWebsiteBackground() {
@@ -2270,6 +2632,16 @@
         }
 
         function switchTab(tabName) {
+            if (tabName === 'manage-users' && !isAdminLoggedIn) {
+                showToast("Hanya Admin yang dapat mengakses menu ini!");
+                return;
+            }
+            if (tabName === 'bendahara' && !isBendaharaLoggedIn && !isAdminLoggedIn) {
+                showToast("Hanya Bendahara atau Admin yang dapat mengakses menu ini!");
+                return;
+            }
+
+            currentActiveTab = tabName;
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(`tab-${tabName}`)?.classList.remove('hidden');
 
@@ -2277,15 +2649,9 @@
                 btn.classList.remove('text-brand-600', 'bg-brand-50');
                 btn.classList.add('text-slate-600');
             });
-            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
-                btn.classList.remove('text-brand-600');
-                btn.classList.add('text-slate-400');
-            });
 
             document.getElementById(`nav-${tabName}`)?.classList.remove('text-slate-600');
             document.getElementById(`nav-${tabName}`)?.classList.add('text-brand-600', 'bg-brand-50');
-            document.getElementById(`mob-nav-${tabName}`)?.classList.remove('text-slate-400');
-            document.getElementById(`mob-nav-${tabName}`)?.classList.add('text-brand-600');
         }
 
         function checkAndShowUserAnnouncement() {
@@ -2346,8 +2712,9 @@
 
             if (imgFile) {
                 const r = new FileReader();
-                r.onload = e => {
-                    adminAnnouncement.image = e.target.result;
+                r.onload = async e => {
+                    const driveUrl = await uploadPhotoToGoogleDrive(e.target.result, `Pengumuman_${Date.now()}.jpg`);
+                    adminAnnouncement.image = driveUrl || e.target.result;
                     done++;
                     if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
                 };
@@ -2355,8 +2722,9 @@
             }
             if (bgFile) {
                 const r = new FileReader();
-                r.onload = e => {
-                    adminAnnouncement.backgroundImage = e.target.result;
+                r.onload = async e => {
+                    const driveUrl = await uploadPhotoToGoogleDrive(e.target.result, `Background_${Date.now()}.jpg`);
+                    adminAnnouncement.backgroundImage = driveUrl || e.target.result;
                     done++;
                     if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
                 };
@@ -2406,7 +2774,7 @@
                 } else if (piketStatus.isDone) {
                     cameraContainer.innerHTML = `<div class="px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-circle-check mr-1"></i> ${loggedInUser.nama} kamu sudah piket hari ini! Mantap!</div>`;
                 } else {
-                    cameraContainer.innerHTML = `<button onclick="openAbsenModal()" class="w-full md:w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-xs"><i class="fa-solid fa-camera text-base"></i> BUKA KAMERA PIKET</button>`;
+                    cameraContainer.innerHTML = `<button onclick="openAbsenModal()" class="w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-xs"><i class="fa-solid fa-camera text-base"></i> BUKA KAMERA PIKET</button>`;
                 }
             }
 
@@ -2415,16 +2783,15 @@
             container.innerHTML = '';
 
             const todayDuties = jadwalPiket[todayName] || [];
-            const now = getWIBDate();
-            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const todayYMD = getTodayYMD();
 
             if (todayDuties.length === 0) {
                 container.innerHTML = `<div class="col-span-2 text-center py-8 text-slate-400 font-medium">Libur Piket Hari Ini (${todayName}) 🎉</div>`;
             } else {
                 todayDuties.forEach((item, index) => {
                     const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Belum Dipilih', kamar: '-' };
-                    const todayLog = riwayatLogs.some(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
-                    const isDone = !!todayLog;
+                    const todayLogObj = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
+                    const isDone = !!todayLogObj;
                     const taskKey = `${todayName}_${index}_${item.area}`;
                     const catatanAdmin = taskCatatanMap[taskKey] || '';
 
@@ -2435,8 +2802,10 @@
                         ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full backdrop-blur-md shadow"><i class="fa-solid fa-circle-check"></i> Selesai <span class="w-2 h-2 rounded-full bg-white/50 animate-ping"></span></span>`
                         : `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
 
-                    let todayLogObj = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
-                    let buktiBtn = isDone && todayLogObj && todayLogObj.foto ? `<button onclick="previewImage('${todayLogObj.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>` : '';
+                    const todayPhotoSrc = isDone ? getTodayPhotoForId(todayLogObj.id, todayLogObj.tanggal, todayLogObj.foto) : '';
+                    let buktiBtn = (isDone && todayPhotoSrc)
+                        ? `<button onclick="previewImage('${todayPhotoSrc}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`
+                        : (isDone ? `<a href="${GDRIVE_LINK}" target="_blank" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Lihat Foto di Google Drive</a>` : '');
 
                     let adminCatatanSection = `
                         <div class="mt-1 pt-2 border-t border-slate-200/60 flex items-start justify-between gap-2">
@@ -2529,6 +2898,8 @@
                 return;
             }
 
+            const todayYMD = getTodayYMD();
+
             tugasTambahanList.forEach((tugas) => {
                 const penghuni = penghuniList.find(p => p.id === tugas.penghuniId) || { nama: 'Belum Ditentukan', kamar: '-' };
                 const isDone = tugas.status === 'Selesai';
@@ -2548,9 +2919,15 @@
                     waktuInfo = `<span class="text-[11px] text-rose-600 font-semibold"><i class="fa-regular fa-clock mr-1"></i> Deadline: ${formattedDate}</span>`;
                 }
 
+                const todayPhotoTambahan = isDone ? getTodayPhotoForId(tugas.id, tugas.tanggalSelesai || todayYMD, tugas.foto) : '';
+
                 let actionBtn = '';
-                if (isDone && tugas.foto) {
-                    actionBtn = `<button onclick="previewImage('${tugas.foto}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`;
+                if (isDone) {
+                    if (todayPhotoTambahan) {
+                        actionBtn = `<button onclick="previewImage('${todayPhotoTambahan}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`;
+                    } else {
+                        actionBtn = `<a href="${GDRIVE_LINK}" target="_blank" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Bukti Tersimpan di Drive</a>`;
+                    }
                 } else {
                     if (!loggedInUser) {
                         actionBtn = `<button onclick="openUserLoginModal()" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow transition">Silakan Login Terlebih Dahulu</button>`;
@@ -2804,34 +3181,49 @@
             stopCameraTambahan();
         }
 
-        function handleAbsenTambahanSubmit(e) {
+        async function handleAbsenTambahanSubmit(e) {
             e.preventDefault();
             if (!capturedPhotoTambahan || !currentTambahanId) return;
 
+            const submitBtn = document.getElementById('btn-submit-tambahan');
+            const origText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Mengunggah ke Drive...";
+
             const idx = tugasTambahanList.findIndex(x => x.id === currentTambahanId);
             if (idx !== -1) {
-                tugasTambahanList[idx].status = 'Selesai';
-                tugasTambahanList[idx].foto = capturedPhotoTambahan;
-
                 const t = tugasTambahanList[idx];
                 const p = penghuniList.find(x => x.id === t.penghuniId) || { nama: 'Unknown' };
                 const now = getWIBDate();
-                const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                const todayYMD = getTodayYMD();
+                const dateStr = `${todayYMD} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                const logId = 'log-tambahan-' + Date.now();
+
+                const filename = `Tambahan_${todayYMD}_${p.nama.replace(/\s+/g, '_')}_${t.nama.replace(/\s+/g, '_')}.jpg`;
+                const driveUrl = await uploadPhotoToGoogleDrive(capturedPhotoTambahan, filename);
+
+                savePhotoToDailyCache(t.id, driveUrl || capturedPhotoTambahan);
+                savePhotoToDailyCache(logId, driveUrl || capturedPhotoTambahan);
+
+                tugasTambahanList[idx].status = 'Selesai';
+                tugasTambahanList[idx].tanggalSelesai = todayYMD;
+                tugasTambahanList[idx].foto = driveUrl || '';
 
                 riwayatLogs.unshift({
-                    id: 'log-tambahan-' + Date.now(),
+                    id: logId,
                     tanggal: dateStr,
                     penghuniNama: p.nama,
                     area: `[Tambahan] ${t.nama}`,
                     gps: `${currentGeoLocationTambahan} (${currentGeoAddressTambahan})`,
-                    foto: capturedPhotoTambahan,
+                    foto: driveUrl || '',
                     status: 'Selesai'
                 });
             }
 
-            saveData();
+            submitBtn.innerText = origText;
+            await saveData();
             closeModal('modal-absen-tambahan');
-            showToast("Tugas tambahan selesai & tercatat di leaderboard!");
+            showToast("Foto tersimpan di Google Drive & absen tercatat!");
         }
 
         function deleteLogEntry(logId) {
@@ -2859,7 +3251,9 @@
                     return `<div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border text-xs"><span class="font-bold text-slate-800">${p.nama}</span><span class="text-[11px] text-brand-700 font-semibold bg-brand-50 px-2 py-0.5 rounded">${item.area}</span></div>`;
                 }).join('') || `<p class="text-xs text-slate-400 italic py-2">Libur</p>`;
 
-                card.innerHTML = `<div><div class="flex justify-between items-center border-b pb-2 mb-3"><h3 class="font-extrabold text-slate-900 text-base">${day}</h3><span class="text-xs font-bold text-slate-400">${duties.length} Tugas</span></div><div class="space-y-2">${listItems}</div></div>`;
+                let adminQuickEdit = isAdminLoggedIn ? `<button onclick="tryOpenEditJadwalModal()" class="text-xs text-brand-600 hover:text-brand-800 font-bold"><i class="fa-solid fa-pen mr-1"></i> Edit</button>` : `<span class="text-xs font-bold text-slate-400">${duties.length} Tugas</span>`;
+
+                card.innerHTML = `<div><div class="flex justify-between items-center border-b pb-2 mb-3"><h3 class="font-extrabold text-slate-900 text-base">${day}</h3>${adminQuickEdit}</div><div class="space-y-2">${listItems}</div></div>`;
                 grid.appendChild(card);
             });
         }
@@ -2935,7 +3329,7 @@
 
                 let editMotivasiBtn = isMyAccount ? `<button onclick="openEditMotivasiModal('${p.id}')" class="w-full py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold rounded-xl text-xs transition border border-brand-200"><i class="fa-solid fa-pen mr-1"></i> Ubah Motivasi Saya</button>` : '';
 
-                let adminActions = isAdminLoggedIn ? `<div class="flex gap-1"><button onclick="editPenghuni('${p.id}')" class="p-1.5 text-slate-500"><i class="fa-solid fa-pen"></i></button><button onclick="deletePenghuni('${p.id}')" class="p-1.5 text-rose-500"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+                let adminActions = isAdminLoggedIn ? `<div class="flex gap-1"><button onclick="editPenghuni('${p.id}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 text-xs font-bold"><i class="fa-solid fa-pen"></i></button><button onclick="deletePenghuni('${p.id}')" class="p-1.5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-600 text-xs font-bold"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
 
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
@@ -3034,7 +3428,7 @@
             tugasList.forEach((tugas, idx) => {
                 const card = document.createElement('div');
                 card.className = "bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between";
-                let adminBtns = isAdminLoggedIn ? `<div class="flex gap-1"><button onclick="editTugas('${tugas}')" class="p-1.5 text-slate-500"><i class="fa-solid fa-pen"></i></button><button onclick="deleteTugas(${idx})" class="p-1.5 text-rose-500"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
+                let adminBtns = isAdminLoggedIn ? `<div class="flex gap-1"><button onclick="editTugas('${tugas}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 text-xs font-bold"><i class="fa-solid fa-pen"></i></button><button onclick="deleteTugas(${idx})" class="p-1.5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-600 text-xs font-bold"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
                 card.innerHTML = `<div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-list-check"></i></div><span class="font-bold text-slate-800 text-sm">${tugas}</span></div>${adminBtns}`;
                 container.appendChild(card);
             });
@@ -3095,7 +3489,10 @@
             filtered.forEach(log => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50/80 transition";
-                let imgCell = log.foto ? `<img src="${log.foto}" onclick="previewImage('${log.foto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">` : '<span class="text-slate-400 text-xs">Tanpa Foto</span>';
+                const todayPhoto = getTodayPhotoForId(log.id, log.tanggal, log.foto);
+                let imgCell = todayPhoto
+                    ? `<img src="${todayPhoto}" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
+                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
                 let adminDel = isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200">Hapus</button>` : '-';
                 tr.innerHTML = `<td class="p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-4 text-brand-700 font-medium">${log.area}</td><td class="p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-4">${imgCell}</td><td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-4">${adminDel}</td>`;
                 tbody.appendChild(tr);
@@ -3197,8 +3594,7 @@
             document.getElementById('absen-select-penghuni').value = loggedInUser.id;
 
             const selArea = document.getElementById('absen-select-area');
-            const now = getWIBDate();
-            const todayYMD = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const todayYMD = getTodayYMD();
 
             let areaOptionsHtml = '';
             userDuties.forEach(duty => {
@@ -3237,34 +3633,47 @@
 
             capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
             video.classList.add('hidden');
-            canvas.classList.add('hidden');
+            canvas.classList.remove('hidden');
             document.getElementById('btn-snap').classList.add('hidden');
             document.getElementById('btn-retake').classList.remove('hidden');
             document.getElementById('btn-submit-absen').disabled = false;
             stopCamera();
         }
 
-        function handleAbsenSubmit(e) {
+        async function handleAbsenSubmit(e) {
             e.preventDefault();
             if (!capturedPhotoData || !loggedInUser) return;
 
+            const submitBtn = document.getElementById('btn-submit-absen');
+            const origText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Mengunggah ke Drive...";
+
             const area = document.getElementById('absen-select-area').value;
             const now = getWIBDate();
-            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            const todayYMD = getTodayYMD();
+            const dateStr = `${todayYMD} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            const logId = 'log-' + Date.now();
+
+            const filename = `Piket_${todayYMD}_${loggedInUser.nama.replace(/\s+/g, '_')}_${area.replace(/\s+/g, '_')}.jpg`;
+            const driveUrl = await uploadPhotoToGoogleDrive(capturedPhotoData, filename);
+
+            savePhotoToDailyCache(logId, driveUrl || capturedPhotoData);
 
             riwayatLogs.unshift({
-                id: 'log-' + Date.now(),
+                id: logId,
                 tanggal: dateStr,
                 penghuniNama: loggedInUser.nama,
                 area: area,
                 gps: `${currentGeoLocation} (${currentGeoAddress})`,
-                foto: capturedPhotoData,
+                foto: driveUrl || '',
                 status: 'Selesai'
             });
 
-            saveData();
+            submitBtn.innerText = origText;
+            await saveData();
             closeAbsenModal();
-            showToast('Absen berhasil disimpan!');
+            showToast('Foto tersimpan di Google Drive & catatan absen berhasil disimpan!');
         }
     </script>
 </body>
