@@ -2,8 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Mengunci tampilan agar di HP sama persis seperti tampilan Laptop/Desktop -->
-    <meta name="viewport" content="width=1280, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absen Piket Kosan - Dinar Boys</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,12 +34,9 @@
         }
     </script>
     <style>
-        body {
-            min-width: 1200px;
-        }
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #f1f1f1;
@@ -68,67 +64,68 @@
         }
     </style>
 </head>
-<body id="app-body" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-6 bg-cover bg-center bg-fixed">
+<body id="app-body" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col pb-8 bg-cover bg-center bg-fixed">
 
-    <!-- Header / Navbar (Tampil Konsisten Seperti Laptop di Semua Perangkat) -->
+    <!-- Header / Navbar (Penataan Gaya Desktop yang Menyesuaikan Layar HP & Laptop) -->
     <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                        <i class="fa-solid fa-broom text-lg"></i>
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap justify-between items-center py-2.5 gap-2">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-teal-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20 shrink-0">
+                        <i class="fa-solid fa-broom text-base sm:text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-lg leading-tight text-slate-900">Piket Kos Dinar Boys<span class="text-brand-600">.</span></h1>
-                        <p class="text-xs text-slate-500">Kosan Bersih, Hidup Nyaman Dan Damai</p>
+                        <h1 class="font-bold text-sm sm:text-lg leading-tight text-slate-900">Piket Kos Dinar Boys<span class="text-brand-600">.</span></h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500">Kosan Bersih, Hidup Nyaman Dan Damai</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <div id="user-session-badge" class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-semibold text-slate-700">
+                <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
+                    <div id="user-session-badge" class="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 rounded-lg text-[11px] sm:text-xs font-semibold text-slate-700">
                         <i class="fa-solid fa-user-check text-brand-600"></i>
-                        <span id="current-logged-user-name">-</span>
-                        <button onclick="openGantiPinModal()" title="Ganti PIN" class="text-brand-600 hover:text-brand-800 ml-1" id="btn-open-ganti-pin"><i class="fa-solid fa-key"></i></button>
-                        <button onclick="logoutUserSession()" title="Logout Akun" class="text-rose-500 hover:text-rose-700 ml-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+                        <span id="current-logged-user-name">AJJA</span>
+                        <button onclick="openGantiPinModal()" title="Ganti PIN" class="text-brand-600 hover:text-brand-800 ml-0.5" id="btn-open-ganti-pin"><i class="fa-solid fa-key"></i></button>
+                        <button onclick="logoutUserSession()" title="Logout Akun" class="text-rose-500 hover:text-rose-700 ml-0.5"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
 
-                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-semibold transition">
-                        <i class="fa-brands fa-google-drive text-blue-600"></i> Drive Foto Backup
+                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-semibold transition">
+                        <i class="fa-brands fa-google-drive text-blue-600"></i> <span class="hidden xs:inline sm:inline">Drive Foto Backup</span><span class="sm:hidden">Drive</span>
                     </a>
 
-                    <button id="admin-toggle-btn" onclick="openAdminRoleSelector()" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
+                    <button id="admin-toggle-btn" onclick="openAdminRoleSelector()" class="px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200">
                         <i id="admin-icon" class="fa-solid fa-lock"></i>
                         <span id="admin-status-text">Admin</span>
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1 border-t border-slate-100 py-2 overflow-x-auto">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 text-brand-600 bg-brand-50 whitespace-nowrap">
+            <!-- Bar Menu Navigasi Atas (Tampil di HP & Laptop Seperti Penataan Desktop) -->
+            <div class="flex items-center gap-1 border-t border-slate-100 py-2 overflow-x-auto custom-scrollbar">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-brand-600 bg-brand-50 whitespace-nowrap">
                     <i class="fa-solid fa-chart-pie"></i> Dashboard
                 </button>
-                <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('jadwal')" id="nav-jadwal" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-calendar-days"></i> Jadwal
                 </button>
-                <button onclick="switchTab('penghuni')" id="nav-penghuni" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('penghuni')" id="nav-penghuni" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-users"></i> Penghuni
                 </button>
-                <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('tugas')" id="nav-tugas" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-list-check"></i> Kelola Tugas
                 </button>
-                <button onclick="switchTab('tambahan')" id="nav-tambahan" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('tambahan')" id="nav-tambahan" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-tasks"></i> Tugas Tambahan
                 </button>
-                <button onclick="switchTab('kas')" id="nav-kas" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('kas')" id="nav-kas" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-wallet"></i> Kas Kosan
                 </button>
-                <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button onclick="switchTab('riwayat')" id="nav-riwayat" class="nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-clock-rotate-left"></i> Riwayat
                 </button>
-                <button id="nav-manage-users-btn" onclick="openManageUsersTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all flex items-center gap-2 whitespace-nowrap relative">
+                <button id="nav-manage-users-btn" onclick="openManageUsersTab()" class="hidden nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-all flex items-center gap-1.5 whitespace-nowrap relative">
                     <i class="fa-solid fa-user-shield"></i> Kelola User & PIN <span id="approval-badge-count" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
-                <button id="nav-bendahara-btn" onclick="openBendaharaTab()" class="hidden nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 transition-all flex items-center gap-2 whitespace-nowrap">
+                <button id="nav-bendahara-btn" onclick="openBendaharaTab()" class="hidden nav-btn px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 transition-all flex items-center gap-1.5 whitespace-nowrap">
                     <i class="fa-solid fa-coins"></i> Menu Bendahara
                 </button>
             </div>
@@ -146,33 +143,33 @@
     </div>
 
     <!-- POP-UP NOTIFIKASI KECIL BAYAR KAS -->
-    <div id="kas-payment-popup-container" class="fixed bottom-16 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+    <div id="kas-payment-popup-container" class="fixed bottom-6 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-8 py-6 flex-1 w-full">
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 flex-1 w-full">
 
         <!-- TAB 1: DASHBOARD -->
-        <section id="tab-dashboard" class="tab-content space-y-6">
-            <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <section id="tab-dashboard" class="tab-content space-y-5">
+            <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-teal-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg relative overflow-hidden">
                 <div class="absolute -right-10 -bottom-10 opacity-10 text-white">
-                    <i class="fa-solid fa-sparkles text-[180px]"></i>
+                    <i class="fa-solid fa-sparkles text-[140px] sm:text-[180px]"></i>
                 </div>
-                <div class="relative z-10 flex flex-row items-center justify-between gap-4">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <div class="flex items-center gap-2 flex-wrap mb-3">
-                            <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium">
+                        <div class="flex items-center gap-2 flex-wrap mb-2.5">
+                            <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-medium">
                                 <i class="fa-regular fa-calendar text-teal-200"></i>
                                 <span id="current-date-str">Hari Ini</span>
                             </div>
-                            <div class="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-amber-300 border border-white/10">
+                            <div class="inline-flex items-center gap-1.5 bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold text-amber-300 border border-white/10">
                                 <i class="fa-solid fa-clock animate-pulse text-amber-300"></i>
                                 <span id="wib-countdown-timer">Sisa Waktu: --j --m --d (WIB)</span>
                             </div>
                         </div>
 
-                        <h2 id="dashboard-main-title" class="text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
-                        <div class="flex items-center gap-3 mt-1 flex-wrap">
-                            <p id="dashboard-main-subtitle" class="text-teal-100 text-sm">Tong hilap foto nya!.</p>
+                        <h2 id="dashboard-main-title" class="text-xl sm:text-3xl font-extrabold">Siapa Piket Hari Ini?</h2>
+                        <div class="flex items-center gap-2.5 mt-1.5 flex-wrap">
+                            <p id="dashboard-main-subtitle" class="text-teal-100 text-xs sm:text-sm">Tong hilap foto nya!.</p>
                             <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold text-amber-200 border border-white/10 shadow-sm">
                                 <i class="fa-solid fa-wallet"></i> Saldo Kas: <span id="dashboard-saldo-kas-display">Rp 0</span>
                             </div>
@@ -184,8 +181,8 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-row gap-2">
-                        <button id="btn-manage-announcement" onclick="tryOpenAnnouncementModal()" class="hidden px-4 py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
+                    <div class="flex flex-row flex-wrap gap-2 items-center">
+                        <button id="btn-manage-announcement" onclick="tryOpenAnnouncementModal()" class="hidden px-3.5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2">
                             <i class="fa-solid fa-bullhorn text-sm"></i> Kelola Teks & Peringatan
                         </button>
                         <div id="camera-action-container" class="w-auto"></div>
@@ -193,10 +190,10 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-6">
-                <div class="col-span-2 bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div class="lg:col-span-2 bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3 flex-wrap gap-2">
-                        <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-lg flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-brand-600"></i> Daftar Tugas Piket Hari Ini (<span id="today-day-name">--</span>)
                         </h3>
                         <div class="flex items-center gap-2">
@@ -210,129 +207,129 @@
                             </div>
                         </div>
                     </div>
-                    <div id="dashboard-task-boxes" class="grid grid-cols-2 gap-4"></div>
+                    <div id="dashboard-task-boxes" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="bg-white/95 backdrop-blur-md rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+                <div class="space-y-5">
+                    <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-slate-200/80 shadow-sm">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 id="leaderboard-title-display" class="font-bold text-slate-900 text-md flex items-center gap-2">
+                            <h3 id="leaderboard-title-display" class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2">
                                 <i class="fa-solid fa-crown text-amber-500"></i> Leaderboard Paling Rajin
                             </h3>
                             <button id="btn-edit-leaderboard-title" onclick="tryOpenLeaderboardConfig()" class="hidden text-xs text-brand-600 hover:text-brand-800 font-bold">
                                 <i class="fa-solid fa-gear"></i> Ubah Gelar
                             </button>
                         </div>
-                        <div id="leaderboard-container" class="space-y-3"></div>
+                        <div id="leaderboard-container" class="space-y-2.5"></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- TAB 2: JADWAL -->
-        <section id="tab-jadwal" class="tab-content hidden space-y-6">
-            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <section id="tab-jadwal" class="tab-content hidden space-y-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Jadwal Piket Mingguan</h2>
-                    <p class="text-sm text-slate-500">Atur, tambah, atau kurangi penanggung jawab area kebersihan setiap hari.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Jadwal Piket Mingguan</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Atur, tambah, atau kurangi penanggung jawab area kebersihan setiap hari.</p>
                 </div>
-                <button id="btn-edit-jadwal-main" onclick="tryOpenEditJadwalModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
+                <button id="btn-edit-jadwal-main" onclick="tryOpenEditJadwalModal()" class="hidden px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i> Atur Ulang Jadwal (Admin)
                 </button>
             </div>
-            <div id="weekly-schedule-grid" class="grid grid-cols-3 gap-6"></div>
+            <div id="weekly-schedule-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB 3: PENGHUNI -->
-        <section id="tab-penghuni" class="tab-content hidden space-y-6">
-            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <section id="tab-penghuni" class="tab-content hidden space-y-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Daftar Penghuni Kosan</h2>
-                    <p class="text-sm text-slate-500">Kelola data penghuni aktif kosan dan tambahkan motivasi personal Anda.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Daftar Penghuni Kosan</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Kelola data penghuni aktif kosan dan tambahkan motivasi personal Anda.</p>
                 </div>
-                <button id="btn-tambah-penghuni-main" onclick="tryOpenPenghuniModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
+                <button id="btn-tambah-penghuni-main" onclick="tryOpenPenghuniModal()" class="hidden px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-user-plus"></i> Tambah Penghuni (Admin)
                 </button>
             </div>
-            <div id="penghuni-grid" class="grid grid-cols-4 gap-4"></div>
+            <div id="penghuni-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
         </section>
 
         <!-- TAB 4: KELOLA TUGAS -->
-        <section id="tab-tugas" class="tab-content hidden space-y-6">
-            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <section id="tab-tugas" class="tab-content hidden space-y-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Kelola Daftar Tugas Kebersihan</h2>
-                    <p class="text-sm text-slate-500">Tambah, ubah, atau hapus jenis area tugas piket kosan.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Kelola Daftar Tugas Kebersihan</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Tambah, ubah, atau hapus jenis area tugas piket kosan.</p>
                 </div>
-                <button id="btn-tambah-tugas-main" onclick="tryOpenTugasModal()" class="hidden px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
+                <button id="btn-tambah-tugas-main" onclick="tryOpenTugasModal()" class="hidden px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition items-center gap-2">
                     <i class="fa-solid fa-plus-circle"></i> Tambah Tugas Baru (Admin)
                 </button>
             </div>
-            <div id="tugas-list-container" class="grid grid-cols-3 gap-4"></div>
+            <div id="tugas-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB: TUGAS TAMBAHAN -->
-        <section id="tab-tambahan" class="tab-content hidden space-y-6">
-            <div class="flex flex-row justify-between items-center gap-4 bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <section id="tab-tambahan" class="tab-content hidden space-y-5">
+            <div class="flex flex-wrap justify-between items-center gap-3 bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Tugas Tambahan</h2>
-                    <p class="text-sm text-slate-500">Kelola tugas tambahan insidentil di kosan.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Tugas Tambahan</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Kelola tugas tambahan insidentil di kosan.</p>
                 </div>
                 <div id="admin-tugas-tambahan-controls" class="hidden">
-                    <button onclick="tryOpenTambahTugasTambahanModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="tryOpenTambahTugasTambahanModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Tambah Tugas Tambahan (Admin)
                     </button>
                 </div>
             </div>
-            <div id="tugas-tambahan-container" class="grid grid-cols-3 gap-4"></div>
+            <div id="tugas-tambahan-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB: KAS KOSAN -->
-        <section id="tab-kas" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
+        <section id="tab-kas" class="tab-content hidden space-y-5">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-wallet text-amber-500 mr-2"></i> Kas Kosan - Minggu Ini</h2>
-                    <p class="text-sm text-slate-500">Catatan pembayaran kas mingguan penghuni dan lihat rekap pemasukan/pengeluaran.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900"><i class="fa-solid fa-wallet text-amber-500 mr-2"></i> Kas Kosan - Minggu Ini</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Catatan pembayaran kas mingguan penghuni dan lihat rekap pemasukan/pengeluaran.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openCatatanKasModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="openCatatanKasModal()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-book-open"></i> Lihat Catatan Kas & Pengeluaran
                     </button>
                     <div id="bendahara-action-btn-container"></div>
                 </div>
             </div>
 
-            <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden p-6 space-y-4">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h3 class="font-bold text-slate-900 text-base">Status Pembayaran Kas Minggu Ini</h3>
+            <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden p-4 sm:p-6 space-y-4">
+                <div class="flex justify-between items-center border-b pb-3 flex-wrap gap-2">
+                    <h3 class="font-bold text-slate-900 text-sm sm:text-base">Status Pembayaran Kas Minggu Ini</h3>
                     <div class="text-xs font-semibold text-slate-600">Nominal Kas: <span id="nominal-kas-badge" class="font-bold text-brand-700">Rp 10.000</span></div>
                 </div>
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="p-4">Nama Penghuni</th>
-                                <th class="p-4">Nomor Kamar</th>
-                                <th class="p-4">Status Pembayaran</th>
-                                <th class="p-4">Aksi (Bendahara)</th>
+                                <th class="p-3 sm:p-4">Nama Penghuni</th>
+                                <th class="p-3 sm:p-4">Nomor Kamar</th>
+                                <th class="p-3 sm:p-4">Status Pembayaran</th>
+                                <th class="p-3 sm:p-4">Aksi (Bendahara)</th>
                             </tr>
                         </thead>
-                        <tbody id="kas-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        <tbody id="kas-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- TAB: RIWAYAT & ARSIP MINGGUAN -->
-        <section id="tab-riwayat" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row items-center justify-between gap-4">
+        <section id="tab-riwayat" class="tab-content hidden space-y-5">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900">Riwayat & Arsip Mingguan Piket</h2>
-                    <p class="text-sm text-slate-500">Daftar rekapan bukti pengerjaan tugas piket kosan dan arsip mingguan yang telah di-reset.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900">Riwayat & Arsip Mingguan Piket</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Daftar rekapan bukti pengerjaan tugas piket kosan dan arsip mingguan yang telah di-reset.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <input type="text" id="search-log" oninput="renderRiwayat()" placeholder="Cari nama / area..." class="px-3.5 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-64">
-                    <button onclick="openArsipModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                    <input type="text" id="search-log" oninput="renderRiwayat()" placeholder="Cari nama / area..." class="px-3.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 w-48 sm:w-64">
+                    <button onclick="openArsipModal()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-box-archive"></i> Lihat Arsip / Backup Mingguan
                     </button>
                     <div id="admin-reset-mingguan-container"></div>
@@ -344,29 +341,29 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                <th class="p-4">Tanggal & Waktu</th>
-                                <th class="p-4">Penghuni</th>
-                                <th class="p-4">Area Piket</th>
-                                <th class="p-4">Koordinat & Wilayah GPS</th>
-                                <th class="p-4">Foto Bukti</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4">Aksi (Admin)</th>
+                                <th class="p-3 sm:p-4">Tanggal & Waktu</th>
+                                <th class="p-3 sm:p-4">Penghuni</th>
+                                <th class="p-3 sm:p-4">Area Piket</th>
+                                <th class="p-3 sm:p-4">Koordinat & Wilayah GPS</th>
+                                <th class="p-3 sm:p-4">Foto Bukti</th>
+                                <th class="p-3 sm:p-4">Status</th>
+                                <th class="p-3 sm:p-4">Aksi (Admin)</th>
                             </tr>
                         </thead>
-                        <tbody id="riwayat-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        <tbody id="riwayat-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- TAB KELOLA USER & PIN (PANEL APPROVAL + KONTROL PERINGATAN TIDAK PIKET + KELOLA PIN) -->
-        <section id="tab-manage-users" class="tab-content hidden space-y-8">
+        <section id="tab-manage-users" class="tab-content hidden space-y-6">
             <!-- Sub-Bagian 1: Panel Approval Admin -->
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-4">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-indigo-600 mr-2"></i> Panel Approval Admin</h2>
-                        <p class="text-sm text-slate-500">Daftar permintaan perubahan saldo/pengeluaran yang menunggu persetujuan (Approve/Reject) dari Admin.</p>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-indigo-600 mr-2"></i> Panel Approval Admin</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Daftar permintaan perubahan saldo/pengeluaran yang menunggu persetujuan (Approve/Reject) dari Admin.</p>
                     </div>
                 </div>
                 <div class="overflow-x-auto custom-scrollbar">
@@ -380,41 +377,41 @@
                                 <th class="p-3">Aksi Admin</th>
                             </tr>
                         </thead>
-                        <tbody id="approval-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        <tbody id="approval-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
             <!-- Sub-Bagian 2: Panel Kontrol Peringatan Pengguna Tidak Piket (Denda & Waktu Pop-Up) -->
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-rose-200 shadow-sm space-y-5">
-                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-rose-200 shadow-sm space-y-5">
+                <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-4">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-2"></i> Kontrol Peringatan Pengguna Tidak Piket (Pop-Up Denda)</h2>
-                        <p class="text-sm text-slate-500">Pop-up peringatan akan muncul terus-menerus secara otomatis pada layar penghuni yang terlewat piket sampai Admin mematikannya di bawah ini.</p>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-2"></i> Kontrol Peringatan Pengguna Tidak Piket (Pop-Up Denda)</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Pop-up peringatan akan muncul terus-menerus secara otomatis pada layar penghuni yang terlewat piket sampai Admin mematikannya di bawah ini.</p>
                     </div>
                 </div>
 
                 <!-- Form Pengaturan Waktu & Status Pop-Up -->
-                <form onsubmit="saveMissedPiketSettings(event)" class="grid grid-cols-3 gap-4 bg-rose-50/60 p-4 rounded-xl border border-rose-200/80 items-end">
+                <form onsubmit="saveMissedPiketSettings(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-rose-50/60 p-4 rounded-xl border border-rose-200/80 items-end">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status Pop-Up Otomatis</label>
-                        <select id="missed-popup-enabled" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm font-semibold bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                        <select id="missed-popup-enabled" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm font-semibold bg-white outline-none focus:ring-2 focus:ring-rose-500">
                             <option value="true">Aktif (Muncul Terus Sebelum Dimatikan)</option>
                             <option value="false">Nonaktif (Matikan Semua Pop-Up Denda)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Waktu Muncul Ulang Pop-Up (Detik)</label>
-                        <input type="number" id="missed-popup-interval" min="3" max="3600" required placeholder="10" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                        <input type="number" id="missed-popup-interval" min="3" max="3600" required placeholder="10" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
                     </div>
                     <div>
                         <button type="submit" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-clock"></i> Simpan Pengaturan Waktu Pop-Up
                         </button>
                     </div>
-                    <div class="col-span-3">
+                    <div class="sm:col-span-3">
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pesan Peringatan Pop-Up Tidak Piket</label>
-                        <input type="text" id="missed-popup-message" required placeholder="Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
+                        <input type="text" id="missed-popup-message" required placeholder="Karena kamu tidak piket, silahkan untuk membayar denda ke bendahara!!" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs sm:text-sm bg-white outline-none focus:ring-2 focus:ring-rose-500">
                     </div>
                 </form>
 
@@ -429,19 +426,19 @@
                                 <th class="p-3">Kontrol Pop-Up (Admin)</th>
                             </tr>
                         </thead>
-                        <tbody id="missed-users-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        <tbody id="missed-users-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
 
             <!-- Sub-Bagian 3: Kelola Akun User & PIN -->
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-                <div class="flex flex-row justify-between items-center gap-4 border-b pb-4">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-wrap justify-between items-center gap-3 border-b pb-4">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-user-shield text-amber-700 mr-2"></i> Kelola Akun User & PIN Login</h2>
-                        <p class="text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900"><i class="fa-solid fa-user-shield text-amber-700 mr-2"></i> Kelola Akun User & PIN Login</h2>
+                        <p class="text-xs sm:text-sm text-slate-500">Atur PIN 6 digit angka untuk setiap penghuni kos yang terdaftar.</p>
                     </div>
-                    <button onclick="saveAllUserPins()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="saveAllUserPins()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Semua PIN User
                     </button>
                 </div>
@@ -455,32 +452,32 @@
                                 <th class="p-3">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="manage-users-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        <tbody id="manage-users-table-body" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- TAB KHUSUS BENDAHARA -->
-        <section id="tab-bendahara" class="tab-content hidden space-y-6">
-            <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-row justify-between items-center gap-4">
+        <section id="tab-bendahara" class="tab-content hidden space-y-5">
+            <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-wrap justify-between items-center gap-3">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-900"><i class="fa-solid fa-coins text-amber-500 mr-2"></i> Panel Kontrol Bendahara Kas</h2>
-                    <p class="text-sm text-slate-500">Atur nominal kas mingguan, catat pengeluaran kas, edit saldo kas, dan verifikasi pembayaran.</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-900"><i class="fa-solid fa-coins text-amber-500 mr-2"></i> Panel Kontrol Bendahara Kas</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">Atur nominal kas mingguan, catat pengeluaran kas, edit saldo kas, dan verifikasi pembayaran.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openEditSaldoModal()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="openEditSaldoModal()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-wallet"></i> Edit Saldo Uang Kas
                     </button>
-                    <button onclick="openCatatPengeluaranModal()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
+                    <button onclick="openCatatPengeluaranModal()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition flex items-center gap-2">
                         <i class="fa-solid fa-minus-circle"></i> Catat Pengeluaran Kas
                     </button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-6">
-                <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-                    <h3 class="font-bold text-slate-900 text-base">Atur Nominal Kas Minggu Ini</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-900 text-sm sm:text-base">Atur Nominal Kas Minggu Ini</h3>
                     <form onsubmit="saveNominalKas(event)" class="space-y-3">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Kas</label>
@@ -490,10 +487,10 @@
                     </form>
                 </div>
 
-                <div class="bg-white/95 backdrop-blur-md p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
+                <div class="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
                     <div>
-                        <h3 class="font-bold text-slate-900 text-base">Total Saldo Kas Saat Ini</h3>
-                        <div class="text-3xl font-black text-brand-700 mt-2" id="bendahara-total-saldo-display">Rp 0</div>
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-base">Total Saldo Kas Saat Ini</h3>
+                        <div class="text-2xl sm:text-3xl font-black text-brand-700 mt-2" id="bendahara-total-saldo-display">Rp 0</div>
                         <p class="text-xs text-slate-500 mt-1">Akumulasi dari pembayaran kas penghuni ditambah penyesuaian saldo dikurangi pengeluaran.</p>
                     </div>
                     <div class="flex gap-2">
@@ -528,7 +525,7 @@
         </div>
     </div>
 
-    <!-- MODAL LOGIN PENGHUNI -->
+    <!-- MODAL LOGIN PENGHUNI (TERPASANG DEFAULT AJJA AGAR TIDAK PERNAH BLANK DI HP) -->
     <div id="modal-user-login" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-5 border-t-8 border-brand-600 text-center">
             <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center mx-auto text-xl font-bold">
@@ -542,14 +539,16 @@
             <form onsubmit="handleUserLoginSubmit(event)" class="space-y-4">
                 <div class="text-left">
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Nama Anda</label>
-                    <select id="login-select-user" required onchange="onLoginUserChange()" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></select>
+                    <select id="login-select-user" required onchange="onLoginUserChange()" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option value="p1">AJJA (Kamar 01)</option>
+                    </select>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-2">PIN Akun (6 Digit Angka)</label>
                     <div class="relative">
                         <input type="password" id="login-input-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" oninput="syncPinDots('login')">
-                        <div class="flex justify-center gap-3 cursor-pointer py-1" onclick="document.getElementById('login-input-pin').focus()">
+                        <div class="flex justify-center gap-2.5 sm:gap-3 cursor-pointer py-1" onclick="document.getElementById('login-input-pin').focus()">
                             <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="0"></div>
                             <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="1"></div>
                             <div class="w-10 h-10 rounded-full border-2 border-slate-300 flex items-center justify-center text-lg font-bold pin-dot-login transition" data-index="2"></div>
@@ -629,9 +628,9 @@
 
     <!-- MODAL KAMERA -->
     <div id="modal-absen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-video text-brand-600"></i> Absen Piket Direct Camera
                 </h3>
                 <button onclick="closeModal('modal-absen')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -652,12 +651,12 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto Real-Time dengan GPS & Stamp Waktu</label>
                     <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-300 shadow-inner">
-                        <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+                        <video id="webcam-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
                         <canvas id="captured-canvas" class="hidden w-full h-full object-cover"></canvas>
                         
                         <div id="gps-lock-overlay" class="absolute inset-0 bg-slate-950/90 text-white flex flex-col items-center justify-center p-4 text-center z-20 space-y-2">
                             <i class="fa-solid fa-location-crosshairs text-3xl text-amber-400 animate-pulse"></i>
-                            <h4 class="text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
+                            <h4 class="text-base sm:text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
                             <p id="gps-lock-subtext" class="text-xs text-slate-300 max-w-xs leading-snug">Mengambil koordinat dan wilayah GPS...</p>
                             <div class="flex flex-col gap-2 mt-2 w-full max-w-xs">
                                 <button type="button" onclick="getGeolocation()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition">
@@ -700,9 +699,9 @@
 
     <!-- MODAL KAMERA / ABSEN TUGAS TAMBAHAN -->
     <div id="modal-absen-tambahan" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-camera text-brand-600"></i> Selesaikan Tugas Tambahan
                 </h3>
                 <button onclick="closeModal('modal-absen-tambahan')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -720,16 +719,19 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto Bukti Real-Time dengan GPS & Wilayah</label>
                     <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-300 shadow-inner">
-                        <video id="webcam-video-tambahan" autoplay playsinline class="w-full h-full object-cover"></video>
+                        <video id="webcam-video-tambahan" autoplay playsinline muted class="w-full h-full object-cover"></video>
                         <canvas id="captured-canvas-tambahan" class="hidden w-full h-full object-cover"></canvas>
                         
                         <div id="gps-lock-overlay-tambahan" class="absolute inset-0 bg-slate-950/90 text-white flex flex-col items-center justify-center p-4 text-center z-20 space-y-2">
                             <i class="fa-solid fa-location-crosshairs text-3xl text-amber-400 animate-pulse"></i>
-                            <h4 class="text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
+                            <h4 class="text-base sm:text-lg font-black text-amber-400 tracking-wider">ANTOSAN SAKEDAP!</h4>
                             <p id="gps-lock-subtext-tambahan" class="text-xs text-slate-300 max-w-xs leading-snug">Mengambil koordinat & wilayah tugas tambahan...</p>
                             <div class="flex flex-col gap-2 mt-2 w-full max-w-xs">
                                 <button type="button" onclick="getGeolocationTambahan()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg shadow transition">
                                     <i class="fa-solid fa-location-arrow mr-1"></i> Aktifkan GPS Tugas Tambahan
+                                </button>
+                                <button type="button" onclick="useDefaultCoordinatesTambahan()" class="w-full px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-[11px] rounded-lg transition border border-slate-700">
+                                    <i class="fa-solid fa-map-pin mr-1"></i> Gunakan Lokasi Default Kosan
                                 </button>
                             </div>
                         </div>
@@ -987,11 +989,11 @@
                 <input type="hidden" id="penghuni-id">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap / Panggilan</label>
-                    <input type="text" id="penghuni-nama" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    <input type="text" id="penghuni-nama" required placeholder="Contoh: AJJA" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
-                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 02" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 01" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kata-Kata Motivasi Personal</label>
@@ -1063,7 +1065,7 @@
 
     <!-- MODAL USER ANNOUNCEMENT -->
     <div id="modal-user-announcement" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeUserAnnouncement()">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-8 shadow-2xl space-y-6 border-t-8 border-amber-500 relative max-h-[95vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 border-t-8 border-amber-500 relative max-h-[95vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
             <div class="flex items-start justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -1079,8 +1081,8 @@
                 <img id="user-announcement-img" src="" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 hidden">
             </div>
 
-            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display"></div>
-            <button onclick="closeUserAnnouncement()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-base shadow-lg transition">Saya Mengerti & Paham</button>
+            <div class="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 text-sm sm:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display"></div>
+            <button onclick="closeUserAnnouncement()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm sm:text-base shadow-lg transition">Saya Mengerti & Paham</button>
         </div>
     </div>
 
@@ -1169,27 +1171,23 @@
             'Sampah & Koridor Utama'
         ];
 
+        // Default Penghuni: AJJA dengan PIN 123456
         const DEFAULT_PENGHUNI = [
-            { id: 'p1', nama: 'Budi Santoso', kamar: 'Kamar 01', pin: '123456', motivasi: 'Selalu jaga kebersihan kosan kita!' },
-            { id: 'p2', nama: 'Andi Pratama', kamar: 'Kamar 02', pin: '123456', motivasi: 'Kosan bersih hati pun senang.' },
-            { id: 'p3', nama: 'Rizky Febian', kamar: 'Kamar 03', pin: '123456', motivasi: 'Semangat piket hari ini boy!' },
-            { id: 'p4', nama: 'Dimas Anggara', kamar: 'Kamar 04', pin: '123456', motivasi: 'Disiplin nomor satu.' },
-            { id: 'p5', nama: 'Eko Prasetyo', kamar: 'Kamar 05', pin: '123456', motivasi: 'Bersih itu sebagian dari iman.' },
+            { id: 'p1', nama: 'AJJA', kamar: 'Kamar 01', pin: '123456', motivasi: 'Selalu jaga kebersihan kosan kita!' }
         ];
 
         const DEFAULT_JADWAL = {
-            'Senin': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p2', area: 'Sampah & Koridor Utama' }],
-            'Selasa': [{ penghuniId: 'p2', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p3', area: 'Area Kamar Mandi & Kloset' }],
-            'Rabu': [{ penghuniId: 'p3', area: 'Area Halaman & Teras' }, { penghuniId: 'p4', area: 'Area Dapur & Wastafel' }],
-            'Kamis': [{ penghuniId: 'p4', area: 'Area Kamar Mandi & Kloset' }, { penghuniId: 'p5', area: 'Sampah & Koridor Utama' }],
-            'Jumat': [{ penghuniId: 'p5', area: 'Area Ruang Tamu & TV' }, { penghuniId: 'p1', area: 'Area Halaman & Teras' }],
-            'Sabtu': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }, { penghuniId: 'p3', area: 'Area Kamar Mandi & Kloset' }],
-            'Minggu': [{ penghuniId: 'p2', area: 'Area Halaman & Teras' }, { penghuniId: 'p4', area: 'Sampah & Koridor Utama' }]
+            'Senin': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }],
+            'Selasa': [{ penghuniId: 'p1', area: 'Area Ruang Tamu & TV' }],
+            'Rabu': [{ penghuniId: 'p1', area: 'Area Halaman & Teras' }],
+            'Kamis': [{ penghuniId: 'p1', area: 'Area Kamar Mandi & Kloset' }],
+            'Jumat': [{ penghuniId: 'p1', area: 'Sampah & Koridor Utama' }],
+            'Sabtu': [{ penghuniId: 'p1', area: 'Area Dapur & Wastafel' }],
+            'Minggu': [{ penghuniId: 'p1', area: 'Area Halaman & Teras' }]
         };
 
         const DEFAULT_TUGAS_TAMBAHAN = [
-            { id: 't1', nama: 'Mengisi & Ganti Galon Air Kos', penghuniId: 'p1', status: 'Belum', foto: '', deadline: '', tanpaWaktu: true },
-            { id: 't2', nama: 'Membersihkan Kulkas Bersama', penghuniId: 'p2', status: 'Belum', foto: '', deadline: '', tanpaWaktu: true }
+            { id: 't1', nama: 'Mengisi & Ganti Galon Air Kos', penghuniId: 'p1', status: 'Belum', foto: '', deadline: '', tanpaWaktu: true }
         ];
 
         const DEFAULT_ANNOUNCEMENT = {
@@ -1213,10 +1211,10 @@
         const ADMIN_PIN = "dinar2026!";
         const BENDAHARA_PIN = "Bayarkas";
 
-        let penghuniList = DEFAULT_PENGHUNI;
-        let jadwalPiket = DEFAULT_JADWAL;
-        let tugasList = DEFAULT_AREAS;
-        let tugasTambahanList = DEFAULT_TUGAS_TAMBAHAN;
+        let penghuniList = JSON.parse(JSON.stringify(DEFAULT_PENGHUNI));
+        let jadwalPiket = JSON.parse(JSON.stringify(DEFAULT_JADWAL));
+        let tugasList = [...DEFAULT_AREAS];
+        let tugasTambahanList = JSON.parse(JSON.stringify(DEFAULT_TUGAS_TAMBAHAN));
         let riwayatLogs = [];
         let arsipRiwayatList = [];
         let kasData = {
@@ -1228,7 +1226,7 @@
             pendingApprovals: [],
             lastAutoResetWeek: ""
         };
-        let adminAnnouncement = DEFAULT_ANNOUNCEMENT;
+        let adminAnnouncement = JSON.parse(JSON.stringify(DEFAULT_ANNOUNCEMENT));
         let leaderboardTitle = "Leaderboard Paling Rajin"; 
         let taskCatatanMap = {};
         let missedPiketConfig = JSON.parse(JSON.stringify(DEFAULT_MISSED_CONFIG));
@@ -1252,6 +1250,40 @@
         let hasCheckedInitialSession = false;
         let lastActiveDateYMD = "";
         let missedPiketPopupTimeout = null;
+
+        // Pastikan daftar penghuni tidak pernah kosong atau rusak sehingga dropdown login selalu berisi minimal AJJA (PIN 123456)
+        function ensureValidPenghuniList() {
+            if (!Array.isArray(penghuniList)) {
+                if (penghuniList && typeof penghuniList === 'object') {
+                    penghuniList = Object.values(penghuniList);
+                } else {
+                    penghuniList = [];
+                }
+            }
+            penghuniList = penghuniList.filter(p => p && p.nama && String(p.nama).trim() !== '');
+            if (penghuniList.length === 0) {
+                penghuniList = JSON.parse(JSON.stringify(DEFAULT_PENGHUNI));
+            }
+            penghuniList.forEach((p, idx) => {
+                if (!p.id) p.id = 'p' + (idx + 1);
+                if (!p.kamar) p.kamar = 'Kamar 0' + (idx + 1);
+                if (!p.pin || String(p.pin).trim().length < 6) p.pin = '123456';
+                if (p.motivasi === undefined) p.motivasi = 'Selalu jaga kebersihan kosan kita!';
+            });
+        }
+
+        function populateLoginSelect() {
+            ensureValidPenghuniList();
+            const sel = document.getElementById('login-select-user');
+            if (!sel) return;
+            const currentVal = sel.value;
+            sel.innerHTML = penghuniList.map(p => `<option value="${p.id}">${p.nama} (${p.kamar})</option>`).join('');
+            if (currentVal && penghuniList.some(p => p.id === currentVal)) {
+                sel.value = currentVal;
+            } else if (penghuniList.length > 0) {
+                sel.value = penghuniList[0].id;
+            }
+        }
 
         function getWIBDate() {
             const now = new Date();
@@ -1356,16 +1388,14 @@
         function applyBackendData(rawData) {
             const data = rawData && (rawData.kos_piket_data || rawData.data || rawData);
             if (data && (data.penghuni || data.jadwal || data.tugas)) {
-                penghuniList = data.penghuni || DEFAULT_PENGHUNI;
-                penghuniList.forEach(p => { 
-                    if (!p.pin || p.pin.length < 6) p.pin = '123456'; 
-                    if (p.motivasi === undefined) p.motivasi = 'Semangat menjaga kebersihan kos!';
-                });
+                if (data.penghuni) penghuniList = data.penghuni;
+                ensureValidPenghuniList();
+
                 jadwalPiket = data.jadwal || DEFAULT_JADWAL;
-                tugasList = data.tugas || DEFAULT_AREAS;
-                tugasTambahanList = data.tugasTambahan || DEFAULT_TUGAS_TAMBAHAN;
-                riwayatLogs = data.riwayat || [];
-                arsipRiwayatList = data.arsipRiwayat || [];
+                tugasList = (Array.isArray(data.tugas) && data.tugas.length > 0) ? data.tugas : DEFAULT_AREAS;
+                tugasTambahanList = Array.isArray(data.tugasTambahan) ? data.tugasTambahan : DEFAULT_TUGAS_TAMBAHAN;
+                riwayatLogs = Array.isArray(data.riwayat) ? data.riwayat : [];
+                arsipRiwayatList = Array.isArray(data.arsipRiwayat) ? data.arsipRiwayat : [];
                 kasData = data.kas || { nominal: 10000, pembayaran: {}, pemasukanLogs: [], pengeluaranLogs: [], penyesuaianSaldo: 0, pendingApprovals: [], lastAutoResetWeek: "" };
                 if (kasData.penyesuaianSaldo === undefined) kasData.penyesuaianSaldo = 0;
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
@@ -1384,7 +1414,12 @@
                 try {
                     localStorage.setItem('dinar_kos_backup_cache', JSON.stringify(data));
                 } catch (e) {}
+            } else {
+                ensureValidPenghuniList();
             }
+
+            // Selalu perbarui dropdown nama login setiap ada perubahan data
+            populateLoginSelect();
 
             initDateHeader();
             updateExternalLinksUI();
@@ -1394,7 +1429,7 @@
                 hasCheckedInitialSession = true;
                 checkUserSession();
             } else if (loggedInUser) {
-                const updatedUser = penghuniList.find(p => p.id === loggedInUser.id);
+                const updatedUser = penghuniList.find(p => p.id === loggedInUser.id) || penghuniList.find(p => p.nama === loggedInUser.nama);
                 if (updatedUser) loggedInUser = updatedUser;
                 updateUserSessionUI();
                 checkMissedPiketForUser(loggedInUser);
@@ -1416,7 +1451,7 @@
                     if (res.ok) {
                         const json = await res.json();
                         const payload = json && (json.kos_piket_data || json.data || json);
-                        if (payload && (payload.penghuni || payload.jadwal || payload.tugas)) {
+                        if (payload && ((Array.isArray(payload.penghuni) && payload.penghuni.length > 0) || payload.jadwal || payload.tugas)) {
                             applyBackendData(payload);
                             return;
                         } else {
@@ -1439,6 +1474,7 @@
 
         // Simpan ke Backend TANPA Base64 Foto (Backend hanya menyimpan catatan absen & link Drive hari ini)
         async function saveData() {
+            ensureValidPenghuniList();
             cleanupExpiredDailyPhotos();
             const todayYMD = getTodayYMD();
 
@@ -1490,9 +1526,6 @@
                 }
             }
         }
-
-        loadDataFromBackend();
-        setInterval(loadDataFromBackend, 10000);
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -1649,12 +1682,10 @@
             const reasons = [];
             const rawDates = [];
 
-            // 1. Cek jika diaktifkan manual oleh Admin
             if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
                 reasons.push("Diaktifkan Manual oleh Admin");
             }
 
-            // 2. Cek otomatis 3 hari ke belakang
             const nowWib = getWIBDate();
             const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
@@ -1821,6 +1852,8 @@
         }
 
         function checkUserSession() {
+            ensureValidPenghuniList();
+            populateLoginSelect();
             const savedUserId = localStorage.getItem('dinar_kos_logged_user_id');
             if (savedUserId) {
                 const found = penghuniList.find(p => p.id === savedUserId);
@@ -1835,10 +1868,7 @@
         }
 
         function openUserLoginModal() {
-            const sel = document.getElementById('login-select-user');
-            if (sel) {
-                sel.innerHTML = penghuniList.map(p => `<option value="${p.id}">${p.nama} (${p.kamar})</option>`).join('');
-            }
+            populateLoginSelect();
             const pinInput = document.getElementById('login-input-pin');
             if (pinInput) pinInput.value = '';
             syncPinDots('login');
@@ -1857,9 +1887,11 @@
 
         function handleUserLoginSubmit(e) {
             e.preventDefault();
-            const userId = document.getElementById('login-select-user').value;
+            ensureValidPenghuniList();
+            const sel = document.getElementById('login-select-user');
+            const userId = sel.value || (penghuniList[0] && penghuniList[0].id);
             const inputPin = document.getElementById('login-input-pin').value;
-            const userObj = penghuniList.find(p => p.id === userId);
+            const userObj = penghuniList.find(p => p.id === userId) || penghuniList[0];
 
             if (userObj) {
                 const correctPin = userObj.pin || '123456';
@@ -1905,6 +1937,7 @@
         }
 
         function openGantiPinModal() {
+            ensureValidPenghuniList();
             let targetUser = loggedInUser;
             if (!targetUser) {
                 const selectedId = document.getElementById('login-select-user').value;
@@ -2062,23 +2095,23 @@
             penghuniList.forEach(p => {
                 const isPaid = kasData.pembayaran && kasData.pembayaran[p.id];
                 let statusBadge = isPaid 
-                    ? `<span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Sudah Membayar</span>`
-                    : `<span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-bold"><i class="fa-solid fa-clock mr-1"></i> Belum Membayar</span>`;
+                    ? `<span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold whitespace-nowrap"><i class="fa-solid fa-circle-check mr-1"></i> Sudah Membayar</span>`
+                    : `<span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-bold whitespace-nowrap"><i class="fa-solid fa-clock mr-1"></i> Belum Membayar</span>`;
 
                 let actionBtn = '-';
                 if (isBendaharaLoggedIn || isAdminLoggedIn) {
                     actionBtn = isPaid
-                        ? `<button onclick="toggleKasPayment('${p.id}', false)" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200">Batalkan / Belum</button>`
-                        : `<button onclick="toggleKasPayment('${p.id}', true)" class="px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg text-xs font-bold shadow">Centang (Sudah Bayar)</button>`;
+                        ? `<button onclick="toggleKasPayment('${p.id}', false)" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200 whitespace-nowrap">Batalkan / Belum</button>`
+                        : `<button onclick="toggleKasPayment('${p.id}', true)" class="px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg text-xs font-bold shadow whitespace-nowrap">Centang (Sudah Bayar)</button>`;
                 }
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
                 tr.innerHTML = `
-                    <td class="p-4 font-bold text-slate-900">${p.nama}</td>
-                    <td class="p-4 text-slate-600">${p.kamar}</td>
-                    <td class="p-4">${statusBadge}</td>
-                    <td class="p-4">${actionBtn}</td>
+                    <td class="p-3 sm:p-4 font-bold text-slate-900">${p.nama}</td>
+                    <td class="p-3 sm:p-4 text-slate-600">${p.kamar}</td>
+                    <td class="p-3 sm:p-4">${statusBadge}</td>
+                    <td class="p-3 sm:p-4">${actionBtn}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -2531,7 +2564,6 @@
             const btnTambahPenghuniMain = document.getElementById('btn-tambah-penghuni-main');
             const btnTambahTugasMain = document.getElementById('btn-tambah-tugas-main');
 
-            // Sembunyikan semua kontrol terlebih dahulu secara ketat
             btnAnnouncement?.classList.add('hidden');
             adminDashboardControls?.classList.add('hidden');
             btnEditLBT?.classList.add('hidden');
@@ -2547,7 +2579,7 @@
             if (adminResetMingguan) adminResetMingguan.innerHTML = '';
 
             if (isAdminLoggedIn || isBendaharaLoggedIn) {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
+                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
                 icon.className = "fa-solid fa-unlock";
                 text.innerText = isAdminLoggedIn ? "Admin Unlocked" : "Bendahara Unlocked";
                 
@@ -2566,19 +2598,18 @@
                     btnTambahTugasMain?.classList.add('flex');
 
                     if (adminResetMingguan) {
-                        adminResetMingguan.innerHTML = `<button onclick="resetRiwayatMingguan()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-rotate mr-1"></i> Reset & Arsip Riwayat Minggu Ini</button>`;
+                        adminResetMingguan.innerHTML = `<button onclick="resetRiwayatMingguan()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-rotate mr-1"></i> Reset & Arsip Riwayat Minggu Ini</button>`;
                     }
                 }
                 if (isBendaharaLoggedIn || isAdminLoggedIn) {
                     navBendaharaBtn?.classList.remove('hidden');
                 }
             } else {
-                btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
+                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
                 icon.className = "fa-solid fa-lock";
                 text.innerText = "Admin";
             }
 
-            // Render ulang SELURUH tab secara langsung agar semua tombol Edit/Hapus langsung muncul/hilang otomatis
             updateDashboardTitlesUI();
             renderDashboard();
             renderJadwal();
@@ -2768,13 +2799,13 @@
             if (cameraContainer) {
                 const piketStatus = checkUserPiketStatusToday();
                 if (!loggedInUser) {
-                    cameraContainer.innerHTML = `<button onclick="openUserLoginModal()" class="px-6 py-3 bg-amber-400 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs">Silakan Login Terlebih Dahulu</button>`;
+                    cameraContainer.innerHTML = `<button onclick="openUserLoginModal()" class="px-5 py-2.5 bg-amber-400 text-slate-900 font-bold rounded-xl shadow-lg transition-all text-xs">Silakan Login Terlebih Dahulu</button>`;
                 } else if (!piketStatus.isAssigned) {
                     cameraContainer.innerHTML = `<div class="px-4 py-2.5 bg-white/20 backdrop-blur-md rounded-xl text-xs font-bold text-white"><i class="fa-solid fa-circle-info mr-1"></i> Anda tidak terjadwal piket hari ini.</div>`;
                 } else if (piketStatus.isDone) {
                     cameraContainer.innerHTML = `<div class="px-4 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-circle-check mr-1"></i> ${loggedInUser.nama} kamu sudah piket hari ini! Mantap!</div>`;
                 } else {
-                    cameraContainer.innerHTML = `<button onclick="openAbsenModal()" class="w-auto px-6 py-3 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-xs"><i class="fa-solid fa-camera text-base"></i> BUKA KAMERA PIKET</button>`;
+                    cameraContainer.innerHTML = `<button onclick="openAbsenModal()" class="w-auto px-5 py-2.5 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-xs"><i class="fa-solid fa-camera text-base"></i> BUKA KAMERA PIKET</button>`;
                 }
             }
 
@@ -2786,7 +2817,7 @@
             const todayYMD = getTodayYMD();
 
             if (todayDuties.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-center py-8 text-slate-400 font-medium">Libur Piket Hari Ini (${todayName}) 🎉</div>`;
+                container.innerHTML = `<div class="sm:col-span-2 text-center py-8 text-slate-400 font-medium">Libur Piket Hari Ini (${todayName}) 🎉</div>`;
             } else {
                 todayDuties.forEach((item, index) => {
                     const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Belum Dipilih', kamar: '-' };
@@ -2799,8 +2830,8 @@
                     card.className = `p-4 rounded-2xl border ${isDone ? 'bg-emerald-50/80 border-emerald-300 backdrop-blur-sm' : 'bg-slate-50 border-slate-200'} flex flex-col justify-between gap-3 shadow-sm relative transition`;
 
                     let statusBadgeOrCheck = isDone 
-                        ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full backdrop-blur-md shadow"><i class="fa-solid fa-circle-check"></i> Selesai <span class="w-2 h-2 rounded-full bg-white/50 animate-ping"></span></span>`
-                        : `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
+                        ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500 text-white text-[11px] font-bold rounded-full backdrop-blur-md shadow shrink-0"><i class="fa-solid fa-circle-check"></i> Selesai <span class="w-2 h-2 rounded-full bg-white/50 animate-ping"></span></span>`
+                        : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-full shrink-0"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
 
                     const todayPhotoSrc = isDone ? getTodayPhotoForId(todayLogObj.id, todayLogObj.tanggal, todayLogObj.foto) : '';
                     let buktiBtn = (isDone && todayPhotoSrc)
@@ -2818,10 +2849,10 @@
                     `;
 
                     card.innerHTML = `
-                        <div class="flex items-start justify-between">
+                        <div class="flex items-start justify-between gap-2">
                             <div>
                                 <span class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block mb-0.5">Tugas Kebersihan</span>
-                                <h4 class="font-bold text-slate-900 text-base">${item.area}</h4>
+                                <h4 class="font-bold text-slate-900 text-sm sm:text-base">${item.area}</h4>
                             </div>
                             ${statusBadgeOrCheck}
                         </div>
@@ -2905,11 +2936,11 @@
                 const isDone = tugas.status === 'Selesai';
 
                 const card = document.createElement('div');
-                card.className = `p-5 rounded-2xl border ${isDone ? 'bg-emerald-50/80 border-emerald-300 backdrop-blur-sm' : 'bg-slate-50 border-slate-200'} flex flex-col justify-between gap-4 shadow-sm relative transition`;
+                card.className = `p-4 sm:p-5 rounded-2xl border ${isDone ? 'bg-emerald-50/80 border-emerald-300 backdrop-blur-sm' : 'bg-slate-50 border-slate-200'} flex flex-col justify-between gap-4 shadow-sm relative transition`;
 
                 let statusBadgeOrCheck = isDone 
-                    ? `<div class="flex items-center gap-2 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full shadow"><i class="fa-solid fa-circle-check text-sm"></i> Tugas selesai di kerjakan</div>`
-                    : `<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
+                    ? `<div class="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500 text-white text-[11px] font-bold rounded-full shadow"><i class="fa-solid fa-circle-check"></i> Selesai</div>`
+                    : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Belum Dikerjakan</span>`;
 
                 let waktuInfo = '';
                 if (tugas.tanpaWaktu || !tugas.deadline) {
@@ -2949,11 +2980,11 @@
                     <div class="flex items-start justify-between pr-14">
                         <div>
                             <span class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block mb-0.5">Tugas Tambahan</span>
-                            <h4 class="font-bold text-slate-900 text-base">${tugas.nama}</h4>
+                            <h4 class="font-bold text-slate-900 text-sm sm:text-base">${tugas.nama}</h4>
                             <div class="mt-1">${waktuInfo}</div>
                         </div>
                     </div>
-                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between">
+                    <div class="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
                         <div>
                             <span class="text-[10px] text-slate-400 block font-semibold">Penghuni Bertugas:</span>
                             <span class="font-extrabold text-brand-700 text-sm">${penghuni.nama}</span> <span class="text-xs text-slate-500">(${penghuni.kamar})</span>
@@ -3049,6 +3080,7 @@
             showToast("Tugas tambahan dihapus.");
         }
 
+        // --- KAMERA & GPS TUGAS TAMBAHAN (ANTI BLANK) ---
         let currentTambahanId = null;
         function openAbsenTambahanModal(id) {
             const t = tugasTambahanList.find(x => x.id === id);
@@ -3066,8 +3098,8 @@
             document.getElementById('absen-tambahan-nama-display').value = t.nama;
             document.getElementById('absen-tambahan-penghuni-display').value = p.nama;
 
-            resetCameraTambahan();
             openModal('modal-absen-tambahan');
+            resetCameraTambahan(true);
             getGeolocationTambahan();
         }
 
@@ -3106,17 +3138,20 @@
             fetchReverseGeocodeTambahan(lat, lng);
             document.getElementById('gps-lock-overlay-tambahan').classList.add('hidden');
             document.getElementById('btn-snap-tambahan').disabled = false;
-            startCameraTambahan();
+            if (!mediaStream) startCameraTambahan();
         }
 
         function handleGpsErrorTambahan(err) {
             document.getElementById('gps-lock-subtext-tambahan').innerHTML = `<span class="text-rose-400 font-bold">Gagal GPS: ${err.message}. Menggunakan default kos.</span>`;
-            setTimeout(() => { useDefaultCoordinatesTambahan(); }, 1500);
+            setTimeout(() => { useDefaultCoordinatesTambahan(); }, 1000);
         }
 
         function getGeolocationTambahan() {
-            if ('geolocation' in navigator) navigator.geolocation.getCurrentPosition(handleGpsSuccessTambahan, handleGpsErrorTambahan, { enableHighAccuracy: true });
-            else useDefaultCoordinatesTambahan();
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(handleGpsSuccessTambahan, handleGpsErrorTambahan, { enableHighAccuracy: true, timeout: 8000 });
+            } else {
+                useDefaultCoordinatesTambahan();
+            }
         }
 
         function useDefaultCoordinatesTambahan() {
@@ -3128,29 +3163,58 @@
             addressEl.classList.remove('hidden');
             document.getElementById('gps-lock-overlay-tambahan').classList.add('hidden');
             document.getElementById('btn-snap-tambahan').disabled = false;
-            startCameraTambahan();
+            if (!mediaStream) startCameraTambahan();
         }
 
-        function startCameraTambahan() {
+        async function startCameraTambahan() {
             const video = document.getElementById('webcam-video-tambahan');
             if (!video) return;
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
-                .then(stream => { mediaStream = stream; video.srcObject = stream; })
-                .catch(() => { navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(s => { mediaStream = s; video.srcObject = s; }); });
+            stopCameraTambahan();
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: false
+                });
+                mediaStream = stream;
+                video.srcObject = stream;
+                await video.play();
+            } catch (err) {
+                try {
+                    const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    mediaStream = fallbackStream;
+                    video.srcObject = fallbackStream;
+                    await video.play();
+                } catch (err2) {
+                    showToast("Gagal mengakses kamera. Pastikan izin kamera telah diberikan di browser!");
+                }
+            }
         }
 
         function stopCameraTambahan() {
-            if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            const video = document.getElementById('webcam-video-tambahan');
+            if (video) video.srcObject = null;
         }
 
-        function resetCameraTambahan() {
+        function resetCameraTambahan(isInitialOpen = false) {
             document.getElementById('webcam-video-tambahan').classList.remove('hidden');
             document.getElementById('captured-canvas-tambahan').classList.add('hidden');
             document.getElementById('btn-snap-tambahan').classList.remove('hidden');
             document.getElementById('btn-retake-tambahan').classList.add('hidden');
             document.getElementById('btn-submit-tambahan').disabled = true;
             capturedPhotoTambahan = null;
-            document.getElementById('gps-lock-overlay-tambahan').classList.remove('hidden');
+
+            if (isInitialOpen && !currentGeoLocationTambahan) {
+                document.getElementById('gps-lock-overlay-tambahan').classList.remove('hidden');
+                document.getElementById('btn-snap-tambahan').disabled = true;
+            } else {
+                document.getElementById('gps-lock-overlay-tambahan').classList.add('hidden');
+                document.getElementById('btn-snap-tambahan').disabled = false;
+            }
+            startCameraTambahan();
         }
 
         function takeSnapshotTambahan() {
@@ -3245,7 +3309,7 @@
             DEFAULT_DAYS.forEach(day => {
                 const duties = jadwalPiket[day] || [];
                 const card = document.createElement('div');
-                card.className = "bg-white/95 backdrop-blur-md rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-3 flex flex-col justify-between";
+                card.className = "bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm space-y-3 flex flex-col justify-between";
                 let listItems = duties.map(item => {
                     const p = penghuniList.find(x => x.id === item.penghuniId) || { nama: 'Penghuni Terhapus' };
                     return `<div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border text-xs"><span class="font-bold text-slate-800">${p.nama}</span><span class="text-[11px] text-brand-700 font-semibold bg-brand-50 px-2 py-0.5 rounded">${item.area}</span></div>`;
@@ -3408,6 +3472,7 @@
                 if (!isAdminLoggedIn) return;
                 penghuniList.push({ id: 'p-' + Date.now(), nama, kamar, pin, motivasi });
             }
+            populateLoginSelect();
             saveData();
             closeModal('modal-penghuni');
             initMotivationRotation();
@@ -3417,6 +3482,8 @@
         function deletePenghuni(id) {
             if (!isAdminLoggedIn) return;
             penghuniList = penghuniList.filter(x => x.id !== id);
+            ensureValidPenghuniList();
+            populateLoginSelect();
             saveData();
             showToast("Penghuni dihapus.");
         }
@@ -3492,13 +3559,14 @@
                 const todayPhoto = getTodayPhotoForId(log.id, log.tanggal, log.foto);
                 let imgCell = todayPhoto
                     ? `<img src="${todayPhoto}" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
-                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
+                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold whitespace-nowrap"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
                 let adminDel = isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200">Hapus</button>` : '-';
-                tr.innerHTML = `<td class="p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-4 text-brand-700 font-medium">${log.area}</td><td class="p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-4">${imgCell}</td><td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-4">${adminDel}</td>`;
+                tr.innerHTML = `<td class="p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-3 sm:p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-3 sm:p-4 text-brand-700 font-medium">${log.area}</td><td class="p-3 sm:p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-3 sm:p-4">${imgCell}</td><td class="p-3 sm:p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-3 sm:p-4">${adminDel}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
+        // --- KAMERA & GPS UTAMA (ANTI BLANK / HITAM) ---
         async function fetchReverseGeocode(lat, lng) {
             const addressEl = document.getElementById('gps-address-text');
             try {
@@ -3534,17 +3602,20 @@
             fetchReverseGeocode(lat, lng);
             document.getElementById('gps-lock-overlay').classList.add('hidden');
             document.getElementById('btn-snap').disabled = false;
-            startCamera();
+            if (!mediaStream) startCamera();
         }
 
         function handleGpsError(err) {
             document.getElementById('gps-lock-subtext').innerHTML = `<span class="text-rose-400 font-bold">Gagal GPS: ${err.message}. Menggunakan default kos.</span>`;
-            setTimeout(() => { useDefaultCoordinates(); }, 1500);
+            setTimeout(() => { useDefaultCoordinates(); }, 1000);
         }
 
         function getGeolocation() {
-            if ('geolocation' in navigator) navigator.geolocation.getCurrentPosition(handleGpsSuccess, handleGpsError, { enableHighAccuracy: true });
-            else useDefaultCoordinates();
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(handleGpsSuccess, handleGpsError, { enableHighAccuracy: true, timeout: 8000 });
+            } else {
+                useDefaultCoordinates();
+            }
         }
 
         function useDefaultCoordinates() {
@@ -3556,30 +3627,57 @@
             addressEl.classList.remove('hidden');
             document.getElementById('gps-lock-overlay').classList.add('hidden');
             document.getElementById('btn-snap').disabled = false;
-            startCamera();
+            if (!mediaStream) startCamera();
         }
 
-        function startCamera() {
+        async function startCamera() {
             const video = document.getElementById('webcam-video');
             if (!video) return;
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
-                .then(stream => { mediaStream = stream; video.srcObject = stream; })
-                .catch(() => { navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(s => { mediaStream = s; video.srcObject = s; }); });
+            stopCamera();
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                    audio: false
+                });
+                mediaStream = stream;
+                video.srcObject = stream;
+                await video.play();
+            } catch (err) {
+                try {
+                    const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    mediaStream = fallbackStream;
+                    video.srcObject = fallbackStream;
+                    await video.play();
+                } catch (err2) {
+                    showToast("Gagal mengakses kamera. Pastikan izin kamera telah diberikan di browser!");
+                }
+            }
         }
 
         function stopCamera() {
-            if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = null;
+            }
+            const video = document.getElementById('webcam-video');
+            if (video) video.srcObject = null;
         }
 
-        function resetCameraView() {
+        function resetCameraView(isInitialOpen = false) {
             document.getElementById('webcam-video').classList.remove('hidden');
             document.getElementById('captured-canvas').classList.add('hidden');
             document.getElementById('btn-snap').classList.remove('hidden');
-            document.getElementById('btn-snap').disabled = false;
             document.getElementById('btn-retake').classList.add('hidden');
             document.getElementById('btn-submit-absen').disabled = true;
             capturedPhotoData = null;
-            document.getElementById('gps-lock-overlay').classList.remove('hidden');
+
+            if (isInitialOpen && !currentGeoLocation) {
+                document.getElementById('gps-lock-overlay').classList.remove('hidden');
+                document.getElementById('btn-snap').disabled = true;
+            } else {
+                document.getElementById('gps-lock-overlay').classList.add('hidden');
+                document.getElementById('btn-snap').disabled = false;
+            }
             startCamera();
         }
 
@@ -3605,8 +3703,8 @@
 
             selArea.innerHTML = userDuties.length === 0 ? `<option value="">Tidak ada tugas untuk Anda hari ini</option>` : areaOptionsHtml;
 
-            resetCameraView();
             openModal('modal-absen');
+            resetCameraView(true);
             getGeolocation();
         }
 
@@ -3675,6 +3773,11 @@
             closeAbsenModal();
             showToast('Foto tersimpan di Google Drive & catatan absen berhasil disimpan!');
         }
+
+        // Jalankan inisialisasi tampilan dan dropdown login AJJA secara langsung tanpa menunggu server Render bangun
+        applyBackendData(null);
+        loadDataFromBackend();
+        setInterval(loadDataFromBackend, 10000);
     </script>
 </body>
 </html>
