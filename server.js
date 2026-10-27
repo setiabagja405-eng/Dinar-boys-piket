@@ -1,11 +1,12 @@
 const express = require('express');
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Konfigurasi koneksi MongoDB Atlas Anda
+// Konfigurasi koneksi MongoDB Atlas
 const uri = "mongodb+srv://bagjasetia924_db_user:b20g0SCG0QjPGUsh@cluster0.4nhdipk.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 
@@ -18,17 +19,32 @@ async function startServer() {
         kosCollection = db.collection('piket_data');
         console.log("Berhasil terhubung ke MongoDB Atlas!");
 
+        app.use(cors());
         app.use(express.json({ limit: '50mb' }));
         app.use(express.urlencoded({ limit: '50mb', extended: true }));
-        app.use(express.static(path.join(__dirname, 'public')));
+        
+        // Menyajikan file statis dari folder root atau public
+        app.use(express.static(path.join(__dirname)));
 
-        // API Endpoint untuk mengambil data kos
+        // API Endpoint untuk mengambil seluruh data kosan
         app.get('/api/data', async (req, res) => {
             try {
                 let data = await kosCollection.findOne({ _id: "main_config" });
                 if (!data) {
                     // Data default jika belum ada di database
-                    data = { _id: "main_config", penghuni: [], jadwal: {}, tugas: [], tugasTambahan: [], riwayat: [], arsipRiwayat: [], kas: {}, announcement: {}, leaderboardTitle: "", taskCatatan: {} };
+                    data = { 
+                        _id: "main_config", 
+                        penghuni: [], 
+                        jadwal: {}, 
+                        tugas: [], 
+                        tugasTambahan: [], 
+                        riwayat: [], 
+                        arsipRiwayat: [], 
+                        kas: {}, 
+                        announcement: {}, 
+                        leaderboardTitle: "", 
+                        taskCatatan: {} 
+                    };
                 }
                 res.json(data);
             } catch (err) {
