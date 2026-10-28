@@ -1438,21 +1438,22 @@
             checkWeeklyAutoReset();
         }
 
-        async function loadDataFromBackend() {
+       async function loadDataFromBackend() {
             const endpoints = [`${BACKEND_URL}/api/data`, `${BACKEND_URL}/data`, `${BACKEND_URL}/kos_piket_data`];
             for (const url of endpoints) {
                 try {
                     const res = await fetch(url, {
                         method: 'GET',
-                        headers: { 'Accept': 'application/json' }
+                        headers: { 'Accept': 'application/json' },
+                        cache: 'no-store'
                     });
                     if (res.ok) {
                         const json = await res.json();
                         const payload = json && (json.kos_piket_data || json.data || json);
-                        if (payload && ((Array.isArray(payload.penghuni) && payload.penghuni.length > 0) || payload.jadwal || payload.tugas)) {
+                        if (payload && !payload.empty && ((Array.isArray(payload.penghuni) && payload.penghuni.length > 0) || payload.jadwal || payload.tugas)) {
                             applyBackendData(payload);
                             return;
-                        } else {
+                        } else if (payload && payload.empty) {
                             await saveData();
                             return;
                         }
@@ -1467,50 +1468,8 @@
                     return;
                 } catch (e) {}
             }
-            applyBackendData(null);
-        }
-
-        async function saveData() {
-            ensureValidPenghuniList();
-            cleanupExpiredDailyPhotos();
-            const todayYMD = getTodayYMD();
-
-            const backendRiwayat = riwayatLogs.map(log => {
-                const isToday = log.tanggal && log.tanggal.startsWith(todayYMD);
-                return { ...log, foto: isToday ? log.foto : '' };
-            });
-
-            const backendTugasTambahan = tugasTambahanList.map(t => {
-                const isToday = t.tanggalSelesai === todayYMD;
-                return { ...t, foto: isToday ? t.foto : '' };
-            });
-
-            const payload = {
-                penghuni: penghuniList,
-                jadwal: jadwalPiket,
-                tugas: tugasList,
-                tugasTambahan: backendTugasTambahan,
-                riwayat: backendRiwayat,
-                arsipRiwayat: arsipRiwayatList,
-                kas: kasData,
-                announcement: adminAnnouncement,
-                leaderboardTitle: leaderboardTitle,
-                taskCatatan: taskCatatanMap,
-                missedPiketConfig: missedPiketConfig
-            };
-
-            applyBackendData(payload);
-
-            const endpoints = [`${BACKEND_URL}/api/data`, `${BACKEND_URL}/data`, `${BACKEND_URL}/kos_piket_data`];
-            for (const url of endpoints) {
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (res.ok) break;
-                } catch (err) {}
+            if (!hasCheckedInitialSession) {
+                applyBackendData(null);
             }
         }
 
@@ -2517,30 +2476,37 @@
         }
 
         // --- UPDATE ADMIN UI STATE (OTOMATIS MERENDER SEMUA MENU EDIT TANPA PERLU DIPANCING) ---
-        function updateAdminUIState() {
-    const btn = document.getElementById('admin-toggle-btn');
-    const icon = document.getElementById('admin-icon');
-    const text = document.getElementById('admin-status-text');
+      function updateAdminUIState() {
+            const btn = document.getElementById('admin-toggle-btn');
+            const icon = document.getElementById('admin-icon');
+            const text = document.getElementById('admin-status-text');
+            const adminResetMingguan = document.getElementById('admin-reset-mingguan-container');
 
-    document.getElementById('btn-manage-announcement')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('admin-dashboard-tugas-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('btn-edit-leaderboard-title')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('admin-tugas-tambahan-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('nav-manage-users-btn')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('nav-bendahara-btn')?.classList.toggle('hidden', !isAdminLoggedIn && !isBendaharaLoggedIn);
-    document.getElementById('btn-edit-jadwal-main')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('btn-tambah-penghuni-main')?.classList.toggle('hidden', !isAdminLoggedIn);
-    document.getElementById('btn-tambah-tugas-main')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('btn-manage-announcement')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('admin-dashboard-tugas-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('btn-edit-leaderboard-title')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('admin-tugas-tambahan-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('nav-manage-users-btn')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('nav-bendahara-btn')?.classList.toggle('hidden', !isAdminLoggedIn && !isBendaharaLoggedIn);
+            document.getElementById('btn-edit-jadwal-main')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('btn-tambah-penghuni-main')?.classList.toggle('hidden', !isAdminLoggedIn);
+            document.getElementById('btn-tambah-tugas-main')?.classList.toggle('hidden', !isAdminLoggedIn);
 
-    if (isAdminLoggedIn || isBendaharaLoggedIn) {
-        btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
-        icon.className = "fa-solid fa-unlock";
-        text.innerText = isAdminLoggedIn ? "Admin Unlocked" : "Bendahara Unlocked";
-    } else {
-        btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
-        icon.className = "fa-solid fa-lock";
-        text.innerText = "Admin";
-    }
+            if (adminResetMingguan) {
+                adminResetMingguan.innerHTML = isAdminLoggedIn
+                    ? `<button onclick="resetRiwayatMingguan()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-rotate mr-1"></i> Reset & Arsip Riwayat Minggu Ini</button>`
+                    : '';
+            }
+
+            if (isAdminLoggedIn || isBendaharaLoggedIn) {
+                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
+                icon.className = "fa-solid fa-unlock";
+                text.innerText = isAdminLoggedIn ? "Admin Unlocked" : "Bendahara Unlocked";
+            } else {
+                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
+                icon.className = "fa-solid fa-lock";
+                text.innerText = "Admin";
+            }
 
             updateDashboardTitlesUI();
             renderDashboard();
@@ -3481,13 +3447,38 @@ let hasShownInitialAnnouncementPopup = false;
             showToast("Tugas diperbarui!");
         }
 
-        function deleteTugas(idx) {
+    function deleteTugas(idx) {
             if (!isAdminLoggedIn) return;
             tugasList.splice(idx, 1);
             saveData();
             showToast("Tugas dihapus.");
         }
 
+        function renderRiwayat() {
+            const tbody = document.getElementById('riwayat-table-body');
+            const searchInput = document.getElementById('search-log');
+            if (!tbody) return;
+            const q = searchInput ? searchInput.value.toLowerCase() : '';
+            tbody.innerHTML = '';
+            const filtered = riwayatLogs.filter(log => log.penghuniNama.toLowerCase().includes(q) || log.area.toLowerCase().includes(q));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data riwayat absen piket.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition";
+                const todayPhoto = getTodayPhotoForId(log.id, log.tanggal, log.foto);
+                let imgCell = todayPhoto
+                    ? `<img src="${todayPhoto}" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
+                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold whitespace-nowrap"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
+                let adminDel = isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200">Hapus</button>` : '-';
+                tr.innerHTML = `<td class="p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-3 sm:p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-3 sm:p-4 text-brand-700 font-medium">${log.area}</td><td class="p-3 sm:p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-3 sm:p-4">${imgCell}</td><td class="p-3 sm:p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-3 sm:p-4">${adminDel}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
         // --- KAMERA & GPS UTAMA (ANTI BLANK / HITAM & AKURAT WILAYAH INDONESIA) ---
         function formatAlamatIndonesia(addr, lat, lng) {
             if (!addr) return `Wilayah (${lat}, ${lng})`;
