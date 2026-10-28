@@ -133,7 +133,7 @@
     </header>
 
     <!-- Running Text Ticker -->
-    <div id="ticker-banner" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center">
+    <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center">
         <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
             <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
         </div>
@@ -1396,7 +1396,10 @@
                 kasData = data.kas || { nominal: 10000, pembayaran: {}, pemasukanLogs: [], pengeluaranLogs: [], penyesuaianSaldo: 0, pendingApprovals: [], lastAutoResetWeek: "" };
                 if (kasData.penyesuaianSaldo === undefined) kasData.penyesuaianSaldo = 0;
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
-                adminAnnouncement = data.announcement || DEFAULT_ANNOUNCEMENT;
+               adminAnnouncement = data.announcement || DEFAULT_ANNOUNCEMENT;
+                if (!adminAnnouncement.text || adminAnnouncement.text.trim() === "") {
+                    adminAnnouncement.text = DEFAULT_ANNOUNCEMENT.text;
+                }
                 leaderboardTitle = data.leaderboardTitle || "Leaderboard Paling Rajin";
                 taskCatatanMap = data.taskCatatan || {};
                 missedPiketConfig = data.missedPiketConfig || JSON.parse(JSON.stringify(DEFAULT_MISSED_CONFIG));
@@ -2668,27 +2671,52 @@
             document.getElementById(`nav-${tabName}`)?.classList.remove('text-slate-600');
             document.getElementById(`nav-${tabName}`)?.classList.add('text-brand-600', 'bg-brand-50');
         }
+let hasShownInitialAnnouncementPopup = false;
 
         function checkAndShowUserAnnouncement() {
             const banner = document.getElementById('ticker-banner');
             const content = document.getElementById('ticker-text-content');
-            if (adminAnnouncement && adminAnnouncement.active && adminAnnouncement.text) {
-                content.innerText = adminAnnouncement.text;
+            const textToShow = (adminAnnouncement && adminAnnouncement.text && adminAnnouncement.text.trim() !== "")
+                ? adminAnnouncement.text
+                : DEFAULT_ANNOUNCEMENT.text;
+
+            // 1. Running Text Banner selalu tampil di bagian atas selama ada teks peringatan
+            if (banner && content) {
+                content.innerText = textToShow;
                 banner.classList.remove('hidden');
-                document.getElementById('announcement-type-badge').innerText = adminAnnouncement.type || "PENGUMUMAN";
-                document.getElementById('announcement-text-display').innerText = adminAnnouncement.text;
-                const img = document.getElementById('user-announcement-img');
-                if (adminAnnouncement.image) {
+                banner.classList.add('flex');
+            }
+
+            // 2. Isi konten untuk Modal Pop-Up Pengumuman
+            const badgeEl = document.getElementById('announcement-type-badge');
+            const textDisplayEl = document.getElementById('announcement-text-display');
+            const img = document.getElementById('user-announcement-img');
+            const mediaContainer = document.getElementById('user-announcement-media');
+
+            if (badgeEl) badgeEl.innerText = (adminAnnouncement && adminAnnouncement.type) ? adminAnnouncement.type : "PERINGATAN ADMIN";
+            if (textDisplayEl) textDisplayEl.innerText = textToShow;
+
+            if (adminAnnouncement && adminAnnouncement.image) {
+                if (img) {
                     img.src = adminAnnouncement.image;
                     img.classList.remove('hidden');
-                    document.getElementById('user-announcement-media').classList.remove('hidden');
-                    document.getElementById('user-announcement-media').classList.add('flex');
-                } else {
-                    img.classList.add('hidden');
-                    document.getElementById('user-announcement-media').classList.add('hidden');
+                }
+                if (mediaContainer) {
+                    mediaContainer.classList.remove('hidden');
+                    mediaContainer.classList.add('flex');
                 }
             } else {
-                banner?.classList.add('hidden');
+                if (img) img.classList.add('hidden');
+                if (mediaContainer) {
+                    mediaContainer.classList.add('hidden');
+                    mediaContainer.classList.remove('flex');
+                }
+            }
+
+            // 3. Jika toggle Pop-Up Peringatan diaktifkan Admin, tampilkan pop-up 1x saat halaman dibuka
+            if (adminAnnouncement && adminAnnouncement.active && !hasShownInitialAnnouncementPopup) {
+                hasShownInitialAnnouncementPopup = true;
+                openModal('modal-user-announcement');
             }
         }
 
