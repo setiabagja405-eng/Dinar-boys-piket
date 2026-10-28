@@ -1,16 +1,40 @@
+require('dotenv').config(); // Untuk membaca .env saat test lokal
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'data.json');
+const MONGODB_URI = process.env.MONGODB_URI; // Mengambil URI dari Environment Variable Render
 
 // Mengatur batas ukuran data maksimal 50MB (Untuk mencegah error 413 Payload Too Large)
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Setup koneksi MongoDB
+const client = new MongoClient(MONGODB_URI, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+let piketCollection;
+
+async function connectDB() {
+    try {
+        await client.connect();
+        // Menggunakan database bawaan dari URI atau membuat DB bernama 'dinarboyspiket'
+        const db = client.db('dinarboyspiket'); 
+        piketCollection = db.collection('data_kamar');
+        console.log("✅ Berhasil terhubung ke MongoDB Database!");
+    } catch (err) {
+        console.error("❌ Gagal terhubung ke MongoDB:", err);
+    }
+}
+connectDB();
 
 // Mendapatkan tanggal hari ini zona WIB (GMT+7)
 function getTodayWIB() {
@@ -20,7 +44,7 @@ function getTodayWIB() {
     return `${wib.getFullYear()}-${String(wib.getMonth() + 1).padStart(2, '0')}-${String(wib.getDate()).padStart(2, '0')}`;
 }
 
-// Fungsi membersihkan base64 dan foto lama agar server tidak penuh (Auto Reset Jam 00:00 WIB)
+// Fungsi membersihkan base64 agar server tidak penuh (Auto Reset Jam 00:00 WIB)
 function sanitizeBackendData(data) {
     if (!data) return data;
     const todayYMD = getTodayWIB();
@@ -31,7 +55,7 @@ function sanitizeBackendData(data) {
             const isBase64 = log.foto && log.foto.startsWith('data:image');
             return {
                 ...log,
-                // Hanya simpan link Drive jika absen di hari yang sama. Jika base64 atau beda hari, kosongkan.
+                // Hanya simpan link Drive (bukan base64) jika absen di hari yang sama
                 foto: (isToday && !isBase64) ? (log.foto || '') : ''
             };
         });
@@ -52,31 +76,42 @@ function sanitizeBackendData(data) {
 }
 
 // Endpoint GET untuk mengambil data ke Web HTML
-app.get(['/api/data', '/data', '/kos_piket_data'], (req, res) => {
-    if (!fs.existsSync(DATA_FILE)) {
-        return res.json({});
-    }
+app.get(['/api/data', '/data', '/kos_piket_data'], async (req, res) => {
     try {
-        const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
-        const cleanData = sanitizeBackendData(raw);
+        // Mengambil dokumen tunggal dengan ID "master_data"
+        const doc = await piketCollection.findOne({ _id: "master_data" });
+        if (!doc || !doc.payload) {
+            return res.json({});
+        }
+        
+        const cleanData = sanitizeBackendData(doc.payload);
         res.json(cleanData);
     } catch (e) {
+        console.error("Error GET data:", e);
         res.json({});
     }
 });
 
 // Endpoint POST untuk menerima dan menyimpan perubahan data dari Web HTML
-app.post(['/api/data', '/data', '/kos_piket_data'], (req, res) => {
+app.post(['/api/data', '/data', '/kos_piket_data'], async (req, res) => {
     try {
         const cleanData = sanitizeBackendData(req.body);
-        fs.writeFileSync(DATA_FILE, JSON.stringify(cleanData, null, 2), 'utf8');
+        
+        // Simpan atau update dokumen dengan ID "master_data" di MongoDB (Upsert)
+        await piketCollection.updateOne(
+            { _id: "master_data" },
+            { $set: { payload: cleanData, updatedAt: new Date() } },
+            { upsert: true }
+        );
+        
         res.json({ status: 'success' });
     } catch (e) {
+        console.error("Error POST data:", e);
         res.status(500).json({ status: 'error', message: e.message });
     }
 });
 
 // Jalankan Server
 app.listen(PORT, () => {
-    console.log(`Server Dinar Boys berjalan di port ${PORT}`);
+    console.log(`🚀 Server Dinar Boys berjalan di port ${PORT}`);
 });
