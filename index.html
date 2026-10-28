@@ -131,6 +131,15 @@
             </div>
         </div>
     </header>
+    <!-- Running Text Ticker Peringatan -->
+    <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center cursor-pointer hover:bg-amber-400 transition" title="Klik untuk membaca pengumuman">
+        <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
+            <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
+        </div>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide"></div>
+        </div>
+    </div>
 
     <!-- Running Text Ticker -->
     <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center">
@@ -2673,21 +2682,23 @@
         }
 let hasShownInitialAnnouncementPopup = false;
 
-        function checkAndShowUserAnnouncement() {
+       function checkAndShowUserAnnouncement() {
             const banner = document.getElementById('ticker-banner');
             const content = document.getElementById('ticker-text-content');
+            
+            // Ambil teks dari admin atau gunakan default
             const textToShow = (adminAnnouncement && adminAnnouncement.text && adminAnnouncement.text.trim() !== "")
                 ? adminAnnouncement.text
                 : DEFAULT_ANNOUNCEMENT.text;
 
-            // 1. Running Text Banner selalu tampil di bagian atas selama ada teks peringatan
+            // 1. MEMASTIKAN RUNNING TEXT SELALU MUNCUL DI BAWAH HEADER
             if (banner && content) {
                 content.innerText = textToShow;
                 banner.classList.remove('hidden');
-                banner.classList.add('flex');
+                banner.classList.add('flex'); // Memaksa elemen tampil (display: flex)
             }
 
-            // 2. Isi konten untuk Modal Pop-Up Pengumuman
+            // 2. Isi konten untuk Modal Pop-Up Pengumuman saat banner diklik
             const badgeEl = document.getElementById('announcement-type-badge');
             const textDisplayEl = document.getElementById('announcement-text-display');
             const img = document.getElementById('user-announcement-img');
