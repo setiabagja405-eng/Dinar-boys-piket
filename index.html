@@ -131,26 +131,15 @@
             </div>
         </div>
     </header>
-    <!-- Running Text Ticker Peringatan -->
-    <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center cursor-pointer hover:bg-amber-400 transition" title="Klik untuk membaca pengumuman">
-        <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
-            <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
-        </div>
-        <div class="overflow-hidden whitespace-nowrap w-full relative">
-            <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide"></div>
-        </div>
+    <!-- Running Text Ticker Peringatan (Tunggal & Terintegrasi) -->
+<div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center cursor-pointer hover:bg-amber-400 transition" title="Klik untuk membaca pengumuman">
+    <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
+        <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
     </div>
-
-    <!-- Running Text Ticker -->
-    <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center">
-        <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
-            <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
-        </div>
-        <div class="overflow-hidden whitespace-nowrap w-full relative">
-            <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide"></div>
-        </div>
+    <div class="overflow-hidden whitespace-nowrap w-full relative">
+        <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide"></div>
     </div>
-
+</div>
     <!-- POP-UP NOTIFIKASI KECIL BAYAR KAS -->
     <div id="kas-payment-popup-container" class="fixed bottom-6 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
@@ -1672,47 +1661,38 @@
         }
 
         // --- SISTEM DETEKSI & KONTROL POP-UP TERLEWAT PIKET (MUNCUL TERUS SAMPAI DIMATIKAN ADMIN) ---
-        function getUserMissedPiketInfo(userObj) {
-            if (!userObj) return { isMissed: false, reasons: [], rawDates: [] };
+       function getUserMissedPiketInfo(userObj) {
+    if (!userObj) return { isMissed: false, reasons: [], rawDates: [] };
+    const reasons = [];
+    const rawDates = [];
 
-            const reasons = [];
-            const rawDates = [];
+    if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
+        reasons.push("Diaktifkan Manual oleh Admin");
+    }
 
-            if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
-                reasons.push("Diaktifkan Manual oleh Admin");
-            }
+    const nowWib = getWIBDate();
+    const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-            const nowWib = getWIBDate();
-            const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    for (let i = 1; i <= 3; i++) {
+        const pastDate = new Date(nowWib);
+        pastDate.setDate(pastDate.getDate() - i);
+        const pastDayName = daysOfWeek[pastDate.getDay()];
+        const userWasAssigned = (jadwalPiket[pastDayName] || []).some(d => d.penghuniId === userObj.id);
 
-            for (let i = 1; i <= 3; i++) {
-                const pastDate = new Date(nowWib);
-                pastDate.setDate(pastDate.getDate() - i);
-                const pastDayName = daysOfWeek[pastDate.getDay()];
-                const pastDuties = jadwalPiket[pastDayName] || [];
-                const userWasAssigned = pastDuties.some(d => d.penghuniId === userObj.id);
-
-                if (userWasAssigned) {
-                    const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
-                    const clearKey = `${userObj.id}_${pastYMD}`;
-                    const isClearedByAdmin = missedPiketConfig.clearedDates && missedPiketConfig.clearedDates[clearKey];
-
-                    if (!isClearedByAdmin) {
-                        const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
-                        if (!hasAbsen) {
-                            reasons.push(`Terlewat Piket ${pastDayName} (${pastYMD})`);
-                            rawDates.push(pastYMD);
-                        }
-                    }
+        if (userWasAssigned) {
+            const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
+            const clearKey = `${userObj.id}_${pastYMD}`;
+            if (!missedPiketConfig.clearedDates?.[clearKey]) {
+                const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
+                if (!hasAbsen) {
+                    reasons.push(`Terlewat Piket ${pastDayName} (${pastYMD})`);
+                    rawDates.push(pastYMD);
                 }
             }
-
-            return {
-                isMissed: reasons.length > 0,
-                reasons: reasons,
-                rawDates: rawDates
-            };
         }
+    }
+    return { isMissed: reasons.length > 0, reasons, rawDates };
+}
 
         function checkMissedPiketForUser(userObj) {
             if (!userObj || !missedPiketConfig.enabled) {
@@ -2059,20 +2039,13 @@
         }
 
         // --- KAS KOSAN & BENDAHARA LOGIC (HITUNGAN SALDO PAS TANPA DIKALI 2 / X2) ---
-        function calculateTotalSaldoKas() {
-            let totalPemasukan = 0;
-            penghuniList.forEach(p => {
-                if (kasData.pembayaran && kasData.pembayaran[p.id]) {
-                    totalPemasukan += Number(kasData.nominal || 0);
-                }
-            });
-            let totalPengeluaran = 0;
-            if (kasData.pengeluaranLogs) {
-                kasData.pengeluaranLogs.forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
-            }
-            let penyesuaian = Number(kasData.penyesuaianSaldo || 0);
-            return totalPemasukan + penyesuaian - totalPengeluaran;
-        }
+      function calculateTotalSaldoKas() {
+         let totalPemasukan = 0;
+         penghuniList.forEach(p => { if (kasData.pembayaran?.[p.id]) totalPemasukan += Number(kasData.nominal || 0); });
+         let totalPengeluaran = 0;
+         (kasData.pengeluaranLogs || []).forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
+         return totalPemasukan + Number(kasData.penyesuaianSaldo || 0) - totalPengeluaran;
+      }
 
         function renderKasTable() {
             const tbody = document.getElementById('kas-table-body');
@@ -2545,66 +2518,29 @@
 
         // --- UPDATE ADMIN UI STATE (OTOMATIS MERENDER SEMUA MENU EDIT TANPA PERLU DIPANCING) ---
         function updateAdminUIState() {
-            const btn = document.getElementById('admin-toggle-btn');
-            const icon = document.getElementById('admin-icon');
-            const text = document.getElementById('admin-status-text');
-            const btnAnnouncement = document.getElementById('btn-manage-announcement');
-            const adminDashboardControls = document.getElementById('admin-dashboard-tugas-controls');
-            const btnEditLBT = document.getElementById('btn-edit-leaderboard-title');
-            const adminTambahanControls = document.getElementById('admin-tugas-tambahan-controls');
-            const navManageUsersBtn = document.getElementById('nav-manage-users-btn');
-            const navBendaharaBtn = document.getElementById('nav-bendahara-btn');
-            const adminResetMingguan = document.getElementById('admin-reset-mingguan-container');
-            
-            const btnEditJadwalMain = document.getElementById('btn-edit-jadwal-main');
-            const btnTambahPenghuniMain = document.getElementById('btn-tambah-penghuni-main');
-            const btnTambahTugasMain = document.getElementById('btn-tambah-tugas-main');
+    const btn = document.getElementById('admin-toggle-btn');
+    const icon = document.getElementById('admin-icon');
+    const text = document.getElementById('admin-status-text');
 
-            btnAnnouncement?.classList.add('hidden');
-            adminDashboardControls?.classList.add('hidden');
-            btnEditLBT?.classList.add('hidden');
-            adminTambahanControls?.classList.add('hidden');
-            navManageUsersBtn?.classList.add('hidden');
-            navBendaharaBtn?.classList.add('hidden');
-            btnEditJadwalMain?.classList.add('hidden');
-            btnEditJadwalMain?.classList.remove('flex');
-            btnTambahPenghuniMain?.classList.add('hidden');
-            btnTambahPenghuniMain?.classList.remove('flex');
-            btnTambahTugasMain?.classList.add('hidden');
-            btnTambahTugasMain?.classList.remove('flex');
-            if (adminResetMingguan) adminResetMingguan.innerHTML = '';
+    document.getElementById('btn-manage-announcement')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('admin-dashboard-tugas-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('btn-edit-leaderboard-title')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('admin-tugas-tambahan-controls')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('nav-manage-users-btn')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('nav-bendahara-btn')?.classList.toggle('hidden', !isAdminLoggedIn && !isBendaharaLoggedIn);
+    document.getElementById('btn-edit-jadwal-main')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('btn-tambah-penghuni-main')?.classList.toggle('hidden', !isAdminLoggedIn);
+    document.getElementById('btn-tambah-tugas-main')?.classList.toggle('hidden', !isAdminLoggedIn);
 
-            if (isAdminLoggedIn || isBendaharaLoggedIn) {
-                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
-                icon.className = "fa-solid fa-unlock";
-                text.innerText = isAdminLoggedIn ? "Admin Unlocked" : "Bendahara Unlocked";
-                
-                if (isAdminLoggedIn) {
-                    btnAnnouncement?.classList.remove('hidden');
-                    adminDashboardControls?.classList.remove('hidden');
-                    btnEditLBT?.classList.remove('hidden');
-                    adminTambahanControls?.classList.remove('hidden');
-                    navManageUsersBtn?.classList.remove('hidden');
-                    
-                    btnEditJadwalMain?.classList.remove('hidden');
-                    btnEditJadwalMain?.classList.add('flex');
-                    btnTambahPenghuniMain?.classList.remove('hidden');
-                    btnTambahPenghuniMain?.classList.add('flex');
-                    btnTambahTugasMain?.classList.remove('hidden');
-                    btnTambahTugasMain?.classList.add('flex');
-
-                    if (adminResetMingguan) {
-                        adminResetMingguan.innerHTML = `<button onclick="resetRiwayatMingguan()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-rotate mr-1"></i> Reset & Arsip Riwayat Minggu Ini</button>`;
-                    }
-                }
-                if (isBendaharaLoggedIn || isAdminLoggedIn) {
-                    navBendaharaBtn?.classList.remove('hidden');
-                }
-            } else {
-                btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
-                icon.className = "fa-solid fa-lock";
-                text.innerText = "Admin";
-            }
+    if (isAdminLoggedIn || isBendaharaLoggedIn) {
+        btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-amber-500 text-slate-950 shadow-sm";
+        icon.className = "fa-solid fa-unlock";
+        text.innerText = isAdminLoggedIn ? "Admin Unlocked" : "Bendahara Unlocked";
+    } else {
+        btn.className = "px-2.5 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200";
+        icon.className = "fa-solid fa-lock";
+        text.innerText = "Admin";
+    }
 
             updateDashboardTitlesUI();
             renderDashboard();
