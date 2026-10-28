@@ -345,7 +345,7 @@
                                 <th class="p-3 sm:p-4">Penghuni</th>
                                 <th class="p-3 sm:p-4">Area Piket</th>
                                 <th class="p-3 sm:p-4">Koordinat & Wilayah GPS</th>
-                                <th class="p-3 sm:p-4">Foto Bukti</th>
+                                <th class="p-3 sm:p-4">Foto Bukti (Web 24 Jam)</th>
                                 <th class="p-3 sm:p-4">Status</th>
                                 <th class="p-3 sm:p-4">Aksi (Admin)</th>
                             </tr>
@@ -626,7 +626,7 @@
         </div>
     </div>
 
-    <!-- MODAL KAMERA -->
+    <!-- MODAL KAMERA (DIPERBAIKI ANTI BLANK) -->
     <div id="modal-absen" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
@@ -651,6 +651,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto Real-Time dengan GPS & Stamp Waktu</label>
                     <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-300 shadow-inner">
+                        <!-- Muted ditambah untuk mencegah block putar video otomatis di HP Safari/Chrome -->
                         <video id="webcam-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
                         <canvas id="captured-canvas" class="hidden w-full h-full object-cover"></canvas>
                         
@@ -697,7 +698,7 @@
         </div>
     </div>
 
-    <!-- MODAL KAMERA / ABSEN TUGAS TAMBAHAN -->
+    <!-- MODAL KAMERA / ABSEN TUGAS TAMBAHAN (DIPERBAIKI ANTI BLANK) -->
     <div id="modal-absen-tambahan" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[95vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center border-b pb-3">
@@ -978,184 +979,13 @@
         </div>
     </div>
 
-    <!-- MODAL PENGHUNI -->
-    <div id="modal-penghuni" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 id="modal-penghuni-title" class="text-lg font-bold text-slate-900">Tambah Penghuni Kos</h3>
-                <button onclick="closeModal('modal-penghuni')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <form id="form-penghuni" onsubmit="handlePenghuniSubmit(event)" class="space-y-4">
-                <input type="hidden" id="penghuni-id">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap / Panggilan</label>
-                    <input type="text" id="penghuni-nama" required placeholder="Contoh: AJJA" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
-                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 01" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kata-Kata Motivasi Personal</label>
-                    <input type="text" id="penghuni-motivasi" placeholder="Contoh: Semangat kerja hari ini!" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN Akun Login (6 Digit)</label>
-                    <div class="relative">
-                        <input type="password" id="penghuni-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" class="w-full px-3.5 py-2.5 pr-10 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono tracking-widest">
-                        <button type="button" onclick="togglePasswordVisibility('penghuni-pin', 'eye-icon-penghuni-pin')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-xs">
-                            <i id="eye-icon-penghuni-pin" class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL EDIT JADWAL -->
-    <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b pb-3">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-900">Atur & Ubah Jadwal Piket</h3>
-                    <p class="text-xs text-slate-500">Tambah orang atau hapus orang dari jadwal piket harian secara fleksibel.</p>
-                </div>
-                <button onclick="closeModal('modal-edit-jadwal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="overflow-y-auto custom-scrollbar flex-1 space-y-4 pr-1" id="edit-jadwal-container"></div>
-            <div class="pt-3 border-t flex gap-3">
-                <button type="button" onclick="closeModal('modal-edit-jadwal')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
-                <button type="button" onclick="saveJadwalChanges()" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan Perubahan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CONFIG LEADERBOARD TITLE (ADMIN) -->
-    <div id="modal-config-leaderboard" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900">Ubah Gelar / Kata-Kata Leaderboard</h3>
-                <button onclick="closeModal('modal-config-leaderboard')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <form onsubmit="saveLeaderboardTitle(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Judul / Kata-Kata Juara</label>
-                    <input type="text" id="input-leaderboard-title" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                </div>
-                <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeModal('modal-config-leaderboard')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL PREVIEW FOTO -->
-    <div id="modal-preview-foto" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeModal('modal-preview-foto')">
-        <div class="max-w-lg w-full bg-white rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
-            <button onclick="closeModal('modal-preview-foto')" class="absolute top-3 right-3 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            <h4 class="font-bold text-slate-800 mb-3 text-center">Bukti Piket Real-Time (GPS Stamped)</h4>
-            <img id="modal-preview-img" src="" alt="Bukti Piket" class="w-full max-h-[70vh] object-contain rounded-xl bg-slate-100 border border-slate-200">
-        </div>
-    </div>
-
-    <!-- MODAL USER ANNOUNCEMENT -->
-    <div id="modal-user-announcement" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeUserAnnouncement()">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 border-t-8 border-amber-500 relative max-h-[95vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    <div>
-                        <span id="announcement-type-badge" class="text-xs uppercase tracking-wider font-extrabold px-2.5 py-1 rounded bg-amber-100 text-amber-800">PERINGATAN ADMIN</span>
-                        <h3 class="text-lg font-bold text-slate-900 leading-tight mt-1">Pengumuman Penting Kosan</h3>
-                    </div>
-                </div>
-                <button onclick="closeUserAnnouncement()" class="text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            
-            <div id="user-announcement-media" class="hidden flex-col gap-3 mb-3">
-                <img id="user-announcement-img" src="" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 hidden">
-            </div>
-
-            <div class="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 text-sm sm:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display"></div>
-            <button onclick="closeUserAnnouncement()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm sm:text-base shadow-lg transition">Saya Mengerti & Paham</button>
-        </div>
-    </div>
-
-    <!-- MODAL EDIT ANNOUNCEMENT & KATA-KATA -->
-    <div id="modal-edit-announcement" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-amber-500"></i> Ubah Teks & Peringatan Admin</h3>
-                <button onclick="closeModal('modal-edit-announcement')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <form onsubmit="saveAnnouncement(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Judul Utama ("Siapa Piket Hari Ini?")</label>
-                    <input type="text" id="edit-main-title-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Siapa Piket Hari Ini?">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Sub-Judul / Kata-Kata ("Tong hilap foto nya!")</label>
-                    <input type="text" id="edit-main-subtitle-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Tong hilap foto nya!">
-                </div>
-
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
-                    <div>
-                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up Peringatan</span>
-                        <span class="text-[11px] text-slate-500">Aktifkan agar pop-up ini muncul di pengguna</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="announcement-active-toggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
-                    </label>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pesan</label>
-                    <select id="announcement-type-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                        <option value="Peringatan Admin">Peringatan / Himbauan</option>
-                        <option value="Informasi Kebersihan">Informasi Kebersihan</option>
-                        <option value="Pengumuman Kos">Pengumuman Kos Penting</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan (Running Text & Pop-Up)</label>
-                    <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Peringatan (Opsional)</label>
-                    <input type="file" id="announcement-img-input" accept="image/*" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none bg-slate-50">
-                </div>
-
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <label class="block text-xs font-bold text-slate-700 uppercase">Ubah Background Tampilan Web (Foto)</label>
-                    <input type="file" id="bg-img-input" accept="image/*" class="w-full px-3 py-1.5 border border-slate-300 rounded-xl text-xs outline-none bg-white">
-                    <button type="button" onclick="clearWebsiteBackground()" class="text-xs text-rose-600 font-bold hover:underline">Hapus / Reset Background</button>
-                </div>
-
-                <div class="pt-2 flex gap-3 border-t">
-                    <button type="button" onclick="closeModal('modal-edit-announcement')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan & Perbarui</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- TOAST -->
     <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700">
         <i id="toast-icon" class="fa-solid fa-circle-check text-teal-400 text-lg"></i>
         <span id="toast-message" class="text-sm font-medium">Notifikasi berhasil!</span>
     </div>
 
-    <!-- BACKEND NODE.JS (RENDER) + DIRECT GOOGLE DRIVE UPLOAD + AUTO RESET JAM 00:00 WIB -->
+    <!-- SCRIPT UTAMA -->
     <script>
         const BACKEND_URL = "https://dinar-boys-piket.onrender.com";
         const GDRIVE_FOLDER_ID = "1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL";
@@ -1296,37 +1126,6 @@
             return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         }
 
-        // --- CACHE FOTO HARIAN LOKAL (Hanya untuk Hari Ini, Otomatis Dihapus Jam 00:00 WIB) ---
-        function getDailyPhotoCache() {
-            const today = getTodayYMD();
-            try {
-                const raw = JSON.parse(localStorage.getItem('dinar_daily_photos') || '{}');
-                if (raw.date !== today) {
-                    localStorage.removeItem('dinar_daily_photos');
-                    return { date: today, photos: {} };
-                }
-                return raw;
-            } catch (e) {
-                return { date: today, photos: {} };
-            }
-        }
-
-        function savePhotoToDailyCache(id, photoUrlOrBase64) {
-            const cache = getDailyPhotoCache();
-            cache.photos[id] = photoUrlOrBase64;
-            try {
-                localStorage.setItem('dinar_daily_photos', JSON.stringify(cache));
-            } catch (e) {}
-        }
-
-        function getTodayPhotoForId(id, logDateStr, existingUrl) {
-            const today = getTodayYMD();
-            if (logDateStr && !logDateStr.startsWith(today)) return '';
-            if (existingUrl && !existingUrl.startsWith('data:image')) return existingUrl;
-            const cache = getDailyPhotoCache();
-            return cache.photos[id] || '';
-        }
-
         // --- UPLOAD FOTO LANGSUNG KE GOOGLE DRIVE (OTOMATIS MASUK FOLDER HARI) ---
         async function uploadPhotoToGoogleDrive(base64Image, filename) {
             if (!GOOGLE_DRIVE_SCRIPT_URL || GOOGLE_DRIVE_SCRIPT_URL.trim() === "") {
@@ -1349,9 +1148,7 @@
                         return resJson.viewUrl;
                     }
                 }
-            } catch (err) {
-                console.warn("Upload Google Drive gagal, menggunakan cache harian sementara:", err);
-            }
+            } catch (err) {}
             return "";
         }
 
@@ -1361,7 +1158,6 @@
             let hasChanged = false;
 
             if (lastActiveDateYMD && lastActiveDateYMD !== todayYMD) {
-                localStorage.removeItem('dinar_daily_photos');
                 hasChanged = true;
             }
             lastActiveDateYMD = todayYMD;
@@ -1418,13 +1214,12 @@
                 ensureValidPenghuniList();
             }
 
-            // Selalu perbarui dropdown nama login setiap ada perubahan data
             populateLoginSelect();
-
             initDateHeader();
             updateExternalLinksUI();
             applyWebsiteBackground();
             updateDashboardTitlesUI();
+            
             if (!hasCheckedInitialSession) {
                 hasCheckedInitialSession = true;
                 checkUserSession();
@@ -1434,6 +1229,7 @@
                 updateUserSessionUI();
                 checkMissedPiketForUser(loggedInUser);
             }
+            
             updateAdminUIState();
             checkAndShowUserAnnouncement();
             initMotivationRotation();
@@ -1472,7 +1268,6 @@
             applyBackendData(null);
         }
 
-        // Simpan ke Backend TANPA Base64 Foto (Backend hanya menyimpan catatan absen & link Drive hari ini)
         async function saveData() {
             ensureValidPenghuniList();
             cleanupExpiredDailyPhotos();
@@ -1480,20 +1275,12 @@
 
             const backendRiwayat = riwayatLogs.map(log => {
                 const isToday = log.tanggal && log.tanggal.startsWith(todayYMD);
-                const isDriveUrl = log.foto && !log.foto.startsWith('data:image');
-                return {
-                    ...log,
-                    foto: (isToday && isDriveUrl) ? log.foto : ''
-                };
+                return { ...log, foto: isToday ? log.foto : '' };
             });
 
             const backendTugasTambahan = tugasTambahanList.map(t => {
                 const isToday = t.tanggalSelesai === todayYMD;
-                const isDriveUrl = t.foto && !t.foto.startsWith('data:image');
-                return {
-                    ...t,
-                    foto: (isToday && isDriveUrl) ? t.foto : ''
-                };
+                return { ...t, foto: isToday ? t.foto : '' };
             });
 
             const payload = {
@@ -1521,9 +1308,7 @@
                         body: JSON.stringify(payload)
                     });
                     if (res.ok) break;
-                } catch (err) {
-                    console.warn(`Gagal mengirim ke ${url}:`, err);
-                }
+                } catch (err) {}
             }
         }
 
@@ -1556,7 +1341,6 @@
 
             const diff = endOfDay - nowWib;
 
-            // Cek jika berganti hari (Jam 00:00 WIB) -> otomatis hapus foto hari kemarin di area web
             const currentYMD = getTodayYMD();
             if (lastActiveDateYMD && lastActiveDateYMD !== currentYMD) {
                 if (cleanupExpiredDailyPhotos()) {
@@ -1580,8 +1364,7 @@
                 timerEl.innerText = `Sisa Waktu Piket: ${String(hours).padStart(2, '0')}j ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}d (WIB)`;
             }
         }
-        setInterval(updateWIBCountdown, 1000);
-
+        
         function getWIBWeekId() {
             const d = getWIBDate();
             d.setHours(0, 0, 0, 0);
@@ -2070,6 +1853,9 @@
                     totalPemasukan += Number(kasData.nominal || 0);
                 }
             });
+            if (kasData.pemasukanLogs) {
+                kasData.pemasukanLogs.forEach(l => { totalPemasukan += Number(l.jumlah || 0); });
+            }
             let totalPengeluaran = 0;
             if (kasData.pengeluaranLogs) {
                 kasData.pengeluaranLogs.forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
@@ -3731,6 +3517,7 @@
 
             capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
             video.classList.add('hidden');
+            // Menampilkan hasil foto pada canvas (tidak lagi hidden/blank)
             canvas.classList.remove('hidden');
             document.getElementById('btn-snap').classList.add('hidden');
             document.getElementById('btn-retake').classList.remove('hidden');
