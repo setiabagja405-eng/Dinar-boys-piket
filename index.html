@@ -3723,11 +3723,13 @@ let hasShownInitialAnnouncementPopup = false;
             }).catch(() => {});
         }
 
-        // Jalankan inisialisasi tampilan, countdown, dan dropdown login AJJA secara langsung
+      // Jalankan inisialisasi tampilan, countdown, dan pastikan data dimuat dari backend dulu
         setInterval(updateWIBCountdown, 1000);
-        applyBackendData(null);
-        loadDataFromBackend();
-        setInterval(loadDataFromBackend, 10000);
+        
+        // Muat data dari backend terlebih dahulu sebelum merender tampilan
+        loadDataFromBackend().then(() => {
+            setInterval(loadDataFromBackend, 15000);
+        });
     </script>
 </body>
 </html>
