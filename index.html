@@ -977,21 +977,22 @@
     </div>
 
     <!-- MODAL PENGHUNI -->
+   <!-- MODAL PENGHUNI -->
     <div id="modal-penghuni" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 relative z-50" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 id="modal-penghuni-title" class="text-lg font-bold text-slate-900">Tambah Penghuni Kos</h3>
-                <button onclick="closeModal('modal-penghuni')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button type="button" onclick="closeModal('modal-penghuni')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <form id="form-penghuni" onsubmit="handlePenghuniSubmit(event)" class="space-y-4">
                 <input type="hidden" id="penghuni-id">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap / Panggilan</label>
-                    <input type="text" id="penghuni-nama" required placeholder="Contoh: AJJA" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    <input type="text" id="penghuni-nama" required placeholder="Contoh: Budi" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
-                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 01" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 02" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kata-Kata Motivasi Personal</label>
@@ -1007,8 +1008,8 @@
                     </div>
                 </div>
                 <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
+                    <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50 cursor-pointer">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md cursor-pointer">Simpan</button>
                 </div>
             </form>
         </div>
@@ -3338,7 +3339,7 @@ let hasShownInitialAnnouncementPopup = false;
             openModal('modal-penghuni');
         }
 
-        function tryOpenPenghuniModal() {
+      function tryOpenPenghuniModal() {
             if (!isAdminLoggedIn) return;
             document.getElementById('penghuni-id').value = '';
             document.getElementById('penghuni-nama').value = '';
