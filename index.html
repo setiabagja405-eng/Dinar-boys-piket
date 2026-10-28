@@ -651,7 +651,6 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Foto Real-Time dengan GPS & Stamp Waktu</label>
                     <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-slate-300 shadow-inner">
-                        <!-- Muted ditambah untuk mencegah block putar video otomatis di HP Safari/Chrome -->
                         <video id="webcam-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
                         <canvas id="captured-canvas" class="hidden w-full h-full object-cover"></canvas>
                         
@@ -979,6 +978,177 @@
         </div>
     </div>
 
+    <!-- MODAL PENGHUNI -->
+    <div id="modal-penghuni" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-penghuni-title" class="text-lg font-bold text-slate-900">Tambah Penghuni Kos</h3>
+                <button onclick="closeModal('modal-penghuni')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="form-penghuni" onsubmit="handlePenghuniSubmit(event)" class="space-y-4">
+                <input type="hidden" id="penghuni-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap / Panggilan</label>
+                    <input type="text" id="penghuni-nama" required placeholder="Contoh: AJJA" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Kamar</label>
+                    <input type="text" id="penghuni-kamar" required placeholder="Contoh: Kamar 01" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kata-Kata Motivasi Personal</label>
+                    <input type="text" id="penghuni-motivasi" placeholder="Contoh: Semangat kerja hari ini!" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN Akun Login (6 Digit)</label>
+                    <div class="relative">
+                        <input type="password" id="penghuni-pin" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="123456" class="w-full px-3.5 py-2.5 pr-10 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none font-mono tracking-widest">
+                        <button type="button" onclick="togglePasswordVisibility('penghuni-pin', 'eye-icon-penghuni-pin')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-xs">
+                            <i id="eye-icon-penghuni-pin" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-penghuni')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT JADWAL -->
+    <div id="modal-edit-jadwal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Atur & Ubah Jadwal Piket</h3>
+                    <p class="text-xs text-slate-500">Tambah orang atau hapus orang dari jadwal piket harian secara fleksibel.</p>
+                </div>
+                <button onclick="closeModal('modal-edit-jadwal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="overflow-y-auto custom-scrollbar flex-1 space-y-4 pr-1" id="edit-jadwal-container"></div>
+            <div class="pt-3 border-t flex gap-3">
+                <button type="button" onclick="closeModal('modal-edit-jadwal')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
+                <button type="button" onclick="saveJadwalChanges()" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIG LEADERBOARD TITLE (ADMIN) -->
+    <div id="modal-config-leaderboard" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-900">Ubah Gelar / Kata-Kata Leaderboard</h3>
+                <button onclick="closeModal('modal-config-leaderboard')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="saveLeaderboardTitle(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Judul / Kata-Kata Juara</label>
+                    <input type="text" id="input-leaderboard-title" required class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal('modal-config-leaderboard')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 text-white rounded-xl font-semibold text-sm shadow-md">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PREVIEW FOTO -->
+    <div id="modal-preview-foto" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeModal('modal-preview-foto')">
+        <div class="max-w-lg w-full bg-white rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal('modal-preview-foto')" class="absolute top-3 right-3 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            <h4 class="font-bold text-slate-800 mb-3 text-center">Bukti Piket Real-Time (GPS Stamped)</h4>
+            <img id="modal-preview-img" src="" alt="Bukti Piket" class="w-full max-h-[70vh] object-contain rounded-xl bg-slate-100 border border-slate-200">
+        </div>
+    </div>
+
+    <!-- MODAL USER ANNOUNCEMENT -->
+    <div id="modal-user-announcement" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeUserAnnouncement()">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 border-t-8 border-amber-500 relative max-h-[95vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
+            <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div>
+                        <span id="announcement-type-badge" class="text-xs uppercase tracking-wider font-extrabold px-2.5 py-1 rounded bg-amber-100 text-amber-800">PERINGATAN ADMIN</span>
+                        <h3 class="text-lg font-bold text-slate-900 leading-tight mt-1">Pengumuman Penting Kosan</h3>
+                    </div>
+                </div>
+                <button onclick="closeUserAnnouncement()" class="text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div id="user-announcement-media" class="hidden flex-col gap-3 mb-3">
+                <img id="user-announcement-img" src="" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 hidden">
+            </div>
+
+            <div class="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 text-sm sm:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display"></div>
+            <button onclick="closeUserAnnouncement()" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-sm sm:text-base shadow-lg transition">Saya Mengerti & Paham</button>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT ANNOUNCEMENT & KATA-KATA -->
+    <div id="modal-edit-announcement" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-amber-500"></i> Ubah Teks & Peringatan Admin</h3>
+                <button onclick="closeModal('modal-edit-announcement')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <form onsubmit="saveAnnouncement(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Judul Utama ("Siapa Piket Hari Ini?")</label>
+                    <input type="text" id="edit-main-title-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Siapa Piket Hari Ini?">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ubah Sub-Judul / Kata-Kata ("Tong hilap foto nya!")</label>
+                    <input type="text" id="edit-main-subtitle-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Tong hilap foto nya!">
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <div>
+                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up Peringatan</span>
+                        <span class="text-[11px] text-slate-500">Aktifkan agar pop-up ini muncul di pengguna</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="announcement-active-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pesan</label>
+                    <select id="announcement-type-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option value="Peringatan Admin">Peringatan / Himbauan</option>
+                        <option value="Informasi Kebersihan">Informasi Kebersihan</option>
+                        <option value="Pengumuman Kos">Pengumuman Kos Penting</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan (Running Text & Pop-Up)</label>
+                    <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Upload Foto Peringatan (Opsional)</label>
+                    <input type="file" id="announcement-img-input" accept="image/*" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none bg-slate-50">
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Ubah Background Tampilan Web (Foto)</label>
+                    <input type="file" id="bg-img-input" accept="image/*" class="w-full px-3 py-1.5 border border-slate-300 rounded-xl text-xs outline-none bg-white">
+                    <button type="button" onclick="clearWebsiteBackground()" class="text-xs text-rose-600 font-bold hover:underline">Hapus / Reset Background</button>
+                </div>
+
+                <div class="pt-2 flex gap-3 border-t">
+                    <button type="button" onclick="closeModal('modal-edit-announcement')" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold text-sm shadow-md">Simpan & Perbarui</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- TOAST -->
     <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700">
         <i id="toast-icon" class="fa-solid fa-circle-check text-teal-400 text-lg"></i>
@@ -1081,7 +1251,6 @@
         let lastActiveDateYMD = "";
         let missedPiketPopupTimeout = null;
 
-        // Pastikan daftar penghuni tidak pernah kosong atau rusak sehingga dropdown login selalu berisi minimal AJJA (PIN 123456)
         function ensureValidPenghuniList() {
             if (!Array.isArray(penghuniList)) {
                 if (penghuniList && typeof penghuniList === 'object') {
@@ -1126,6 +1295,37 @@
             return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         }
 
+        // --- CACHE FOTO HARIAN LOKAL (24 JAM) ---
+        function getDailyPhotoCache() {
+            const today = getTodayYMD();
+            try {
+                const raw = JSON.parse(localStorage.getItem('dinar_daily_photos') || '{}');
+                if (raw.date !== today) {
+                    localStorage.removeItem('dinar_daily_photos');
+                    return { date: today, photos: {} };
+                }
+                return raw;
+            } catch (e) {
+                return { date: today, photos: {} };
+            }
+        }
+
+        function savePhotoToDailyCache(id, photoUrlOrBase64) {
+            const cache = getDailyPhotoCache();
+            cache.photos[id] = photoUrlOrBase64;
+            try {
+                localStorage.setItem('dinar_daily_photos', JSON.stringify(cache));
+            } catch (e) {}
+        }
+
+        function getTodayPhotoForId(id, logDateStr, existingUrl) {
+            const today = getTodayYMD();
+            if (logDateStr && !logDateStr.startsWith(today)) return '';
+            if (existingUrl && existingUrl.trim() !== '') return existingUrl;
+            const cache = getDailyPhotoCache();
+            return cache.photos[id] || '';
+        }
+
         // --- UPLOAD FOTO LANGSUNG KE GOOGLE DRIVE (OTOMATIS MASUK FOLDER HARI) ---
         async function uploadPhotoToGoogleDrive(base64Image, filename) {
             if (!GOOGLE_DRIVE_SCRIPT_URL || GOOGLE_DRIVE_SCRIPT_URL.trim() === "") {
@@ -1158,6 +1358,7 @@
             let hasChanged = false;
 
             if (lastActiveDateYMD && lastActiveDateYMD !== todayYMD) {
+                localStorage.removeItem('dinar_daily_photos');
                 hasChanged = true;
             }
             lastActiveDateYMD = todayYMD;
@@ -1845,7 +2046,7 @@
             showToast("Semua PIN user berhasil disimpan ke data admin!");
         }
 
-        // --- KAS KOSAN & BENDAHARA LOGIC ---
+        // --- KAS KOSAN & BENDAHARA LOGIC (HITUNGAN SALDO PAS TANPA DIKALI 2 / X2) ---
         function calculateTotalSaldoKas() {
             let totalPemasukan = 0;
             penghuniList.forEach(p => {
@@ -1853,9 +2054,6 @@
                     totalPemasukan += Number(kasData.nominal || 0);
                 }
             });
-            if (kasData.pemasukanLogs) {
-                kasData.pemasukanLogs.forEach(l => { totalPemasukan += Number(l.jumlah || 0); });
-            }
             let totalPengeluaran = 0;
             if (kasData.pengeluaranLogs) {
                 kasData.pengeluaranLogs.forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
@@ -2892,19 +3090,11 @@
         async function fetchReverseGeocodeTambahan(lat, lng) {
             const addressEl = document.getElementById('gps-address-text-tambahan');
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=id`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.address) {
-                        const addr = data.address;
-                        const kpDusun = addr.hamlet || addr.village || addr.suburb || "";
-                        const rtRw = (addr.neighbourhood || addr.quarter || "") ? `RT/RW: ${addr.neighbourhood || addr.quarter}` : "";
-                        const desaKel = addr.village || addr.suburb || addr.town || "";
-                        const kec = addr.county || addr.district || "";
-                        const kabKota = addr.city || addr.town || addr.municipality || "";
-                        const prov = addr.state || "";
-
-                        currentGeoAddressTambahan = [kpDusun, rtRw, desaKel ? `Desa/Kel: ${desaKel}` : "", kec ? `Kec: ${kec}` : "", kabKota, prov].filter(Boolean).join(', ');
+                        currentGeoAddressTambahan = formatAlamatIndonesia(data.address, lat, lng);
                         if (addressEl) {
                             addressEl.innerHTML = `<i class="fa-solid fa-map-location-dot mr-1"></i> ${currentGeoAddressTambahan}`;
                             addressEl.classList.remove('hidden');
@@ -3022,7 +3212,7 @@
             ctx.fillText(`🌐 GPS: ${currentGeoLocationTambahan}`, 12, canvas.height - 35);
             ctx.fillText(`📅 Waktu (WIB): ${timeStr}`, 12, canvas.height - 12);
 
-            capturedPhotoTambahan = canvas.toDataURL('image/jpeg', 0.85);
+            capturedPhotoTambahan = canvas.toDataURL('image/jpeg', 0.65);
             video.classList.add('hidden');
             canvas.classList.remove('hidden');
             document.getElementById('btn-snap-tambahan').classList.add('hidden');
@@ -3035,12 +3225,10 @@
             e.preventDefault();
             if (!capturedPhotoTambahan || !currentTambahanId) return;
 
-            const submitBtn = document.getElementById('btn-submit-tambahan');
-            const origText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Mengunggah ke Drive...";
+            const photoToSave = capturedPhotoTambahan;
+            const targetTambahanId = currentTambahanId;
+            const idx = tugasTambahanList.findIndex(x => x.id === targetTambahanId);
 
-            const idx = tugasTambahanList.findIndex(x => x.id === currentTambahanId);
             if (idx !== -1) {
                 const t = tugasTambahanList[idx];
                 const p = penghuniList.find(x => x.id === t.penghuniId) || { nama: 'Unknown' };
@@ -3048,16 +3236,14 @@
                 const todayYMD = getTodayYMD();
                 const dateStr = `${todayYMD} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
                 const logId = 'log-tambahan-' + Date.now();
-
                 const filename = `Tambahan_${todayYMD}_${p.nama.replace(/\s+/g, '_')}_${t.nama.replace(/\s+/g, '_')}.jpg`;
-                const driveUrl = await uploadPhotoToGoogleDrive(capturedPhotoTambahan, filename);
 
-                savePhotoToDailyCache(t.id, driveUrl || capturedPhotoTambahan);
-                savePhotoToDailyCache(logId, driveUrl || capturedPhotoTambahan);
+                savePhotoToDailyCache(t.id, photoToSave);
+                savePhotoToDailyCache(logId, photoToSave);
 
                 tugasTambahanList[idx].status = 'Selesai';
                 tugasTambahanList[idx].tanggalSelesai = todayYMD;
-                tugasTambahanList[idx].foto = driveUrl || '';
+                tugasTambahanList[idx].foto = photoToSave;
 
                 riwayatLogs.unshift({
                     id: logId,
@@ -3065,15 +3251,16 @@
                     penghuniNama: p.nama,
                     area: `[Tambahan] ${t.nama}`,
                     gps: `${currentGeoLocationTambahan} (${currentGeoAddressTambahan})`,
-                    foto: driveUrl || '',
+                    foto: photoToSave,
                     status: 'Selesai'
                 });
-            }
 
-            submitBtn.innerText = origText;
-            await saveData();
-            closeModal('modal-absen-tambahan');
-            showToast("Foto tersimpan di Google Drive & absen tercatat!");
+                closeModal('modal-absen-tambahan');
+                showToast("Tugas tambahan selesai! Sistem sedang mem-backup foto ke Drive...");
+                saveData();
+
+                uploadPhotoToGoogleDrive(photoToSave, filename).catch(() => {});
+            }
         }
 
         function deleteLogEntry(logId) {
@@ -3326,49 +3513,46 @@
             showToast("Tugas dihapus.");
         }
 
-        function renderRiwayat() {
-            const tbody = document.getElementById('riwayat-table-body');
-            const searchInput = document.getElementById('search-log');
-            if (!tbody) return;
-            const q = searchInput ? searchInput.value.toLowerCase() : '';
-            tbody.innerHTML = '';
-            const filtered = riwayatLogs.filter(log => log.penghuniNama.toLowerCase().includes(q) || log.area.toLowerCase().includes(q));
+        // --- KAMERA & GPS UTAMA (ANTI BLANK / HITAM & AKURAT WILAYAH INDONESIA) ---
+        function formatAlamatIndonesia(addr, lat, lng) {
+            if (!addr) return `Wilayah (${lat}, ${lng})`;
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data riwayat absen piket.</td></tr>`;
-                return;
+            const jalanKp = addr.road || addr.hamlet || addr.neighbourhood || addr.residential || "";
+            
+            const rawDesa = addr.village || addr.kelurahan || addr.quarter || "";
+            const desaKel = rawDesa ? (rawDesa.toLowerCase().includes('desa') || rawDesa.toLowerCase().includes('kel') ? rawDesa : `Desa/Kel. ${rawDesa}`) : "";
+
+            const rawKec = addr.municipality || addr.city_district || addr.suburb || addr.district || addr.town || "";
+            const kec = rawKec ? (rawKec.toLowerCase().includes('kec') ? rawKec : `Kec. ${rawKec}`) : "";
+
+            let kabKota = "";
+            if (addr.county || addr.regency) {
+                const rawKab = addr.county || addr.regency;
+                kabKota = rawKab.toLowerCase().includes('kab') ? rawKab : `Kab. ${rawKab}`;
+            } else if (addr.city) {
+                kabKota = addr.city.toLowerCase().includes('kota') ? addr.city : `Kota ${addr.city}`;
             }
 
-            filtered.forEach(log => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/80 transition";
-                const todayPhoto = getTodayPhotoForId(log.id, log.tanggal, log.foto);
-                let imgCell = todayPhoto
-                    ? `<img src="${todayPhoto}" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
-                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold whitespace-nowrap"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
-                let adminDel = isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200">Hapus</button>` : '-';
-                tr.innerHTML = `<td class="p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-3 sm:p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-3 sm:p-4 text-brand-700 font-medium">${log.area}</td><td class="p-3 sm:p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-3 sm:p-4">${imgCell}</td><td class="p-3 sm:p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-3 sm:p-4">${adminDel}</td>`;
-                tbody.appendChild(tr);
+            const prov = addr.state || "";
+
+            const parts = [];
+            [jalanKp, desaKel, kec, kabKota, prov].forEach(item => {
+                if (item && !parts.some(p => p.toLowerCase() === item.toLowerCase())) {
+                    parts.push(item);
+                }
             });
+
+            return parts.length > 0 ? parts.join(', ') : `Wilayah (${lat}, ${lng})`;
         }
 
-        // --- KAMERA & GPS UTAMA (ANTI BLANK / HITAM) ---
         async function fetchReverseGeocode(lat, lng) {
             const addressEl = document.getElementById('gps-address-text');
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=id`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.address) {
-                        const addr = data.address;
-                        const kpDusun = addr.hamlet || addr.village || addr.suburb || "";
-                        const rtRw = (addr.neighbourhood || addr.quarter || "") ? `RT/RW: ${addr.neighbourhood || addr.quarter}` : "";
-                        const desaKel = addr.village || addr.suburb || addr.town || "";
-                        const kec = addr.county || addr.district || "";
-                        const kabKota = addr.city || addr.town || addr.municipality || "";
-                        const prov = addr.state || "";
-
-                        currentGeoAddress = [kpDusun, rtRw, desaKel ? `Desa/Kel: ${desaKel}` : "", kec ? `Kec: ${kec}` : "", kabKota, prov].filter(Boolean).join(', ');
+                        currentGeoAddress = formatAlamatIndonesia(data.address, lat, lng);
                         if (addressEl) {
                             addressEl.innerHTML = `<i class="fa-solid fa-map-location-dot mr-1"></i> ${currentGeoAddress}`;
                             addressEl.classList.remove('hidden');
@@ -3515,9 +3699,8 @@
             ctx.fillText(`🌐 GPS: ${currentGeoLocation}`, 12, canvas.height - 35);
             ctx.fillText(`📅 Waktu (WIB): ${timeStr}`, 12, canvas.height - 12);
 
-            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.65);
             video.classList.add('hidden');
-            // Menampilkan hasil foto pada canvas (tidak lagi hidden/blank)
             canvas.classList.remove('hidden');
             document.getElementById('btn-snap').classList.add('hidden');
             document.getElementById('btn-retake').classList.remove('hidden');
@@ -3529,21 +3712,16 @@
             e.preventDefault();
             if (!capturedPhotoData || !loggedInUser) return;
 
-            const submitBtn = document.getElementById('btn-submit-absen');
-            const origText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Mengunggah ke Drive...";
-
+            const photoToSave = capturedPhotoData;
             const area = document.getElementById('absen-select-area').value;
             const now = getWIBDate();
             const todayYMD = getTodayYMD();
             const dateStr = `${todayYMD} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
             const logId = 'log-' + Date.now();
-
             const filename = `Piket_${todayYMD}_${loggedInUser.nama.replace(/\s+/g, '_')}_${area.replace(/\s+/g, '_')}.jpg`;
-            const driveUrl = await uploadPhotoToGoogleDrive(capturedPhotoData, filename);
 
-            savePhotoToDailyCache(logId, driveUrl || capturedPhotoData);
+            // 1. Langsung simpan ke Web & Cache (Instan tanpa nunggu Drive)
+            savePhotoToDailyCache(logId, photoToSave);
 
             riwayatLogs.unshift({
                 id: logId,
@@ -3551,17 +3729,27 @@
                 penghuniNama: loggedInUser.nama,
                 area: area,
                 gps: `${currentGeoLocation} (${currentGeoAddress})`,
-                foto: driveUrl || '',
+                foto: photoToSave,
                 status: 'Selesai'
             });
 
-            submitBtn.innerText = origText;
-            await saveData();
             closeAbsenModal();
-            showToast('Foto tersimpan di Google Drive & catatan absen berhasil disimpan!');
+            showToast('Absen berhasil disimpan! Sistem sedang mem-backup foto ke Drive...');
+            saveData();
+
+            // 2. Sistem otomatis kirim ke Google Drive di latar belakang (Background Process)
+            uploadPhotoToGoogleDrive(photoToSave, filename).then(driveUrl => {
+                if (driveUrl) {
+                    const targetLog = riwayatLogs.find(l => l.id === logId);
+                    if (targetLog) {
+                        targetLog.driveUrl = driveUrl;
+                    }
+                }
+            }).catch(() => {});
         }
 
-        // Jalankan inisialisasi tampilan dan dropdown login AJJA secara langsung tanpa menunggu server Render bangun
+        // Jalankan inisialisasi tampilan, countdown, dan dropdown login AJJA secara langsung
+        setInterval(updateWIBCountdown, 1000);
         applyBackendData(null);
         loadDataFromBackend();
         setInterval(loadDataFromBackend, 10000);
