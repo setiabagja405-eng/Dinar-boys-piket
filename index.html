@@ -51,13 +51,16 @@
         }
 
         @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            0% { transform: translate3d(0%, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
         .animate-marquee {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
             white-space: nowrap;
-            animation: marquee 18s linear infinite;
+            width: max-content;
+            animation: marquee 22s linear infinite;
+            will-change: transform;
         }
         .animate-marquee:hover {
             animation-play-state: paused;
@@ -75,7 +78,13 @@
                         <i class="fa-solid fa-broom text-base sm:text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-sm sm:text-lg leading-tight text-slate-900">Piket Kos Dinar Boys<span class="text-brand-600">.</span></h1>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-bold text-sm sm:text-lg leading-tight text-slate-900">Piket Kos Dinar Boys<span class="text-brand-600">.</span></h1>
+                            <span id="firebase-sync-badge" onclick="forceManualSync()" title="Status Koneksi Firebase RTDB (Klik untuk Sinkronisasi Manual)" class="cursor-pointer inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 transition hover:bg-emerald-100">
+                                <span id="firebase-sync-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span id="firebase-sync-text">Firebase Hemat</span>
+                            </span>
+                        </div>
                         <p class="text-[10px] sm:text-xs text-slate-500">Kosan Bersih, Hidup Nyaman Dan Damai</p>
                     </div>
                 </div>
@@ -88,7 +97,7 @@
                         <button onclick="logoutUserSession()" title="Logout Akun" class="text-rose-500 hover:text-rose-700 ml-0.5"><i class="fa-solid fa-right-from-bracket"></i></button>
                     </div>
 
-                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-semibold transition">
+                    <a id="btn-gdrive" href="https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[11px] sm:text-xs font-semibold transition">
                         <i class="fa-brands fa-google-drive text-blue-600"></i> <span class="hidden xs:inline sm:inline">Drive Foto Backup</span><span class="sm:hidden">Drive</span>
                     </a>
 
@@ -131,15 +140,22 @@
             </div>
         </div>
     </header>
-    <!-- Running Text Ticker Peringatan (Tunggal & Terintegrasi) -->
-<div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="hidden bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center cursor-pointer hover:bg-amber-400 transition" title="Klik untuk membaca pengumuman">
-    <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
-        <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
+
+    <!-- Running Text Ticker Peringatan (Selalu Tampil & Terpisah dari Pop-Up) -->
+    <div id="ticker-banner" onclick="openModal('modal-user-announcement')" class="bg-amber-500 text-slate-950 font-semibold text-xs py-2 px-4 shadow-inner overflow-hidden border-b border-amber-600 relative flex items-center cursor-pointer hover:bg-amber-400 transition" title="Klik untuk membaca detail pengumuman">
+        <div class="bg-amber-600 text-white px-2.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase mr-3 shrink-0 flex items-center gap-1 shadow-sm z-10">
+            <i class="fa-solid fa-bullhorn text-amber-200"></i> PERINGATAN
+        </div>
+        <div class="overflow-hidden whitespace-nowrap w-full relative">
+            <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide">
+                <span class="mx-6">Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu &amp; membuang sampah!</span>
+                <span class="text-amber-900/70 font-black">•</span>
+                <span class="mx-6">Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu &amp; membuang sampah!</span>
+                <span class="text-amber-900/70 font-black">•</span>
+            </div>
+        </div>
     </div>
-    <div class="overflow-hidden whitespace-nowrap w-full relative">
-        <div id="ticker-text-content" class="animate-marquee font-bold tracking-wide"></div>
-    </div>
-</div>
+
     <!-- POP-UP NOTIFIKASI KECIL BAYAR KAS -->
     <div id="kas-payment-popup-container" class="fixed bottom-6 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
 
@@ -219,6 +235,19 @@
                             </button>
                         </div>
                         <div id="leaderboard-container" class="space-y-2.5"></div>
+                    </div>
+
+                    <!-- Card Informasi Optimasi Kuota Firebase -->
+                    <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-teal-200/80 shadow-sm space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-bolt text-amber-500"></i> Status Database Firebase
+                            </span>
+                            <span id="db-payload-size-badge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">~1.2 KB</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 leading-relaxed">
+                            Mode <strong>Hemat Kuota RTDB</strong> aktif: foto disimpan di cache perangkat 24 jam &amp; Google Drive sehingga kuota Firebase tidak cepat habis dan web bebas lag.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -500,6 +529,21 @@
         </section>
 
     </main>
+
+    <!-- MODAL KONFIRMASI / INPUT IN-PAGE (MENGGANTIKAN CONFIRM & PROMPT AGAR ANTI-BLOCKING) -->
+    <div id="modal-custom-dialog" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <h3 id="custom-dialog-title" class="font-bold text-slate-900 text-base">Konfirmasi Tindakan</h3>
+            <p id="custom-dialog-message" class="text-xs sm:text-sm text-slate-600 leading-relaxed"></p>
+            <div id="custom-dialog-input-wrap" class="hidden">
+                <input type="text" id="custom-dialog-input" class="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button type="button" onclick="closeCustomDialog(false)" class="flex-1 py-2.5 border border-slate-300 text-slate-700 rounded-xl font-semibold text-xs hover:bg-slate-50">Batal</button>
+                <button type="button" onclick="closeCustomDialog(true)" class="flex-1 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold text-xs shadow">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL PILIH ROLE ADMIN / BENDAHARA -->
     <div id="modal-role-selector" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -977,7 +1021,6 @@
     </div>
 
     <!-- MODAL PENGHUNI -->
-   <!-- MODAL PENGHUNI -->
     <div id="modal-penghuni" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 relative z-50" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b pb-3">
@@ -1058,7 +1101,7 @@
         <div class="max-w-lg w-full bg-white rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
             <button onclick="closeModal('modal-preview-foto')" class="absolute top-3 right-3 w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             <h4 class="font-bold text-slate-800 mb-3 text-center">Bukti Piket Real-Time (GPS Stamped)</h4>
-            <img id="modal-preview-img" src="" alt="Bukti Piket" class="w-full max-h-[70vh] object-contain rounded-xl bg-slate-100 border border-slate-200">
+            <img id="modal-preview-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Bukti Piket" class="w-full max-h-[70vh] object-contain rounded-xl bg-slate-100 border border-slate-200">
         </div>
     </div>
 
@@ -1077,7 +1120,7 @@
             </div>
             
             <div id="user-announcement-media" class="hidden flex-col gap-3 mb-3">
-                <img id="user-announcement-img" src="" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 hidden">
+                <img id="user-announcement-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Pengumuman" class="w-full max-h-64 object-cover rounded-xl border border-slate-200 hidden">
             </div>
 
             <div class="p-4 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200 text-sm sm:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-line" id="announcement-text-display"></div>
@@ -1104,29 +1147,50 @@
                     <input type="text" id="edit-main-subtitle-input" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Tong hilap foto nya!">
                 </div>
 
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
-                    <div>
-                        <span class="block text-xs font-bold text-slate-800">Tampilkan Pop-Up Peringatan</span>
-                        <span class="text-[11px] text-slate-500">Aktifkan agar pop-up ini muncul di pengguna</span>
+                <!-- Bagian 1: Pengaturan Running Text (Teks Berjalan Atas - Terpisah dari Pop-Up) -->
+                <div class="p-3.5 bg-amber-50/80 rounded-xl border border-amber-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="block text-xs font-bold text-amber-900"><i class="fa-solid fa-bullhorn mr-1"></i> Tampilkan Running Text (Teks Berjalan)</span>
+                            <span class="text-[11px] text-amber-700">Tetap berjalan di atas meskipun Pop-Up dimatikan</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="running-text-active-toggle" checked class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        </label>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="announcement-active-toggle" class="sr-only peer">
-                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
-                    </label>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Teks Berjalan (Running Text Atas)</label>
+                        <textarea id="running-text-input" rows="2" required placeholder="Contoh: Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan..." class="w-full px-3.5 py-2 border border-amber-300 bg-white rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pesan</label>
-                    <select id="announcement-type-select" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
-                        <option value="Peringatan Admin">Peringatan / Himbauan</option>
-                        <option value="Informasi Kebersihan">Informasi Kebersihan</option>
-                        <option value="Pengumuman Kos">Pengumuman Kos Penting</option>
-                    </select>
-                </div>
+                <!-- Bagian 2: Pengaturan Pop-Up Peringatan (Muncul Saat Web Dibuka - Terpisah) -->
+                <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="block text-xs font-bold text-slate-800"><i class="fa-solid fa-window-restore mr-1 text-brand-600"></i> Tampilkan Pop-Up Peringatan</span>
+                            <span class="text-[11px] text-slate-500">Jika dimatikan, hanya pop-up otomatis yang mati (Running Text tetap tampil)</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="announcement-active-toggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                        </label>
+                    </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Kata-Kata / Pesan Peringatan (Running Text & Pop-Up)</label>
-                    <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh..." class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipe Pesan Pop-Up</label>
+                        <select id="announcement-type-select" class="w-full px-3.5 py-2 border border-slate-300 bg-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="Peringatan Admin">Peringatan / Himbauan</option>
+                            <option value="Informasi Kebersihan">Informasi Kebersihan</option>
+                            <option value="Pengumuman Kos">Pengumuman Kos Penting</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Isi Pesan Detail (Di Dalam Pop-Up)</label>
+                        <textarea id="announcement-text-input" rows="3" required placeholder="Contoh: Tolong tempat sampah jika sudah penuh..." class="w-full px-3.5 py-2 border border-slate-300 bg-white rounded-xl text-sm focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+                    </div>
                 </div>
 
                 <div>
@@ -1154,9 +1218,29 @@
         <span id="toast-message" class="text-sm font-medium">Notifikasi berhasil!</span>
     </div>
 
-    <!-- SCRIPT UTAMA -->
+    <!-- SCRIPT UTAMA (TERINTEGRASI FIREBASE REALTIME DATABASE + ANTI-LAG + HEMAT KUOTA) -->
     <script>
-       const BACKEND_URL = "https://dinar-boys-piket-1.onrender.com";
+        // ============================================================================
+        // KONFIGURASI FIREBASE REALTIME DATABASE (DINAR BOYS PIKET BACKEND)
+        // ============================================================================
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyA_kxgfrlvk2OwLessKBQNiFhkMhLCEhro",
+            authDomain: "dinarboyspiketbackend.firebaseapp.com",
+            databaseURL: "https://dinarboyspiketbackend-default-rtdb.firebaseio.com",
+            projectId: "dinarboyspiketbackend",
+            storageBucket: "dinarboyspiketbackend.firebasestorage.app",
+            messagingSenderId: "32377047337",
+            appId: "1:32377047337:web:b9b3708026bc654f8d8f38",
+            measurementId: "G-JZZNW68N7E"
+        };
+
+        // Kandidat endpoint RTDB (otomatis mendeteksi US-Central atau Asia-Southeast1)
+        const RTDB_CANDIDATE_URLS = [
+            "https://dinarboyspiketbackend-default-rtdb.firebaseio.com",
+            "https://dinarboyspiketbackend-default-rtdb.asia-southeast1.firebasedatabase.app"
+        ];
+        const FIREBASE_DB_NODE = "kos_piket_data";
+
         const GDRIVE_FOLDER_ID = "1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL";
         const GDRIVE_LINK = "https://drive.google.com/drive/folders/1fA3LRbW8VnwD-j7sRQWULhn8cZZhnprL?usp=sharing";
         const GOOGLE_DRIVE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyqUU8mDZxU9kDkTlVDHkcvU996hd-c6-kdwWarF3amA6rycUcatULwVMpZU0xZvzll/exec";
@@ -1170,7 +1254,6 @@
             'Sampah & Koridor Utama'
         ];
 
-        // Default Penghuni: AJJA dengan PIN 123456
         const DEFAULT_PENGHUNI = [
             { id: 'p1', nama: 'AJJA', kamar: 'Kamar 01', pin: '123456', motivasi: 'Selalu jaga kebersihan kosan kita!' }
         ];
@@ -1191,9 +1274,11 @@
 
         const DEFAULT_ANNOUNCEMENT = {
             active: true,
+            runningTextActive: true,
             type: "Peringatan Admin",
             title: "Siapa Piket Hari Ini?",
             subtitle: "Tong hilap foto nya!.",
+            runningText: "Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu & membuang sampah!",
             text: "Diharapkan bagi yang bertugas piket hari ini untuk selalu menjaga kebersihan area dan tidak lupa menyapu & membuang sampah!",
             image: "",
             backgroundImage: ""
@@ -1209,6 +1294,11 @@
 
         const ADMIN_PIN = "dinar2026!";
         const BENDAHARA_PIN = "Bayarkas";
+
+        // Batas Maksimum Data di Cloud agar Firebase Tidak Cepat Habis
+        const MAX_CLOUD_RIWAYAT_LOGS = 80;
+        const MAX_CLOUD_ARSIP_WEEKS = 10;
+        const MAX_CLOUD_KAS_LOGS = 40;
 
         let penghuniList = JSON.parse(JSON.stringify(DEFAULT_PENGHUNI));
         let jadwalPiket = JSON.parse(JSON.stringify(DEFAULT_JADWAL));
@@ -1249,6 +1339,287 @@
         let hasCheckedInitialSession = false;
         let lastActiveDateYMD = "";
         let missedPiketPopupTimeout = null;
+        let hasShownInitialAnnouncementPopup = false;
+
+        // State Koneksi & Optimasi Firebase
+        let activeRtdbBaseUrl = RTDB_CANDIDATE_URLS[0];
+        let firebaseSdkRef = null;
+        let firebaseSdkSet = null;
+        let isSavingToCloud = false;
+        let saveDebounceTimer = null;
+        let lastSyncedHash = "";
+        let lastCloudTimestamp = 0;
+        let sseConnection = null;
+        let customDialogCallback = null;
+
+        // --- SAFE STORAGE HELPERS (ANTI ERROR DI SANDBOX / PRIVATE MODE) ---
+        function safeGetStorage(key, fallback = null) {
+            try {
+                const val = localStorage.getItem(key);
+                return val !== null ? val : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function safeSetStorage(key, val) {
+            try {
+                localStorage.setItem(key, val);
+            } catch (e) {}
+        }
+
+        function safeRemoveStorage(key) {
+            try {
+                localStorage.removeItem(key);
+            } catch (e) {}
+        }
+
+        // --- CUSTOM IN-PAGE DIALOG (PENGGANTI CONFIRM & PROMPT) ---
+        function openCustomConfirm(title, message, onConfirm) {
+            document.getElementById('custom-dialog-title').innerText = title;
+            document.getElementById('custom-dialog-message').innerText = message;
+            document.getElementById('custom-dialog-input-wrap').classList.add('hidden');
+            customDialogCallback = (confirmed) => {
+                if (confirmed && typeof onConfirm === 'function') onConfirm();
+            };
+            openModal('modal-custom-dialog');
+        }
+
+        function openCustomPrompt(title, message, defaultValue, onSubmit) {
+            document.getElementById('custom-dialog-title').innerText = title;
+            document.getElementById('custom-dialog-message').innerText = message;
+            const wrap = document.getElementById('custom-dialog-input-wrap');
+            const input = document.getElementById('custom-dialog-input');
+            wrap.classList.remove('hidden');
+            input.value = defaultValue || '';
+            customDialogCallback = (confirmed) => {
+                if (confirmed && typeof onSubmit === 'function') onSubmit(input.value);
+            };
+            openModal('modal-custom-dialog');
+            setTimeout(() => input.focus(), 80);
+        }
+
+        function closeCustomDialog(confirmed) {
+            closeModal('modal-custom-dialog');
+            if (customDialogCallback) {
+                const cb = customDialogCallback;
+                customDialogCallback = null;
+                cb(confirmed);
+            }
+        }
+
+        // --- INDIKATOR STATUS SINKRONISASI FIREBASE ---
+        function setSyncBadgeState(state, detailText) {
+            const badge = document.getElementById('firebase-sync-badge');
+            const dot = document.getElementById('firebase-sync-dot');
+            const text = document.getElementById('firebase-sync-text');
+            if (!badge || !dot || !text) return;
+
+            if (state === 'syncing') {
+                badge.className = "cursor-pointer inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 transition";
+                dot.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping";
+                text.innerText = detailText || "Menyimpan...";
+            } else if (state === 'offline') {
+                badge.className = "cursor-pointer inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-300 transition";
+                dot.className = "w-1.5 h-1.5 rounded-full bg-slate-400";
+                text.innerText = detailText || "Cache Lokal";
+            } else {
+                badge.className = "cursor-pointer inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 transition hover:bg-emerald-100";
+                dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+                text.innerText = detailText || "Firebase Hemat";
+            }
+        }
+
+        function computeFastHash(str) {
+            let hash = 5381;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) + hash) + str.charCodeAt(i);
+                hash = hash & hash;
+            }
+            return String(hash);
+        }
+
+        // --- KOMPRESI & FILTER DATA CLOUD AGAR KUOTA FIREBASE TIDAK CEPAT HABIS ---
+        function isBase64DataUri(str) {
+            return typeof str === 'string' && str.startsWith('data:image/');
+        }
+
+        function buildCompactCloudPayload() {
+            const todayYMD = getTodayYMD();
+
+            // 1. Pangkas & bersihkan riwayatLogs dari Base64 foto besar (simpan URL Drive saja di Firebase)
+            const compactRiwayat = (riwayatLogs || []).slice(0, MAX_CLOUD_RIWAYAT_LOGS).map(log => {
+                const cleanFotoUrl = (log.driveUrl && !isBase64DataUri(log.driveUrl))
+                    ? log.driveUrl
+                    : (!isBase64DataUri(log.foto) ? (log.foto || '') : '');
+                return {
+                    id: log.id,
+                    tanggal: log.tanggal,
+                    penghuniNama: log.penghuniNama,
+                    area: log.area,
+                    gps: log.gps || '-',
+                    foto: cleanFotoUrl,
+                    driveUrl: log.driveUrl || cleanFotoUrl || '',
+                    status: log.status || 'Selesai'
+                };
+            });
+
+            // 2. Bersihkan tugasTambahan dari Base64 foto besar
+            const compactTambahan = (tugasTambahanList || []).map(t => {
+                const cleanFotoUrl = !isBase64DataUri(t.foto) ? (t.foto || '') : '';
+                return {
+                    id: t.id,
+                    nama: t.nama,
+                    penghuniId: t.penghuniId,
+                    status: t.status || 'Belum',
+                    foto: cleanFotoUrl,
+                    tanggalSelesai: t.tanggalSelesai || todayYMD,
+                    tanpaWaktu: !!t.tanpaWaktu,
+                    deadline: t.deadline || ''
+                };
+            });
+
+            // 3. Pangkas arsip mingguan agar tidak membengkak selamanya
+            const compactArsip = (arsipRiwayatList || []).slice(0, MAX_CLOUD_ARSIP_WEEKS).map(a => ({
+                id: a.id,
+                periode: a.periode,
+                logs: (a.logs || []).slice(0, 60).map(l => ({
+                    id: l.id,
+                    tanggal: l.tanggal,
+                    penghuniNama: l.penghuniNama,
+                    area: l.area
+                })),
+                kasStatus: a.kasStatus || {}
+            }));
+
+            // 4. Pangkas log pemasukan & pengeluaran kas
+            const compactKas = {
+                nominal: Number(kasData.nominal || 10000),
+                pembayaran: kasData.pembayaran || {},
+                pemasukanLogs: (kasData.pemasukanLogs || []).slice(0, MAX_CLOUD_KAS_LOGS),
+                pengeluaranLogs: (kasData.pengeluaranLogs || []).slice(0, MAX_CLOUD_KAS_LOGS),
+                penyesuaianSaldo: Number(kasData.penyesuaianSaldo || 0),
+                pendingApprovals: (kasData.pendingApprovals || []).slice(0, 30),
+                lastAutoResetWeek: kasData.lastAutoResetWeek || getWIBWeekId()
+            };
+
+            // 5. Bersihkan pengumuman dari Base64 raksasa (simpan di localStorage jika belum ada URL Drive)
+            const compactAnnouncement = {
+                active: !!adminAnnouncement.active,
+                runningTextActive: adminAnnouncement.runningTextActive !== false,
+                type: adminAnnouncement.type || "Peringatan Admin",
+                title: adminAnnouncement.title || "Siapa Piket Hari Ini?",
+                subtitle: adminAnnouncement.subtitle || "Tong hilap foto nya!.",
+                runningText: (adminAnnouncement.runningText && adminAnnouncement.runningText.trim() !== "") ? adminAnnouncement.runningText : (adminAnnouncement.text || DEFAULT_ANNOUNCEMENT.runningText),
+                text: adminAnnouncement.text || DEFAULT_ANNOUNCEMENT.text,
+                image: !isBase64DataUri(adminAnnouncement.image) ? (adminAnnouncement.image || "") : "",
+                backgroundImage: !isBase64DataUri(adminAnnouncement.backgroundImage) ? (adminAnnouncement.backgroundImage || "") : ""
+            };
+
+            return {
+                penghuni: penghuniList,
+                jadwal: jadwalPiket,
+                tugas: tugasList,
+                tugasTambahan: compactTambahan,
+                riwayat: compactRiwayat,
+                arsipRiwayat: compactArsip,
+                kas: compactKas,
+                announcement: compactAnnouncement,
+                leaderboardTitle: leaderboardTitle,
+                taskCatatan: taskCatatanMap,
+                missedPiketConfig: missedPiketConfig
+            };
+        }
+
+        function updatePayloadSizeIndicator(jsonStr) {
+            const badge = document.getElementById('db-payload-size-badge');
+            if (!badge || !jsonStr) return;
+            const kb = (jsonStr.length / 1024).toFixed(1);
+            badge.innerText = `Payload: ${kb} KB (Hemat)`;
+        }
+
+        // --- FUNGSI SAVEDATA UTAMA (DEBOUNCED + DIFFING + FIREBASE RTDB) ---
+        async function saveData(immediate = false) {
+            const payload = buildCompactCloudPayload();
+            const serialized = JSON.stringify(payload);
+            updatePayloadSizeIndicator(serialized);
+
+            // Simpan ke cache lokal seketika (Optimistic UI, 0ms lag)
+            safeSetStorage('dinar_kos_backup_cache', serialized);
+            if (isBase64DataUri(adminAnnouncement.image)) {
+                safeSetStorage('dinar_local_ann_img', adminAnnouncement.image);
+            }
+            if (isBase64DataUri(adminAnnouncement.backgroundImage)) {
+                safeSetStorage('dinar_local_bg_img', adminAnnouncement.backgroundImage);
+            }
+
+            // Render ulang hanya tab yang sedang aktif agar tidak lag
+            renderActiveTabAndHeader();
+
+            // Cek apakah isi data benar-benar berubah sebelum menulis ke Firebase
+            const currentHash = computeFastHash(serialized);
+            if (currentHash === lastSyncedHash && !immediate) {
+                return;
+            }
+
+            if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+            setSyncBadgeState('syncing', 'Menyimpan...');
+
+            const performCloudWrite = async () => {
+                isSavingToCloud = true;
+                lastCloudTimestamp = Date.now();
+                const cloudDataWithMeta = { ...payload, _updatedAt: lastCloudTimestamp };
+
+                try {
+                    // Prioritas 1: Gunakan Firebase Modular SDK jika sudah aktif
+                    if (firebaseSdkRef && firebaseSdkSet) {
+                        await firebaseSdkSet(firebaseSdkRef, cloudDataWithMeta);
+                        lastSyncedHash = currentHash;
+                        setSyncBadgeState('online', 'Firebase Aktif');
+                        isSavingToCloud = false;
+                        return;
+                    }
+
+                    // Prioritas 2: Gunakan Firebase Realtime Database REST API
+                    for (const baseUrl of [activeRtdbBaseUrl, ...RTDB_CANDIDATE_URLS]) {
+                        try {
+                            const rtdbUrl = new URL(`${FIREBASE_DB_NODE}.json`, baseUrl).href;
+                    const res = await fetch(rtdbUrl, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(cloudDataWithMeta)
+                            });
+                            if (res.ok) {
+                                activeRtdbBaseUrl = baseUrl;
+                                safeSetStorage('dinar_active_rtdb_url', baseUrl);
+                                lastSyncedHash = currentHash;
+                                setSyncBadgeState('online', 'Firebase Aktif');
+                                isSavingToCloud = false;
+                                return;
+                            }
+                        } catch (innerErr) {}
+                    }
+                    setSyncBadgeState('offline', 'Tersimpan Lokal');
+                } catch (e) {
+                    setSyncBadgeState('offline', 'Tersimpan Lokal');
+                } finally {
+                    isSavingToCloud = false;
+                }
+            };
+
+            if (immediate) {
+                await performCloudWrite();
+            } else {
+                saveDebounceTimer = setTimeout(performCloudWrite, 550);
+            }
+        }
+
+        function forceManualSync() {
+            setSyncBadgeState('syncing', 'Sinkronisasi...');
+            loadDataFromBackend(true).then(() => {
+                showToast("Data berhasil disinkronkan dengan Firebase Realtime Database!");
+            });
+        }
 
         function ensureValidPenghuniList() {
             if (!Array.isArray(penghuniList)) {
@@ -1298,9 +1669,9 @@
         function getDailyPhotoCache() {
             const today = getTodayYMD();
             try {
-                const raw = JSON.parse(localStorage.getItem('dinar_daily_photos') || '{}');
+                const raw = JSON.parse(safeGetStorage('dinar_daily_photos', '{}'));
                 if (raw.date !== today) {
-                    localStorage.removeItem('dinar_daily_photos');
+                    safeRemoveStorage('dinar_daily_photos');
                     return { date: today, photos: {} };
                 }
                 return raw;
@@ -1311,18 +1682,18 @@
 
         function savePhotoToDailyCache(id, photoUrlOrBase64) {
             const cache = getDailyPhotoCache();
+            if (!cache.photos) cache.photos = {};
             cache.photos[id] = photoUrlOrBase64;
-            try {
-                localStorage.setItem('dinar_daily_photos', JSON.stringify(cache));
-            } catch (e) {}
+            safeSetStorage('dinar_daily_photos', JSON.stringify(cache));
         }
 
         function getTodayPhotoForId(id, logDateStr, existingUrl) {
             const today = getTodayYMD();
             if (logDateStr && !logDateStr.startsWith(today)) return '';
-            if (existingUrl && existingUrl.trim() !== '') return existingUrl;
             const cache = getDailyPhotoCache();
-            return cache.photos[id] || '';
+            if (cache.photos && cache.photos[id]) return cache.photos[id];
+            if (existingUrl && existingUrl.trim() !== '') return existingUrl;
+            return '';
         }
 
         // --- UPLOAD FOTO LANGSUNG KE GOOGLE DRIVE (OTOMATIS MASUK FOLDER HARI) ---
@@ -1357,22 +1728,22 @@
             let hasChanged = false;
 
             if (lastActiveDateYMD && lastActiveDateYMD !== todayYMD) {
-                localStorage.removeItem('dinar_daily_photos');
+                safeRemoveStorage('dinar_daily_photos');
                 hasChanged = true;
             }
             lastActiveDateYMD = todayYMD;
 
             riwayatLogs.forEach(log => {
                 if (!log.tanggal || !log.tanggal.startsWith(todayYMD)) {
-                    if (log.foto && log.foto !== '') {
-                        log.foto = '';
+                    if (log.foto && isBase64DataUri(log.foto)) {
+                        log.foto = log.driveUrl || '';
                         hasChanged = true;
                     }
                 }
             });
 
             tugasTambahanList.forEach(t => {
-                if (t.tanggalSelesai && t.tanggalSelesai !== todayYMD && t.foto) {
+                if (t.tanggalSelesai && t.tanggalSelesai !== todayYMD && isBase64DataUri(t.foto)) {
                     t.foto = '';
                     hasChanged = true;
                 }
@@ -1381,24 +1752,92 @@
             return hasChanged;
         }
 
+        // --- RENDER SELEKTIF ANTI-LAG (HANYA MERENDER TAB AKTIF) ---
+        function renderActiveTabAndHeader() {
+            updateDashboardTitlesUI();
+            if (currentActiveTab === 'dashboard') {
+                renderDashboard();
+                renderKasHeaderBadgeOnly();
+            } else if (currentActiveTab === 'jadwal') {
+                renderJadwal();
+            } else if (currentActiveTab === 'penghuni') {
+                renderPenghuni();
+            } else if (currentActiveTab === 'tugas') {
+                renderTugas();
+            } else if (currentActiveTab === 'tambahan') {
+                renderTugasTambahan();
+            } else if (currentActiveTab === 'kas') {
+                renderKasTable();
+            } else if (currentActiveTab === 'riwayat') {
+                renderRiwayat();
+            } else if (currentActiveTab === 'manage-users') {
+                renderManageUsersTable();
+                renderApprovalBadge();
+            } else if (currentActiveTab === 'bendahara') {
+                renderKasHeaderBadgeOnly();
+            }
+            renderApprovalBadge();
+        }
+
+        function renderKasHeaderBadgeOnly() {
+            const nominalBadge = document.getElementById('nominal-kas-badge');
+            const saldoDisplay = document.getElementById('dashboard-saldo-kas-display');
+            const bendaharaSaldo = document.getElementById('bendahara-total-saldo-display');
+            if (nominalBadge) nominalBadge.innerText = `Rp ${Number(kasData.nominal || 0).toLocaleString('id-ID')}`;
+            const saldo = calculateTotalSaldoKas();
+            if (saldoDisplay) saldoDisplay.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
+            if (bendaharaSaldo) bendaharaSaldo.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
+        }
+
         function applyBackendData(rawData) {
+            if (isSavingToCloud) return;
             const data = rawData && (rawData.kos_piket_data || rawData.data || rawData);
             if (data && (data.penghuni || data.jadwal || data.tugas)) {
-                if (data.penghuni) penghuniList = data.penghuni;
+                const { _updatedAt, ...cleanCompare } = data;
+                const incomingStr = JSON.stringify(cleanCompare);
+                const incomingHash = computeFastHash(incomingStr);
+
+                // Jika tidak ada perubahan data sama sekali, lewati re-render agar tidak lag
+                if (hasCheckedInitialSession && incomingHash === lastSyncedHash) {
+                    return;
+                }
+                lastSyncedHash = incomingHash;
+                updatePayloadSizeIndicator(incomingStr);
+
+                if (data.penghuni) penghuniList = Array.isArray(data.penghuni) ? data.penghuni : Object.values(data.penghuni);
                 ensureValidPenghuniList();
 
                 jadwalPiket = data.jadwal || DEFAULT_JADWAL;
                 tugasList = (Array.isArray(data.tugas) && data.tugas.length > 0) ? data.tugas : DEFAULT_AREAS;
-                tugasTambahanList = Array.isArray(data.tugasTambahan) ? data.tugasTambahan : DEFAULT_TUGAS_TAMBAHAN;
-                riwayatLogs = Array.isArray(data.riwayat) ? data.riwayat : [];
-                arsipRiwayatList = Array.isArray(data.arsipRiwayat) ? data.arsipRiwayat : [];
+                tugasTambahanList = Array.isArray(data.tugasTambahan) ? data.tugasTambahan : (data.tugasTambahan ? Object.values(data.tugasTambahan) : DEFAULT_TUGAS_TAMBAHAN);
+                riwayatLogs = Array.isArray(data.riwayat) ? data.riwayat : (data.riwayat ? Object.values(data.riwayat) : []);
+                arsipRiwayatList = Array.isArray(data.arsipRiwayat) ? data.arsipRiwayat : (data.arsipRiwayat ? Object.values(data.arsipRiwayat) : []);
                 kasData = data.kas || { nominal: 10000, pembayaran: {}, pemasukanLogs: [], pengeluaranLogs: [], penyesuaianSaldo: 0, pendingApprovals: [], lastAutoResetWeek: "" };
                 if (kasData.penyesuaianSaldo === undefined) kasData.penyesuaianSaldo = 0;
-                if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
-               adminAnnouncement = data.announcement || DEFAULT_ANNOUNCEMENT;
+                if (!kasData.pembayaran) kasData.pembayaran = {};
+                if (!Array.isArray(kasData.pemasukanLogs)) kasData.pemasukanLogs = kasData.pemasukanLogs ? Object.values(kasData.pemasukanLogs) : [];
+                if (!Array.isArray(kasData.pengeluaranLogs)) kasData.pengeluaranLogs = kasData.pengeluaranLogs ? Object.values(kasData.pengeluaranLogs) : [];
+                if (!Array.isArray(kasData.pendingApprovals)) kasData.pendingApprovals = kasData.pendingApprovals ? Object.values(kasData.pendingApprovals) : [];
+
+                adminAnnouncement = data.announcement || JSON.parse(JSON.stringify(DEFAULT_ANNOUNCEMENT));
                 if (!adminAnnouncement.text || adminAnnouncement.text.trim() === "") {
                     adminAnnouncement.text = DEFAULT_ANNOUNCEMENT.text;
                 }
+                if (!adminAnnouncement.runningText || adminAnnouncement.runningText.trim() === "") {
+                    adminAnnouncement.runningText = adminAnnouncement.text || DEFAULT_ANNOUNCEMENT.runningText;
+                }
+                if (adminAnnouncement.runningTextActive === undefined) {
+                    adminAnnouncement.runningTextActive = true;
+                }
+                if (!adminAnnouncement.image) {
+                    const localAnnImg = safeGetStorage('dinar_local_ann_img', '');
+                    if (localAnnImg) adminAnnouncement.image = localAnnImg;
+                }
+                if (!adminAnnouncement.backgroundImage) {
+                    const localBgImg = safeGetStorage('dinar_local_bg_img', '');
+                    if (localBgImg) adminAnnouncement.backgroundImage = localBgImg;
+                }
+
                 leaderboardTitle = data.leaderboardTitle || "Leaderboard Paling Rajin";
                 taskCatatanMap = data.taskCatatan || {};
                 missedPiketConfig = data.missedPiketConfig || JSON.parse(JSON.stringify(DEFAULT_MISSED_CONFIG));
@@ -1409,10 +1848,7 @@
                 if (!missedPiketConfig.manualActive) missedPiketConfig.manualActive = {};
 
                 cleanupExpiredDailyPhotos();
-
-                try {
-                    localStorage.setItem('dinar_kos_backup_cache', JSON.stringify(data));
-                } catch (e) {}
+                safeSetStorage('dinar_kos_backup_cache', incomingStr);
             } else {
                 ensureValidPenghuniList();
             }
@@ -1426,6 +1862,7 @@
             if (!hasCheckedInitialSession) {
                 hasCheckedInitialSession = true;
                 checkUserSession();
+                initMotivationRotation();
             } else if (loggedInUser) {
                 const updatedUser = penghuniList.find(p => p.id === loggedInUser.id) || penghuniList.find(p => p.nama === loggedInUser.nama);
                 if (updatedUser) loggedInUser = updatedUser;
@@ -1433,42 +1870,123 @@
                 checkMissedPiketForUser(loggedInUser);
             }
             
-            updateAdminUIState();
+            updateAdminButtonsVisibility();
+            renderActiveTabAndHeader();
             checkAndShowUserAnnouncement();
-            initMotivationRotation();
             checkWeeklyAutoReset();
         }
 
-       async function loadDataFromBackend() {
-            const endpoints = [`${BACKEND_URL}/api/data`, `${BACKEND_URL}/data`, `${BACKEND_URL}/kos_piket_data`];
-            for (const url of endpoints) {
+        // --- KONEKSI FIREBASE REALTIME DATABASE (SDK + SSE STREAM + REST FALLBACK) ---
+        async function initFirebaseRealtimeSync() {
+            const cachedUrl = safeGetStorage('dinar_active_rtdb_url');
+            if (cachedUrl && RTDB_CANDIDATE_URLS.includes(cachedUrl)) {
+                activeRtdbBaseUrl = cachedUrl;
+            }
+
+            // 1. Muat cache lokal terlebih dahulu agar tampilan langsung muncul dalam 0ms (tanpa tunggu jaringan)
+            const cachedData = safeGetStorage('dinar_kos_backup_cache');
+            if (cachedData) {
                 try {
-                    const res = await fetch(url, {
+                    applyBackendData(JSON.parse(cachedData));
+                } catch (e) {}
+            }
+
+            // 2. Ambil data terbaru dari Firebase REST API
+            await loadDataFromBackend(false);
+
+            // 3. Coba inisialisasi Firebase Modular SDK untuk sinkronisasi real-time hemat bandwidth
+            try {
+                const [{ initializeApp }, { getDatabase, ref, onValue, set, goOffline, goOnline }] = await Promise.all([
+                    import("https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"),
+                    import("https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js")
+                ]);
+                const app = initializeApp({ ...FIREBASE_CONFIG, databaseURL: activeRtdbBaseUrl });
+                const db = getDatabase(app);
+                const dbRef = ref(db, FIREBASE_DB_NODE);
+                firebaseSdkRef = dbRef;
+                firebaseSdkSet = set;
+
+                onValue(dbRef, (snapshot) => {
+                    if (isSavingToCloud) return;
+                    const val = snapshot.val();
+                    if (val) {
+                        setSyncBadgeState('online', 'Firebase Live');
+                        applyBackendData(val);
+                    } else {
+                        saveData(true);
+                    }
+                }, () => {
+                    setSyncBadgeState('offline', 'Mode Hemat REST');
+                });
+
+                // Hemat kuota koneksi: putuskan koneksi saat tab di-minimize, sambungkan lagi saat dibuka
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        try { goOffline(db); } catch (e) {}
+                    } else {
+                        try { goOnline(db); } catch (e) {}
+                    }
+                });
+                return;
+            } catch (sdkErr) {
+                // Fallback ke Server-Sent Events (SSE) ringan jika modul CDN diblokir
+                setupLightweightSseFallback();
+            }
+        }
+
+        function setupLightweightSseFallback() {
+            if (sseConnection) {
+                try { sseConnection.close(); } catch (e) {}
+            }
+            if (typeof EventSource !== 'undefined') {
+                try {
+                    sseConnection = new EventSource(`${activeRtdbBaseUrl}/${FIREBASE_DB_NODE}.json`);
+                    sseConnection.addEventListener('put', (e) => {
+                        if (isSavingToCloud) return;
+                        try {
+                            const parsed = JSON.parse(e.data);
+                            if (parsed && parsed.path === '/' && parsed.data) {
+                                setSyncBadgeState('online', 'Firebase Live');
+                                applyBackendData(parsed.data);
+                            } else if (parsed && parsed.path !== '/') {
+                                loadDataFromBackend(false);
+                            }
+                        } catch (err) {}
+                    });
+                } catch (e) {}
+            }
+        }
+
+        async function loadDataFromBackend(forceRefresh = false) {
+            if (document.hidden && !forceRefresh) return;
+            const urlsToTry = [activeRtdbBaseUrl, ...RTDB_CANDIDATE_URLS.filter(u => u !== activeRtdbBaseUrl)];
+
+            for (const baseUrl of urlsToTry) {
+                try {
+                    const rtdbUrl = new URL(`${FIREBASE_DB_NODE}.json`, baseUrl).href;
+                    const res = await fetch(rtdbUrl, {
                         method: 'GET',
-                        headers: { 'Accept': 'application/json' },
-                        cache: 'no-store'
+                        headers: { 'Accept': 'application/json' }
                     });
                     if (res.ok) {
+                        activeRtdbBaseUrl = baseUrl;
+                        safeSetStorage('dinar_active_rtdb_url', baseUrl);
                         const json = await res.json();
-                        const payload = json && (json.kos_piket_data || json.data || json);
-                        if (payload && !payload.empty && ((Array.isArray(payload.penghuni) && payload.penghuni.length > 0) || payload.jadwal || payload.tugas)) {
-                            applyBackendData(payload);
+                        if (json && (json.penghuni || json.jadwal || json.tugas)) {
+                            setSyncBadgeState('online', 'Firebase Aktif');
+                            applyBackendData(json);
                             return;
-                        } else if (payload && payload.empty) {
-                            await saveData();
+                        } else if (json === null) {
+                            // Database Firebase masih kosong, inisialisasi dengan data awal
+                            await saveData(true);
+                            applyBackendData(buildCompactCloudPayload());
                             return;
                         }
                     }
                 } catch (err) {}
             }
 
-            const cached = localStorage.getItem('dinar_kos_backup_cache');
-            if (cached) {
-                try {
-                    applyBackendData(JSON.parse(cached));
-                    return;
-                } catch (e) {}
-            }
+            setSyncBadgeState('offline', 'Cache Lokal');
             if (!hasCheckedInitialSession) {
                 applyBackendData(null);
             }
@@ -1480,7 +1998,7 @@
             if (toast && toastMsg) {
                 toastMsg.innerText = message;
                 toast.classList.remove('translate-x-full');
-                setTimeout(() => { toast.classList.add('translate-x-full'); }, 3500);
+                setTimeout(() => { toast.classList.add('translate-x-full'); }, 3200);
             }
         }
 
@@ -1497,6 +2015,7 @@
         }
 
         function updateWIBCountdown() {
+            if (document.hidden) return;
             const nowWib = getWIBDate();
             const endOfDay = new Date(nowWib);
             endOfDay.setHours(23, 59, 59, 999);
@@ -1507,9 +2026,6 @@
             if (lastActiveDateYMD && lastActiveDateYMD !== currentYMD) {
                 if (cleanupExpiredDailyPhotos()) {
                     saveData();
-                    renderDashboard();
-                    renderTugasTambahan();
-                    renderRiwayat();
                 }
             }
 
@@ -1538,7 +2054,11 @@
 
         function checkWeeklyAutoReset() {
             const currentWeekId = getWIBWeekId();
-            if (kasData.lastAutoResetWeek && kasData.lastAutoResetWeek !== currentWeekId) {
+            if (!kasData.lastAutoResetWeek) {
+                kasData.lastAutoResetWeek = currentWeekId;
+                return;
+            }
+            if (kasData.lastAutoResetWeek !== currentWeekId) {
                 performWeeklyResetAndArchive();
             }
         }
@@ -1547,7 +2067,12 @@
             const nowWib = getWIBDate();
             const weekName = `Arsip Minggu (${nowWib.getDate()} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'][nowWib.getMonth()]} ${nowWib.getFullYear()})`;
             
-            const cleanLogsForArchive = riwayatLogs.map(l => ({ ...l, foto: '' }));
+            const cleanLogsForArchive = riwayatLogs.map(l => ({
+                id: l.id,
+                tanggal: l.tanggal,
+                penghuniNama: l.penghuniNama,
+                area: l.area
+            }));
 
             arsipRiwayatList.unshift({
                 id: 'arsip-' + Date.now(),
@@ -1562,7 +2087,7 @@
             kasData.pemasukanLogs = [];
             kasData.pengeluaranLogs = [];
             kasData.lastAutoResetWeek = getWIBWeekId();
-            saveData();
+            saveData(true);
             showToast("Pergantian minggu terdeteksi: Data berhasil di-reset dan masuk ke Arsip!");
         }
 
@@ -1620,39 +2145,39 @@
             });
         }
 
-        // --- SISTEM DETEKSI & KONTROL POP-UP TERLEWAT PIKET (MUNCUL TERUS SAMPAI DIMATIKAN ADMIN) ---
-       function getUserMissedPiketInfo(userObj) {
-    if (!userObj) return { isMissed: false, reasons: [], rawDates: [] };
-    const reasons = [];
-    const rawDates = [];
+        // --- SISTEM DETEKSI & KONTROL POP-UP TERLEWAT PIKET ---
+        function getUserMissedPiketInfo(userObj) {
+            if (!userObj) return { isMissed: false, reasons: [], rawDates: [] };
+            const reasons = [];
+            const rawDates = [];
 
-    if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
-        reasons.push("Diaktifkan Manual oleh Admin");
-    }
+            if (missedPiketConfig.manualActive && missedPiketConfig.manualActive[userObj.id]) {
+                reasons.push("Diaktifkan Manual oleh Admin");
+            }
 
-    const nowWib = getWIBDate();
-    const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const nowWib = getWIBDate();
+            const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-    for (let i = 1; i <= 3; i++) {
-        const pastDate = new Date(nowWib);
-        pastDate.setDate(pastDate.getDate() - i);
-        const pastDayName = daysOfWeek[pastDate.getDay()];
-        const userWasAssigned = (jadwalPiket[pastDayName] || []).some(d => d.penghuniId === userObj.id);
+            for (let i = 1; i <= 3; i++) {
+                const pastDate = new Date(nowWib);
+                pastDate.setDate(pastDate.getDate() - i);
+                const pastDayName = daysOfWeek[pastDate.getDay()];
+                const userWasAssigned = (jadwalPiket[pastDayName] || []).some(d => d.penghuniId === userObj.id);
 
-        if (userWasAssigned) {
-            const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
-            const clearKey = `${userObj.id}_${pastYMD}`;
-            if (!missedPiketConfig.clearedDates?.[clearKey]) {
-                const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
-                if (!hasAbsen) {
-                    reasons.push(`Terlewat Piket ${pastDayName} (${pastYMD})`);
-                    rawDates.push(pastYMD);
+                if (userWasAssigned) {
+                    const pastYMD = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
+                    const clearKey = `${userObj.id}_${pastYMD}`;
+                    if (!missedPiketConfig.clearedDates?.[clearKey]) {
+                        const hasAbsen = riwayatLogs.some(log => log.penghuniNama === userObj.nama && log.tanggal.startsWith(pastYMD));
+                        if (!hasAbsen) {
+                            reasons.push(`Terlewat Piket ${pastDayName} (${pastYMD})`);
+                            rawDates.push(pastYMD);
+                        }
+                    }
                 }
             }
+            return { isMissed: reasons.length > 0, reasons, rawDates };
         }
-    }
-    return { isMissed: reasons.length > 0, reasons, rawDates };
-}
 
         function checkMissedPiketForUser(userObj) {
             if (!userObj || !missedPiketConfig.enabled) {
@@ -1707,6 +2232,7 @@
             missedPiketConfig.intervalSeconds = Math.max(3, parseInt(document.getElementById('missed-popup-interval').value) || 10);
             missedPiketConfig.message = document.getElementById('missed-popup-message').value.trim() || DEFAULT_MISSED_CONFIG.message;
             saveData();
+            if (loggedInUser) checkMissedPiketForUser(loggedInUser);
             showToast("Pengaturan waktu & pop-up denda berhasil disimpan!");
         }
 
@@ -1726,6 +2252,7 @@
             });
 
             saveData();
+            if (loggedInUser && loggedInUser.id === userId) checkMissedPiketForUser(loggedInUser);
             showToast(`Pop-up peringatan denda untuk ${userObj.nama} telah dimatikan!`);
         }
 
@@ -1739,6 +2266,7 @@
             missedPiketConfig.enabled = true;
 
             saveData();
+            if (loggedInUser && loggedInUser.id === userId) checkMissedPiketForUser(loggedInUser);
             showToast(`Pop-up peringatan denda diaktifkan terus-menerus untuk ${userObj.nama}!`);
         }
 
@@ -1760,7 +2288,7 @@
                 msgInput.value = missedPiketConfig.message || DEFAULT_MISSED_CONFIG.message;
             }
 
-            tbody.innerHTML = '';
+            const frag = document.createDocumentFragment();
             penghuniList.forEach(p => {
                 const info = getUserMissedPiketInfo(p);
                 const tr = document.createElement('tr');
@@ -1783,14 +2311,16 @@
                     <td class="p-3">${statusBadge}</td>
                     <td class="p-3">${actionBtn}</td>
                 `;
-                tbody.appendChild(tr);
+                frag.appendChild(tr);
             });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
         }
 
         function checkUserSession() {
             ensureValidPenghuniList();
             populateLoginSelect();
-            const savedUserId = localStorage.getItem('dinar_kos_logged_user_id');
+            const savedUserId = safeGetStorage('dinar_kos_logged_user_id');
             if (savedUserId) {
                 const found = penghuniList.find(p => p.id === savedUserId);
                 if (found) {
@@ -1833,12 +2363,10 @@
                 const correctPin = userObj.pin || '123456';
                 if (inputPin === correctPin) {
                     loggedInUser = userObj;
-                    localStorage.setItem('dinar_kos_logged_user_id', userObj.id);
+                    safeSetStorage('dinar_kos_logged_user_id', userObj.id);
                     closeModal('modal-user-login');
                     updateUserSessionUI();
-                    renderDashboard();
-                    renderPenghuni();
-                    renderTugasTambahan();
+                    renderActiveTabAndHeader();
                     checkMissedPiketForUser(userObj);
                     showToast(`Berhasil login sebagai ${userObj.nama}!`);
                 } else {
@@ -1848,7 +2376,7 @@
         }
 
         function logoutUserSession() {
-            localStorage.removeItem('dinar_kos_logged_user_id');
+            safeRemoveStorage('dinar_kos_logged_user_id');
             loggedInUser = null;
             if (missedPiketPopupTimeout) {
                 clearTimeout(missedPiketPopupTimeout);
@@ -1856,9 +2384,7 @@
             }
             closeModal('modal-terlewat-piket');
             updateUserSessionUI();
-            renderDashboard();
-            renderPenghuni();
-            renderTugasTambahan();
+            renderActiveTabAndHeader();
             openUserLoginModal();
             showToast("Anda telah keluar dari sesi.");
         }
@@ -1919,7 +2445,7 @@
             if (idx !== -1) {
                 penghuniList[idx].pin = pinBaru;
                 if (loggedInUser && loggedInUser.id === userObj.id) loggedInUser.pin = pinBaru;
-                saveData();
+                saveData(true);
                 closeModal('modal-ganti-pin');
                 showToast("PIN berhasil diganti secara otomatis!");
                 if (!loggedInUser) openUserLoginModal();
@@ -1955,7 +2481,7 @@
         function renderManageUsersTable() {
             const tbody = document.getElementById('manage-users-table-body');
             if (!tbody) return;
-            tbody.innerHTML = '';
+            const frag = document.createDocumentFragment();
             penghuniList.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
@@ -1972,8 +2498,10 @@
                     </td>
                     <td class="p-3"><button onclick="updateSingleUserPin('${p.id}')" class="px-3 py-1.5 bg-brand-50 text-brand-700 hover:bg-brand-100 rounded-lg text-xs font-bold border border-brand-200">Ubah PIN</button></td>
                 `;
-                tbody.appendChild(tr);
+                frag.appendChild(tr);
             });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
             renderMissedUsersAdminPanel();
         }
 
@@ -1982,7 +2510,7 @@
             const idx = penghuniList.findIndex(p => p.id === userId);
             if (idx !== -1 && inputVal) {
                 penghuniList[idx].pin = inputVal;
-                saveData();
+                saveData(true);
                 showToast(`PIN untuk ${penghuniList[idx].nama} berhasil diperbarui!`);
             } else {
                 showToast("PIN tidak boleh kosong!");
@@ -1994,33 +2522,25 @@
                 const field = document.getElementById(`pin-field-${p.id}`);
                 if (field && field.value.trim()) p.pin = field.value.trim();
             });
-            saveData();
-            showToast("Semua PIN user berhasil disimpan ke data admin!");
+            saveData(true);
+            showToast("Semua PIN user berhasil disimpan ke Firebase!");
         }
 
-        // --- KAS KOSAN & BENDAHARA LOGIC (HITUNGAN SALDO PAS TANPA DIKALI 2 / X2) ---
-      function calculateTotalSaldoKas() {
-         let totalPemasukan = 0;
-         penghuniList.forEach(p => { if (kasData.pembayaran?.[p.id]) totalPemasukan += Number(kasData.nominal || 0); });
-         let totalPengeluaran = 0;
-         (kasData.pengeluaranLogs || []).forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
-         return totalPemasukan + Number(kasData.penyesuaianSaldo || 0) - totalPengeluaran;
-      }
+        // --- KAS KOSAN & BENDAHARA LOGIC ---
+        function calculateTotalSaldoKas() {
+            let totalPemasukan = 0;
+            penghuniList.forEach(p => { if (kasData.pembayaran?.[p.id]) totalPemasukan += Number(kasData.nominal || 0); });
+            let totalPengeluaran = 0;
+            (kasData.pengeluaranLogs || []).forEach(e => { totalPengeluaran += Number(e.nominal || 0); });
+            return totalPemasukan + Number(kasData.penyesuaianSaldo || 0) - totalPengeluaran;
+        }
 
         function renderKasTable() {
+            renderKasHeaderBadgeOnly();
             const tbody = document.getElementById('kas-table-body');
-            const nominalBadge = document.getElementById('nominal-kas-badge');
-            const saldoDisplay = document.getElementById('dashboard-saldo-kas-display');
-            const bendaharaSaldo = document.getElementById('bendahara-total-saldo-display');
-            
-            if (nominalBadge) nominalBadge.innerText = `Rp ${Number(kasData.nominal || 0).toLocaleString('id-ID')}`;
-            const saldo = calculateTotalSaldoKas();
-            if (saldoDisplay) saldoDisplay.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
-            if (bendaharaSaldo) bendaharaSaldo.innerText = `Rp ${saldo.toLocaleString('id-ID')}`;
-
             if (!tbody) return;
-            tbody.innerHTML = '';
 
+            const frag = document.createDocumentFragment();
             penghuniList.forEach(p => {
                 const isPaid = kasData.pembayaran && kasData.pembayaran[p.id];
                 let statusBadge = isPaid 
@@ -2042,8 +2562,10 @@
                     <td class="p-3 sm:p-4">${statusBadge}</td>
                     <td class="p-3 sm:p-4">${actionBtn}</td>
                 `;
-                tbody.appendChild(tr);
+                frag.appendChild(tr);
             });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
             renderApprovalBadge();
         }
 
@@ -2091,7 +2613,7 @@
                     <strong class="block text-teal-300 font-bold">Informasi Kas Masuk</strong>
                     <span><strong>${namaPenghuni}</strong> membayar kas Rp ${Number(nominal).toLocaleString('id-ID')}! 🎉</span>
                 </div>
-                <button onclick="document.getElementById('${popupId}').remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="document.getElementById('${popupId}')?.remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(popupEl);
 
@@ -2102,7 +2624,7 @@
                     popupEl.classList.add('translate-y-10', 'opacity-0');
                     setTimeout(() => popupEl.remove(), 300);
                 }
-            }, 30 * 60 * 1000);
+            }, 15000);
         }
 
         function saveNominalKas(e) {
@@ -2111,7 +2633,7 @@
             if (!isNaN(val) && val >= 0) {
                 kasData.nominal = val;
                 saveData();
-                renderKasTable();
+                renderKasHeaderBadgeOnly();
                 showToast("Nominal kas berhasil diperbarui!");
             } else {
                 showToast("Nominal kas tidak valid!");
@@ -2147,7 +2669,7 @@
                 });
                 saveData();
                 closeModal('modal-catat-pengeluaran');
-                renderKasTable();
+                renderKasHeaderBadgeOnly();
                 showToast("Pengeluaran kas berhasil dicatat!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
@@ -2216,7 +2738,7 @@
             if (isAdminLoggedIn) {
                 applyDirectSaldoAdjustment(finalAdjustmentValue, ket, 'Admin');
                 closeModal('modal-edit-saldo');
-                renderKasTable();
+                renderKasHeaderBadgeOnly();
                 showToast("Saldo kas berhasil disesuaikan secara langsung!");
             } else {
                 if (!kasData.pendingApprovals) kasData.pendingApprovals = [];
@@ -2262,13 +2784,14 @@
                     badge.classList.add('hidden');
                 }
             }
-            renderApprovalTable();
+            if (currentActiveTab === 'manage-users') {
+                renderApprovalTable();
+            }
         }
 
         function renderApprovalTable() {
             const tbody = document.getElementById('approval-table-body');
             if (!tbody) return;
-            tbody.innerHTML = '';
 
             const list = kasData.pendingApprovals || [];
             if (list.length === 0) {
@@ -2276,6 +2799,7 @@
                 return;
             }
 
+            const frag = document.createDocumentFragment();
             list.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition";
@@ -2291,8 +2815,10 @@
                         <button onclick="rejectRequest('${item.id}')" class="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200">Reject</button>
                     </td>
                 `;
-                tbody.appendChild(tr);
+                frag.appendChild(tr);
             });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
         }
 
         function approveRequest(id) {
@@ -2315,7 +2841,6 @@
 
             kasData.pendingApprovals = kasData.pendingApprovals.filter(x => x.id !== id);
             saveData();
-            renderKasTable();
             renderApprovalBadge();
             showToast("Pengajuan berhasil disetujui (Approved) dan saldo langsung diperbarui!");
         }
@@ -2324,7 +2849,6 @@
             if (!isAdminLoggedIn) return;
             kasData.pendingApprovals = (kasData.pendingApprovals || []).filter(x => x.id !== id);
             saveData();
-            renderKasTable();
             renderApprovalBadge();
             showToast("Pengajuan ditolak (Rejected).");
         }
@@ -2353,16 +2877,20 @@
             kasData.pengeluaranLogs = kasData.pengeluaranLogs.filter(e => e.id !== id);
             saveData();
             openCatatanKasModal();
-            renderKasTable();
+            renderKasHeaderBadgeOnly();
             showToast("Catatan pengeluaran dihapus.");
         }
 
         function resetRiwayatMingguan() {
             if (!isAdminLoggedIn) return;
-            if (confirm("Apakah Anda ingin mereset riwayat minggu ini dan memindahkannya ke menu Arsip/Backup?")) {
-                performWeeklyResetAndArchive();
-                renderRiwayat();
-            }
+            openCustomConfirm(
+                "Reset & Arsip Riwayat Mingguan",
+                "Apakah Anda ingin mereset riwayat minggu ini dan memindahkannya ke menu Arsip/Backup?",
+                () => {
+                    performWeeklyResetAndArchive();
+                    renderRiwayat();
+                }
+            );
         }
 
         function openArsipModal() {
@@ -2371,14 +2899,14 @@
             if (!arsipRiwayatList || arsipRiwayatList.length === 0) {
                 container.innerHTML = `<p class="text-center text-slate-400 py-6">Belum ada arsip riwayat mingguan.</p>`;
             } else {
-                container.innerHTML = arsipRiwayatList.map((a, aIdx) => `
+                container.innerHTML = arsipRiwayatList.map((a) => `
                     <div class="p-4 bg-slate-50 rounded-xl border space-y-3">
                         <div class="flex justify-between items-center border-b pb-2 flex-wrap gap-2">
                             <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-box-archive text-amber-500"></i> ${a.periode}
                             </h4>
                             <div class="flex items-center gap-2">
-                                <span class="text-xs text-slate-500 font-semibold">${a.logs.length} Log Kegiatan</span>
+                                <span class="text-xs text-slate-500 font-semibold">${(a.logs || []).length} Log Kegiatan</span>
                                 ${isAdminLoggedIn ? `
                                     <button onclick="editArsipTitle('${a.id}')" class="px-2 py-1 bg-white border text-slate-600 rounded text-xs font-bold hover:bg-slate-100"><i class="fa-solid fa-pen mr-1"></i> Edit Judul</button>
                                     <button onclick="deleteEntireArsip('${a.id}')" class="px-2 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded text-xs font-bold hover:bg-rose-100"><i class="fa-solid fa-trash-can mr-1"></i> Hapus Arsip</button>
@@ -2386,7 +2914,7 @@
                             </div>
                         </div>
                         <div class="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar text-xs">
-                            ${a.logs.length > 0 ? a.logs.map(l => `
+                            ${(a.logs && a.logs.length > 0) ? a.logs.map(l => `
                                 <div class="p-2 bg-white rounded border flex justify-between items-center">
                                     <span><strong>${l.penghuniNama}</strong> - ${l.area} <span class="text-slate-400">(${l.tanggal})</span></span>
                                     ${isAdminLoggedIn ? `<button onclick="deleteArsipLog('${a.id}', '${l.id}')" class="text-rose-500 font-bold hover:underline ml-2">Hapus</button>` : ''}
@@ -2403,20 +2931,21 @@
             if (!isAdminLoggedIn) return;
             const a = arsipRiwayatList.find(x => x.id === arsipId);
             if (!a) return;
-            const newTitle = prompt("Ubah Nama Judul Arsip:", a.periode);
-            if (newTitle && newTitle.trim() !== "") {
-                a.periode = newTitle.trim();
-                saveData();
-                openArsipModal();
-                showToast("Judul arsip berhasil diperbarui!");
-            }
+            openCustomPrompt("Ubah Nama Judul Arsip", "Masukkan nama periode arsip baru:", a.periode, (newTitle) => {
+                if (newTitle && newTitle.trim() !== "") {
+                    a.periode = newTitle.trim();
+                    saveData();
+                    openArsipModal();
+                    showToast("Judul arsip berhasil diperbarui!");
+                }
+            });
         }
 
         function deleteArsipLog(arsipId, logId) {
             if (!isAdminLoggedIn) return;
             const a = arsipRiwayatList.find(x => x.id === arsipId);
             if (!a) return;
-            a.logs = a.logs.filter(l => l.id !== logId);
+            a.logs = (a.logs || []).filter(l => l.id !== logId);
             saveData();
             openArsipModal();
             showToast("Log dalam arsip dihapus.");
@@ -2424,12 +2953,12 @@
 
         function deleteEntireArsip(arsipId) {
             if (!isAdminLoggedIn) return;
-            if (confirm("Apakah Anda yakin ingin menghapus seluruh arsip minggu ini?")) {
+            openCustomConfirm("Hapus Arsip Mingguan", "Apakah Anda yakin ingin menghapus seluruh arsip minggu ini?", () => {
                 arsipRiwayatList = arsipRiwayatList.filter(x => x.id !== arsipId);
                 saveData();
                 openArsipModal();
                 showToast("Arsip berhasil dihapus.");
-            }
+            });
         }
 
         function openAdminRoleSelector() {
@@ -2476,8 +3005,7 @@
             }
         }
 
-        // --- UPDATE ADMIN UI STATE (OTOMATIS MERENDER SEMUA MENU EDIT TANPA PERLU DIPANCING) ---
-      function updateAdminUIState() {
+        function updateAdminButtonsVisibility() {
             const btn = document.getElementById('admin-toggle-btn');
             const icon = document.getElementById('admin-icon');
             const text = document.getElementById('admin-status-text');
@@ -2508,17 +3036,11 @@
                 icon.className = "fa-solid fa-lock";
                 text.innerText = "Admin";
             }
+        }
 
-            updateDashboardTitlesUI();
-            renderDashboard();
-            renderJadwal();
-            renderPenghuni();
-            renderTugas();
-            renderTugasTambahan();
-            renderKasTable();
-            renderRiwayat();
-            renderManageUsersTable();
-            renderApprovalBadge();
+        function updateAdminUIState() {
+            updateAdminButtonsVisibility();
+            renderActiveTabAndHeader();
         }
 
         function initDateHeader() {
@@ -2551,13 +3073,13 @@
             if (isAdminLoggedIn) {
                 titleEl?.classList.add('cursor-pointer');
                 subTitleEl?.classList.add('cursor-pointer');
-                titleEl.onclick = tryOpenAnnouncementModal;
-                subTitleEl.onclick = tryOpenAnnouncementModal;
+                if (titleEl) titleEl.onclick = tryOpenAnnouncementModal;
+                if (subTitleEl) subTitleEl.onclick = tryOpenAnnouncementModal;
             } else {
                 titleEl?.classList.remove('cursor-pointer');
                 subTitleEl?.classList.remove('cursor-pointer');
-                titleEl.onclick = null;
-                subTitleEl.onclick = null;
+                if (titleEl) titleEl.onclick = null;
+                if (subTitleEl) subTitleEl.onclick = null;
             }
         }
 
@@ -2580,35 +3102,53 @@
                 btn.classList.add('text-slate-600');
             });
 
-            document.getElementById(`nav-${tabName}`)?.classList.remove('text-slate-600');
-            document.getElementById(`nav-${tabName}`)?.classList.add('text-brand-600', 'bg-brand-50');
-        }
-let hasShownInitialAnnouncementPopup = false;
+            const activeBtn = document.getElementById(`nav-${tabName}`) || (tabName === 'manage-users' ? document.getElementById('nav-manage-users-btn') : document.getElementById('nav-bendahara-btn'));
+            activeBtn?.classList.remove('text-slate-600');
+            activeBtn?.classList.add('text-brand-600', 'bg-brand-50');
 
-       function checkAndShowUserAnnouncement() {
+            // Lazy-render tab saat dibuka agar perpindahan tab sangat ringan dan cepat
+            renderActiveTabAndHeader();
+        }
+
+        function renderRunningTextBanner() {
             const banner = document.getElementById('ticker-banner');
             const content = document.getElementById('ticker-text-content');
-            
-            // Ambil teks dari admin atau gunakan default
-            const textToShow = (adminAnnouncement && adminAnnouncement.text && adminAnnouncement.text.trim() !== "")
+            if (!banner || !content) return;
+
+            const runningTextStr = (adminAnnouncement && adminAnnouncement.runningText && adminAnnouncement.runningText.trim() !== "")
+                ? adminAnnouncement.runningText.trim()
+                : ((adminAnnouncement && adminAnnouncement.text && adminAnnouncement.text.trim() !== "")
+                    ? adminAnnouncement.text.trim()
+                    : DEFAULT_ANNOUNCEMENT.runningText);
+
+            const isRunningActive = !adminAnnouncement || adminAnnouncement.runningTextActive !== false;
+            if (isRunningActive) {
+                const escaped = runningTextStr.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                content.innerHTML = `<span class="mx-6">${escaped}</span><span class="text-amber-900/70 font-black">•</span><span class="mx-6">${escaped}</span><span class="text-amber-900/70 font-black">•</span><span class="mx-6">${escaped}</span><span class="text-amber-900/70 font-black">•</span><span class="mx-6">${escaped}</span><span class="text-amber-900/70 font-black">•</span>`;
+                banner.classList.remove('hidden');
+                banner.classList.add('flex');
+            } else {
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+            }
+        }
+
+        function checkAndShowUserAnnouncement() {
+            // 1. Render Running Text secara terpisah (tidak terpengaruh saat Pop-Up dimatikan)
+            renderRunningTextBanner();
+
+            // 2. Isi konten untuk Modal Pop-Up Pengumuman
+            const popupTextToShow = (adminAnnouncement && adminAnnouncement.text && adminAnnouncement.text.trim() !== "")
                 ? adminAnnouncement.text
                 : DEFAULT_ANNOUNCEMENT.text;
 
-            // 1. MEMASTIKAN RUNNING TEXT SELALU MUNCUL DI BAWAH HEADER
-            if (banner && content) {
-                content.innerText = textToShow;
-                banner.classList.remove('hidden');
-                banner.classList.add('flex'); // Memaksa elemen tampil (display: flex)
-            }
-
-            // 2. Isi konten untuk Modal Pop-Up Pengumuman saat banner diklik
             const badgeEl = document.getElementById('announcement-type-badge');
             const textDisplayEl = document.getElementById('announcement-text-display');
             const img = document.getElementById('user-announcement-img');
             const mediaContainer = document.getElementById('user-announcement-media');
 
             if (badgeEl) badgeEl.innerText = (adminAnnouncement && adminAnnouncement.type) ? adminAnnouncement.type : "PERINGATAN ADMIN";
-            if (textDisplayEl) textDisplayEl.innerText = textToShow;
+            if (textDisplayEl) textDisplayEl.innerText = popupTextToShow;
 
             if (adminAnnouncement && adminAnnouncement.image) {
                 if (img) {
@@ -2627,10 +3167,12 @@ let hasShownInitialAnnouncementPopup = false;
                 }
             }
 
-            // 3. Jika toggle Pop-Up Peringatan diaktifkan Admin, tampilkan pop-up 1x saat halaman dibuka
+            // 3. Hanya tampilkan Pop-Up otomatis jika toggle Pop-Up (adminAnnouncement.active) diaktifkan
             if (adminAnnouncement && adminAnnouncement.active && !hasShownInitialAnnouncementPopup) {
                 hasShownInitialAnnouncementPopup = true;
                 openModal('modal-user-announcement');
+            } else if (adminAnnouncement && !adminAnnouncement.active) {
+                closeModal('modal-user-announcement');
             }
         }
 
@@ -2638,9 +3180,11 @@ let hasShownInitialAnnouncementPopup = false;
             if (!isAdminLoggedIn) return;
             document.getElementById('edit-main-title-input').value = adminAnnouncement.title || "Siapa Piket Hari Ini?";
             document.getElementById('edit-main-subtitle-input').value = adminAnnouncement.subtitle || "Tong hilap foto nya!.";
-            document.getElementById('announcement-active-toggle').checked = adminAnnouncement.active;
+            document.getElementById('running-text-active-toggle').checked = adminAnnouncement.runningTextActive !== false;
+            document.getElementById('running-text-input').value = adminAnnouncement.runningText || adminAnnouncement.text || DEFAULT_ANNOUNCEMENT.runningText;
+            document.getElementById('announcement-active-toggle').checked = !!adminAnnouncement.active;
             document.getElementById('announcement-type-select').value = adminAnnouncement.type || "Peringatan Admin";
-            document.getElementById('announcement-text-input').value = adminAnnouncement.text || "";
+            document.getElementById('announcement-text-input').value = adminAnnouncement.text || DEFAULT_ANNOUNCEMENT.text;
             openModal('modal-edit-announcement');
         }
 
@@ -2649,9 +3193,11 @@ let hasShownInitialAnnouncementPopup = false;
             if (!isAdminLoggedIn) return;
             adminAnnouncement.title = document.getElementById('edit-main-title-input').value || "Siapa Piket Hari Ini?";
             adminAnnouncement.subtitle = document.getElementById('edit-main-subtitle-input').value || "Tong hilap foto nya!.";
+            adminAnnouncement.runningTextActive = document.getElementById('running-text-active-toggle').checked;
+            adminAnnouncement.runningText = document.getElementById('running-text-input').value.trim() || DEFAULT_ANNOUNCEMENT.runningText;
             adminAnnouncement.active = document.getElementById('announcement-active-toggle').checked;
             adminAnnouncement.type = document.getElementById('announcement-type-select').value;
-            adminAnnouncement.text = document.getElementById('announcement-text-input').value;
+            adminAnnouncement.text = document.getElementById('announcement-text-input').value.trim() || DEFAULT_ANNOUNCEMENT.text;
 
             const imgFile = document.getElementById('announcement-img-input').files[0];
             const bgFile = document.getElementById('bg-img-input').files[0];
@@ -2662,6 +3208,7 @@ let hasShownInitialAnnouncementPopup = false;
             if (tasks === 0) {
                 saveData();
                 closeModal('modal-edit-announcement');
+                checkAndShowUserAnnouncement();
                 updateDashboardTitlesUI();
                 showToast("Pengaturan teks & peringatan disimpan!");
                 return;
@@ -2669,21 +3216,33 @@ let hasShownInitialAnnouncementPopup = false;
 
             if (imgFile) {
                 const r = new FileReader();
-                r.onload = async e => {
-                    const driveUrl = await uploadPhotoToGoogleDrive(e.target.result, `Pengumuman_${Date.now()}.jpg`);
-                    adminAnnouncement.image = driveUrl || e.target.result;
+                r.onload = async ev => {
+                    const driveUrl = await uploadPhotoToGoogleDrive(ev.target.result, `Pengumuman_${Date.now()}.jpg`);
+                    adminAnnouncement.image = driveUrl || ev.target.result;
                     done++;
-                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
+                    if (done === tasks) {
+                        saveData();
+                        closeModal('modal-edit-announcement');
+                        checkAndShowUserAnnouncement();
+                        updateDashboardTitlesUI();
+                        showToast("Disimpan!");
+                    }
                 };
                 r.readAsDataURL(imgFile);
             }
             if (bgFile) {
                 const r = new FileReader();
-                r.onload = async e => {
-                    const driveUrl = await uploadPhotoToGoogleDrive(e.target.result, `Background_${Date.now()}.jpg`);
-                    adminAnnouncement.backgroundImage = driveUrl || e.target.result;
+                r.onload = async ev => {
+                    const driveUrl = await uploadPhotoToGoogleDrive(ev.target.result, `Background_${Date.now()}.jpg`);
+                    adminAnnouncement.backgroundImage = driveUrl || ev.target.result;
                     done++;
-                    if(done === tasks) { saveData(); closeModal('modal-edit-announcement'); updateDashboardTitlesUI(); showToast("Disimpan!"); }
+                    if (done === tasks) {
+                        saveData();
+                        closeModal('modal-edit-announcement');
+                        applyWebsiteBackground();
+                        updateDashboardTitlesUI();
+                        showToast("Disimpan!");
+                    }
                 };
                 r.readAsDataURL(bgFile);
             }
@@ -2692,6 +3251,7 @@ let hasShownInitialAnnouncementPopup = false;
         function clearWebsiteBackground() {
             if (!isAdminLoggedIn) return;
             adminAnnouncement.backgroundImage = "";
+            safeRemoveStorage('dinar_local_bg_img');
             saveData();
             applyWebsiteBackground();
             showToast("Background direset!");
@@ -2737,7 +3297,6 @@ let hasShownInitialAnnouncementPopup = false;
 
             const container = document.getElementById('dashboard-task-boxes');
             if (!container) return;
-            container.innerHTML = '';
 
             const todayDuties = jadwalPiket[todayName] || [];
             const todayYMD = getTodayYMD();
@@ -2745,6 +3304,7 @@ let hasShownInitialAnnouncementPopup = false;
             if (todayDuties.length === 0) {
                 container.innerHTML = `<div class="sm:col-span-2 text-center py-8 text-slate-400 font-medium">Libur Piket Hari Ini (${todayName}) 🎉</div>`;
             } else {
+                const frag = document.createDocumentFragment();
                 todayDuties.forEach((item, index) => {
                     const penghuni = penghuniList.find(p => p.id === item.penghuniId) || { nama: 'Belum Dipilih', kamar: '-' };
                     const todayLogObj = riwayatLogs.find(log => log.penghuniNama === penghuni.nama && log.area === item.area && log.tanggal.startsWith(todayYMD));
@@ -2762,7 +3322,7 @@ let hasShownInitialAnnouncementPopup = false;
                     const todayPhotoSrc = isDone ? getTodayPhotoForId(todayLogObj.id, todayLogObj.tanggal, todayLogObj.foto) : '';
                     let buktiBtn = (isDone && todayPhotoSrc)
                         ? `<button onclick="previewImage('${todayPhotoSrc}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`
-                        : (isDone ? `<a href="${GDRIVE_LINK}" target="_blank" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Lihat Foto di Google Drive</a>` : '');
+                        : (isDone ? `<a href="${GDRIVE_LINK}" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Lihat Foto di Google Drive</a>` : '');
 
                     let adminCatatanSection = `
                         <div class="mt-1 pt-2 border-t border-slate-200/60 flex items-start justify-between gap-2">
@@ -2791,8 +3351,10 @@ let hasShownInitialAnnouncementPopup = false;
                         ${adminCatatanSection}
                         ${buktiBtn}
                     `;
-                    container.appendChild(card);
+                    frag.appendChild(card);
                 });
+                container.innerHTML = '';
+                container.appendChild(frag);
             }
             renderLeaderboard();
         }
@@ -2810,7 +3372,7 @@ let hasShownInitialAnnouncementPopup = false;
             });
 
             const sortedMembers = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-            container.innerHTML = '';
+            const frag = document.createDocumentFragment();
 
             sortedMembers.forEach(([name, total], idx) => {
                 const rank = idx + 1;
@@ -2826,8 +3388,10 @@ let hasShownInitialAnnouncementPopup = false;
                     </div>
                     <div class="text-right"><span class="font-extrabold text-sm text-brand-700">${total}x</span></div>
                 `;
-                container.appendChild(item);
+                frag.appendChild(item);
             });
+            container.innerHTML = '';
+            container.appendChild(frag);
         }
 
         function tryOpenLeaderboardConfig() {
@@ -2848,7 +3412,6 @@ let hasShownInitialAnnouncementPopup = false;
         function renderTugasTambahan() {
             const container = document.getElementById('tugas-tambahan-container');
             if (!container) return;
-            container.innerHTML = '';
 
             if (!tugasTambahanList || tugasTambahanList.length === 0) {
                 container.innerHTML = `<div class="col-span-full text-center py-8 text-slate-400 text-sm">Belum ada tugas tambahan.</div>`;
@@ -2856,6 +3419,7 @@ let hasShownInitialAnnouncementPopup = false;
             }
 
             const todayYMD = getTodayYMD();
+            const frag = document.createDocumentFragment();
 
             tugasTambahanList.forEach((tugas) => {
                 const penghuni = penghuniList.find(p => p.id === tugas.penghuniId) || { nama: 'Belum Ditentukan', kamar: '-' };
@@ -2883,7 +3447,7 @@ let hasShownInitialAnnouncementPopup = false;
                     if (todayPhotoTambahan) {
                         actionBtn = `<button onclick="previewImage('${todayPhotoTambahan}')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-solid fa-eye"></i> Lihat Bukti Pengerjaan</button>`;
                     } else {
-                        actionBtn = `<a href="${GDRIVE_LINK}" target="_blank" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Bukti Tersimpan di Drive</a>`;
+                        actionBtn = `<a href="${GDRIVE_LINK}" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-200 transition"><i class="fa-brands fa-google-drive"></i> Bukti Tersimpan di Drive</a>`;
                     }
                 } else {
                     if (!loggedInUser) {
@@ -2920,8 +3484,10 @@ let hasShownInitialAnnouncementPopup = false;
                     ${actionBtn}
                     ${adminEditDel}
                 `;
-                container.appendChild(card);
+                frag.appendChild(card);
             });
+            container.innerHTML = '';
+            container.appendChild(frag);
         }
 
         function toggleWaktuInput(isTanpaWaktu) {
@@ -3006,7 +3572,7 @@ let hasShownInitialAnnouncementPopup = false;
             showToast("Tugas tambahan dihapus.");
         }
 
-        // --- KAMERA & GPS TUGAS TAMBAHAN (ANTI BLANK) ---
+        // --- KAMERA & GPS TUGAS TAMBAHAN ---
         let currentTambahanId = null;
         function openAbsenTambahanModal(id) {
             const t = tugasTambahanList.find(x => x.id === id);
@@ -3154,7 +3720,7 @@ let hasShownInitialAnnouncementPopup = false;
             ctx.fillText(`🌐 GPS: ${currentGeoLocationTambahan}`, 12, canvas.height - 35);
             ctx.fillText(`📅 Waktu (WIB): ${timeStr}`, 12, canvas.height - 12);
 
-            capturedPhotoTambahan = canvas.toDataURL('image/jpeg', 0.65);
+            capturedPhotoTambahan = canvas.toDataURL('image/jpeg', 0.6);
             video.classList.add('hidden');
             canvas.classList.remove('hidden');
             document.getElementById('btn-snap-tambahan').classList.add('hidden');
@@ -3180,12 +3746,13 @@ let hasShownInitialAnnouncementPopup = false;
                 const logId = 'log-tambahan-' + Date.now();
                 const filename = `Tambahan_${todayYMD}_${p.nama.replace(/\s+/g, '_')}_${t.nama.replace(/\s+/g, '_')}.jpg`;
 
+                // Simpan foto di cache lokal 24 jam agar tidak membebani kuota Firebase
                 savePhotoToDailyCache(t.id, photoToSave);
                 savePhotoToDailyCache(logId, photoToSave);
 
                 tugasTambahanList[idx].status = 'Selesai';
                 tugasTambahanList[idx].tanggalSelesai = todayYMD;
-                tugasTambahanList[idx].foto = photoToSave;
+                tugasTambahanList[idx].foto = '';
 
                 riwayatLogs.unshift({
                     id: logId,
@@ -3193,15 +3760,26 @@ let hasShownInitialAnnouncementPopup = false;
                     penghuniNama: p.nama,
                     area: `[Tambahan] ${t.nama}`,
                     gps: `${currentGeoLocationTambahan} (${currentGeoAddressTambahan})`,
-                    foto: photoToSave,
+                    foto: '',
+                    driveUrl: '',
                     status: 'Selesai'
                 });
 
                 closeModal('modal-absen-tambahan');
-                showToast("Tugas tambahan selesai! Sistem sedang mem-backup foto ke Drive...");
-                saveData();
+                showToast("Tugas tambahan selesai! Mem-backup foto ke Drive & Firebase...");
+                saveData(true);
 
-                uploadPhotoToGoogleDrive(photoToSave, filename).catch(() => {});
+                uploadPhotoToGoogleDrive(photoToSave, filename).then(driveUrl => {
+                    if (driveUrl) {
+                        tugasTambahanList[idx].foto = driveUrl;
+                        const targetLog = riwayatLogs.find(l => l.id === logId);
+                        if (targetLog) {
+                            targetLog.driveUrl = driveUrl;
+                            targetLog.foto = driveUrl;
+                        }
+                        saveData(true);
+                    }
+                }).catch(() => {});
             }
         }
 
@@ -3220,7 +3798,7 @@ let hasShownInitialAnnouncementPopup = false;
         function renderJadwal() {
             const grid = document.getElementById('weekly-schedule-grid');
             if (!grid) return;
-            grid.innerHTML = '';
+            const frag = document.createDocumentFragment();
             DEFAULT_DAYS.forEach(day => {
                 const duties = jadwalPiket[day] || [];
                 const card = document.createElement('div');
@@ -3233,8 +3811,10 @@ let hasShownInitialAnnouncementPopup = false;
                 let adminQuickEdit = isAdminLoggedIn ? `<button onclick="tryOpenEditJadwalModal()" class="text-xs text-brand-600 hover:text-brand-800 font-bold"><i class="fa-solid fa-pen mr-1"></i> Edit</button>` : `<span class="text-xs font-bold text-slate-400">${duties.length} Tugas</span>`;
 
                 card.innerHTML = `<div><div class="flex justify-between items-center border-b pb-2 mb-3"><h3 class="font-extrabold text-slate-900 text-base">${day}</h3>${adminQuickEdit}</div><div class="space-y-2">${listItems}</div></div>`;
-                grid.appendChild(card);
+                frag.appendChild(card);
             });
+            grid.innerHTML = '';
+            grid.appendChild(frag);
         }
 
         function tryOpenEditJadwalModal() {
@@ -3247,7 +3827,7 @@ let hasShownInitialAnnouncementPopup = false;
         function renderEditJadwalModalContent() {
             const container = document.getElementById('edit-jadwal-container');
             if (!container) return;
-            container.innerHTML = '';
+            const frag = document.createDocumentFragment();
             DEFAULT_DAYS.forEach(day => {
                 const duties = tempEditJadwal[day] || [];
                 const dayBox = document.createElement('div');
@@ -3268,8 +3848,10 @@ let hasShownInitialAnnouncementPopup = false;
                     <div class="flex justify-between items-center"><h4 class="font-bold text-xs uppercase tracking-wider text-slate-800">${day}</h4><button type="button" onclick="addTempDuty('${day}')" class="text-xs bg-brand-50 text-brand-700 border px-3 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-user-plus text-[10px]"></i> Tambah</button></div>
                     <div class="space-y-2">${rows || '<p class="text-xs text-slate-400 italic">Libur</p>'}</div>
                 `;
-                container.appendChild(dayBox);
+                frag.appendChild(dayBox);
             });
+            container.innerHTML = '';
+            container.appendChild(frag);
         }
 
         function addTempDuty(day) {
@@ -3285,7 +3867,7 @@ let hasShownInitialAnnouncementPopup = false;
         function saveJadwalChanges() {
             if (!isAdminLoggedIn) return;
             jadwalPiket = tempEditJadwal;
-            saveData();
+            saveData(true);
             closeModal('modal-edit-jadwal');
             showToast("Jadwal diperbarui!");
         }
@@ -3293,7 +3875,7 @@ let hasShownInitialAnnouncementPopup = false;
         function renderPenghuni() {
             const grid = document.getElementById('penghuni-grid');
             if (!grid) return;
-            grid.innerHTML = '';
+            const frag = document.createDocumentFragment();
             penghuniList.forEach(p => {
                 const card = document.createElement('div');
                 card.className = "bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-col justify-between gap-3";
@@ -3321,8 +3903,10 @@ let hasShownInitialAnnouncementPopup = false;
                     ${motivasiSection}
                     ${editMotivasiBtn}
                 `;
-                grid.appendChild(card);
+                frag.appendChild(card);
             });
+            grid.innerHTML = '';
+            grid.appendChild(frag);
         }
 
         function openEditMotivasiModal(id) {
@@ -3339,7 +3923,7 @@ let hasShownInitialAnnouncementPopup = false;
             openModal('modal-penghuni');
         }
 
-      function tryOpenPenghuniModal() {
+        function tryOpenPenghuniModal() {
             if (!isAdminLoggedIn) return;
             document.getElementById('penghuni-id').value = '';
             document.getElementById('penghuni-nama').value = '';
@@ -3388,7 +3972,7 @@ let hasShownInitialAnnouncementPopup = false;
                 penghuniList.push({ id: 'p-' + Date.now(), nama, kamar, pin, motivasi });
             }
             populateLoginSelect();
-            saveData();
+            saveData(true);
             closeModal('modal-penghuni');
             initMotivationRotation();
             showToast("Data penghuni disimpan!");
@@ -3399,21 +3983,23 @@ let hasShownInitialAnnouncementPopup = false;
             penghuniList = penghuniList.filter(x => x.id !== id);
             ensureValidPenghuniList();
             populateLoginSelect();
-            saveData();
+            saveData(true);
             showToast("Penghuni dihapus.");
         }
 
         function renderTugas() {
             const container = document.getElementById('tugas-list-container');
             if (!container) return;
-            container.innerHTML = '';
+            const frag = document.createDocumentFragment();
             tugasList.forEach((tugas, idx) => {
                 const card = document.createElement('div');
                 card.className = "bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between";
                 let adminBtns = isAdminLoggedIn ? `<div class="flex gap-1"><button onclick="editTugas('${tugas}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 text-xs font-bold"><i class="fa-solid fa-pen"></i></button><button onclick="deleteTugas(${idx})" class="p-1.5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-600 text-xs font-bold"><i class="fa-solid fa-trash-can"></i></button></div>` : '';
                 card.innerHTML = `<div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs"><i class="fa-solid fa-list-check"></i></div><span class="font-bold text-slate-800 text-sm">${tugas}</span></div>${adminBtns}`;
-                container.appendChild(card);
+                frag.appendChild(card);
             });
+            container.innerHTML = '';
+            container.appendChild(frag);
         }
 
         function tryOpenTugasModal() {
@@ -3448,7 +4034,7 @@ let hasShownInitialAnnouncementPopup = false;
             showToast("Tugas diperbarui!");
         }
 
-    function deleteTugas(idx) {
+        function deleteTugas(idx) {
             if (!isAdminLoggedIn) return;
             tugasList.splice(idx, 1);
             saveData();
@@ -3460,7 +4046,6 @@ let hasShownInitialAnnouncementPopup = false;
             const searchInput = document.getElementById('search-log');
             if (!tbody) return;
             const q = searchInput ? searchInput.value.toLowerCase() : '';
-            tbody.innerHTML = '';
             const filtered = riwayatLogs.filter(log => log.penghuniNama.toLowerCase().includes(q) || log.area.toLowerCase().includes(q));
 
             if (filtered.length === 0) {
@@ -3468,19 +4053,23 @@ let hasShownInitialAnnouncementPopup = false;
                 return;
             }
 
+            const frag = document.createDocumentFragment();
             filtered.forEach(log => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50/80 transition";
                 const todayPhoto = getTodayPhotoForId(log.id, log.tanggal, log.foto);
                 let imgCell = todayPhoto
-                    ? `<img src="${todayPhoto}" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
-                    : `<a href="${GDRIVE_LINK}" target="_blank" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold whitespace-nowrap"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
+                    ? `<img src="${todayPhoto}" alt="Bukti" onclick="previewImage('${todayPhoto}')" class="w-12 h-12 object-cover rounded-lg border cursor-pointer shadow-sm">`
+                    : `<a href="${log.driveUrl || GDRIVE_LINK}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-600 hover:underline text-xs font-bold whitespace-nowrap"><i class="fa-brands fa-google-drive"></i> Di Drive</a>`;
                 let adminDel = isAdminLoggedIn ? `<button onclick="deleteLogEntry('${log.id}')" class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold border border-rose-200">Hapus</button>` : '-';
                 tr.innerHTML = `<td class="p-3 sm:p-4 font-semibold text-slate-700 whitespace-nowrap">${log.tanggal}</td><td class="p-3 sm:p-4 font-bold text-slate-900">${log.penghuniNama}</td><td class="p-3 sm:p-4 text-brand-700 font-medium">${log.area}</td><td class="p-3 sm:p-4 text-xs text-slate-500 max-w-xs truncate">${log.gps || '-'}</td><td class="p-3 sm:p-4">${imgCell}</td><td class="p-3 sm:p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Selesai</span></td><td class="p-3 sm:p-4">${adminDel}</td>`;
-                tbody.appendChild(tr);
+                frag.appendChild(tr);
             });
+            tbody.innerHTML = '';
+            tbody.appendChild(frag);
         }
-        // --- KAMERA & GPS UTAMA (ANTI BLANK / HITAM & AKURAT WILAYAH INDONESIA) ---
+
+        // --- KAMERA & GPS UTAMA ---
         function formatAlamatIndonesia(addr, lat, lng) {
             if (!addr) return `Wilayah (${lat}, ${lng})`;
 
@@ -3666,7 +4255,7 @@ let hasShownInitialAnnouncementPopup = false;
             ctx.fillText(`🌐 GPS: ${currentGeoLocation}`, 12, canvas.height - 35);
             ctx.fillText(`📅 Waktu (WIB): ${timeStr}`, 12, canvas.height - 12);
 
-            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.65);
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.6);
             video.classList.add('hidden');
             canvas.classList.remove('hidden');
             document.getElementById('btn-snap').classList.add('hidden');
@@ -3687,7 +4276,7 @@ let hasShownInitialAnnouncementPopup = false;
             const logId = 'log-' + Date.now();
             const filename = `Piket_${todayYMD}_${loggedInUser.nama.replace(/\s+/g, '_')}_${area.replace(/\s+/g, '_')}.jpg`;
 
-            // 1. Langsung simpan ke Web & Cache (Instan tanpa nunggu Drive)
+            // 1. Langsung simpan ke Cache 24 Jam di perangkat (tanpa menaruh Base64 besar ke Firebase)
             savePhotoToDailyCache(logId, photoToSave);
 
             riwayatLogs.unshift({
@@ -3696,32 +4285,34 @@ let hasShownInitialAnnouncementPopup = false;
                 penghuniNama: loggedInUser.nama,
                 area: area,
                 gps: `${currentGeoLocation} (${currentGeoAddress})`,
-                foto: photoToSave,
+                foto: '',
+                driveUrl: '',
                 status: 'Selesai'
             });
 
             closeAbsenModal();
-            showToast('Absen berhasil disimpan! Sistem sedang mem-backup foto ke Drive...');
-            saveData();
+            showToast('Absen berhasil disimpan! Mem-backup foto ke Drive & Firebase...');
+            saveData(true);
 
-            // 2. Sistem otomatis kirim ke Google Drive di latar belakang (Background Process)
+            // 2. Sistem otomatis kirim ke Google Drive di latar belakang dan hanya menyimpan URL pendek ke Firebase
             uploadPhotoToGoogleDrive(photoToSave, filename).then(driveUrl => {
                 if (driveUrl) {
                     const targetLog = riwayatLogs.find(l => l.id === logId);
                     if (targetLog) {
                         targetLog.driveUrl = driveUrl;
+                        targetLog.foto = driveUrl;
+                        saveData(true);
                     }
                 }
             }).catch(() => {});
         }
 
-      // Jalankan inisialisasi tampilan, countdown, dan pastikan data dimuat dari backend dulu
+        // Jalankan countdown 1 detik (otomatis hemat CPU saat tab di-minimize)
         setInterval(updateWIBCountdown, 1000);
-        
-        // Muat data dari backend terlebih dahulu sebelum merender tampilan
-        loadDataFromBackend().then(() => {
-            setInterval(loadDataFromBackend, 15000);
-        });
+        updateWIBCountdown();
+
+        // Jalankan sinkronisasi real-time Firebase (menggantikan polling 15 detik yang boros kuota)
+        initFirebaseRealtimeSync();
     </script>
 </body>
 </html>
